@@ -5,7 +5,7 @@ rules.push({
   use: [
     { loader: 'style-loader' },
     { loader: 'css-loader' },
-    { loader: 'postcss-loader' } // v5.0.0 requires webpack 5. See inside the electron forge plugin
+    { loader: 'postcss-loader' }, // v5.0.0 requires webpack 5. See inside the electron forge plugin
   ],
 });
 

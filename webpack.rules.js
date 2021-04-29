@@ -23,6 +23,10 @@ module.exports = [
         presets: ['@babel/preset-react']
       }
     }
+  },
+  {
+    test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
+    loader: 'url-loader?limit=100000' 
   }
   // Put your webpack loader rules in this array.  This is where you would put
   // your ts-loader configuration for instance:
