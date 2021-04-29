@@ -17,13 +17,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+      - run: yarn install
+      - run: yarn make
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          files: |
+            out/**/*.AppImage
+            out/**/*.deb
+            out/**/*.dmg
+            out/**/*.exe
+            out/**/*.rpm
+            out/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
