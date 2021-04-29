@@ -20,7 +20,10 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "appCategoryType": "public.app-category.utilities",
+        "icon": "assets/icon.icns"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -31,7 +34,7 @@
         {
           "name": "@electron-forge/maker-dmg",
           "config": {
-            "icon": "./assets/logo.png",
+            "icon": "assets/icon.png",
             "name": "Octowise"
           }
         },
