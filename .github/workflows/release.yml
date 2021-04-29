@@ -19,7 +19,6 @@ jobs:
           node-version: 12.x
       - run: yarn install
       - run: yarn make
-      - run: npx rimraf "out/**/!(*.exe|*.deb|*.AppImage|*.dmg|*.zip)"
       - run: ls out
       - name: Release
         uses: softprops/action-gh-release@v1
