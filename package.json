@@ -1,8 +1,8 @@
 {
-  "name": "octowise",
-  "productName": "octowise",
+  "name": "Octowise",
+  "productName": "Octowise",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "A small electron application for pulling Kobo highlights and sending them to Readwise",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "kobowise"
+            "name": "Octowise"
           }
         },
         {
