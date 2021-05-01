@@ -1,1 +1,2 @@
-export const buildSqlitePath = (basePath) => `${basePath}/.kobo/KoboReader.sqlite`
+export const buildSqlitePath = (basePath) =>
+  `${basePath}/.kobo/KoboReader.sqlite`;

@@ -1,6 +1,6 @@
-export default function reducer (store = {}, action) {
-  switch(action.type) {
+export default function reducer(store = {}, action) {
+  switch (action.type) {
     default:
-      return store
+      return store;
   }
 }

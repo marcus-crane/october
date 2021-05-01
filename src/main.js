@@ -13,11 +13,11 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-    }
+    },
   })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY) // eslint-disable-line
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY); // eslint-disable-line
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -48,4 +48,6 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.handle("select-mounted-volume", () => dialog.showOpenDialogSync({ properties: ["openDirectory"] }))
+ipcMain.handle("select-mounted-volume", () =>
+  dialog.showOpenDialogSync({ properties: ["openDirectory"] })
+)
