@@ -55,21 +55,27 @@ ipcMain.handle("select-mounted-volume", () =>
 )
 
 ipcMain.handle("read-database", (_, { path }) => {
-  if (!fs.existSync(path)) {
+  if (!fs.existsSync(path)) {
     throw Error(
       "Couldn't find a Kobo database. Are you sure this is the correct path?"
     )
   }
   const db = new Database(path, {
-    readOnly: true,
+    readonly: true,
     fileMustExist: true,
     verbose: console.error,
   })
 
-  const query = db.prepare(
-    "SELECT b.VolumeID, c.Title, c.Attribution, c.___PercentRead, b.Text, b.Annotation FROM Content c INNER JOIN Bookmark b ON c.ContentID = b.VolumeID WHERE c.ContentType = 6 AND c.MimeType = 'application/x-kobo-epub+zip' LIMIT 1"
+  const bookQuery = db.prepare(
+    "SElECT DISTINCT b.VolumeID, c.Title, c.Attribution, c.___PercentRead FROM Content c INNER JOIN Bookmark b on c.ContentID = b.VolumeID WHERE c.ContentType = 6 AND c.MimeType = 'application/x-kobo-epub+zip'"
   )
-  const result = query.all()
 
-  return result
+  const bookResult = bookQuery.all()
+
+  // const query = db.prepare(
+  //   "SELECT b.VolumeID, c.Title, c.Attribution, c.___PercentRead, b.Text, b.Annotation FROM Content c INNER JOIN Bookmark b ON c.ContentID = b.VolumeID WHERE c.ContentType = 6 AND c.MimeType = 'application/x-kobo-epub+zip'"
+  // )
+  // const result = query.all()
+
+  return { books: bookResult }
 })
