@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { Component } from "react"
 
-import logo from "../logo.png";
+import logo from "../logo.png"
 
 export default class DeviceSelection extends Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   render() {
@@ -34,6 +34,6 @@ export default class DeviceSelection extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
