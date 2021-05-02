@@ -1,66 +1,80 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer } from "electron"
 
-import { buildSqlitePath } from "./constants";
+import { buildSqlitePath } from "./constants"
 
-export const GET_DB_PATH_REQUEST = "GET_DB_PATH_REQUEST";
-export const GET_DB_PATH_SUCCESS = "GET_DB_PATH_SUCCESS";
-export const GET_DB_PATH_FAILURE = "GET_DB_PATH_FAILURE";
-
-export const READ_DB_REQUEST = "READ_DB_REQUEST";
-export const READ_DB_SUCCESS = "READ_DB_SUCCESS";
-export const READ_DB_FAILURE = "READ_DB_FAILURE";
+export const actionTypes = {
+  GET_DB_PATH_REQUEST: "GET_DB_PATH_REQUEST",
+  GET_DB_PATH_SUCCESS: "GET_DB_PATH_SUCCESS",
+  GET_DB_PATH_FAILURE: "GET_DB_PATH_FAILURE",
+  READ_DB_REQUEST: "READ_DB_REQUEST",
+  READ_DB_SUCCESS: "READ_DB_SUCCESS",
+  READ_DB_FAILURE: "READ_DB_FAILURE",
+}
 
 export const getDbPathRequest = () => {
-  return { type: GET_DB_PATH_REQUEST };
-};
+  return { type: actionTypes.GET_DB_PATH_REQUEST }
+}
 
 export const getDbPathSuccess = (databasePath) => {
   return {
-    type: GET_DB_PATH_SUCCESS,
+    type: actionTypes.GET_DB_PATH_SUCCESS,
     databasePath,
-  };
-};
+  }
+}
 
-export const getDbPathFailure = (error) => {
+export const getDbPathFailure = (errorMessage) => {
   return {
-    type: GET_DB_PATH_FAILURE,
-    error,
-  };
-};
+    type: actionTypes.GET_DB_PATH_FAILURE,
+    errorMessage,
+  }
+}
 
 export const getDbPath = (renderer = ipcRenderer) => {
   return (dispatch) => {
-    dispatch(getDbPathRequest());
+    dispatch(getDbPathRequest())
     return renderer
       .invoke("select-mounted-volume")
       .then((res) => {
         if (res === undefined) {
-          return Promise.reject("something broke?!");
+          return Promise.reject("something broke?!")
         }
-        return buildSqlitePath(res[0]);
+        return buildSqlitePath(res[0])
       })
       .then((data) => dispatch(getDbPathSuccess(data)))
-      .catch((error) => dispatch(getDbPathFailure(error)));
-  };
-};
+      .catch((error) => dispatch(getDbPathFailure(error)))
+  }
+}
 
 export const readDbRequest = (databasePath) => {
   return {
-    type: READ_DB_REQUEST,
+    type: actionTypes.READ_DB_REQUEST,
     databasePath,
-  };
-};
+  }
+}
 
 export const readDbSuccess = (database) => {
   return {
-    type: READ_DB_SUCCESS,
+    type: actionTypes.READ_DB_SUCCESS,
     database,
-  };
-};
+  }
+}
 
-export const readDbFailure = (error) => {
+export const readDbFailure = (errorMessage) => {
   return {
-    type: READ_DB_FAILURE,
-    error,
-  };
-};
+    type: actionTypes.READ_DB_FAILURE,
+    errorMessage,
+  }
+}
+
+export const readDb = (path, renderer = ipcRenderer) => {
+  return (dispatch) => {
+    dispatch(readDbRequest())
+    return renderer
+      .invoke("read-database", { path })
+      .then((database) => {
+        console.log(database)
+        return true
+      })
+      .catch((error) => dispatch(readDbFailure(error)))
+  }
+}

@@ -1,94 +1,98 @@
-import configureMockStore from "redux-mock-store";
-import thunk from "redux-thunk";
-import * as actions from "./actions";
-import expect from "expect";
+import configureMockStore from "redux-mock-store"
+import thunk from "redux-thunk"
+import * as actions from "./actions.jsx"
+import expect from "expect"
 
-const middlewares = [thunk];
-const mockStore = configureMockStore(middlewares);
+const middlewares = [thunk]
+const mockStore = configureMockStore(middlewares)
+
+const { actionTypes } = actions
 
 describe("regular actions", () => {
   it("should create GET_DB_PATH_REQUEST when user selects a volume", () => {
-    const expectedAction = { type: actions.GET_DB_PATH_REQUEST };
-    expect(actions.getDbPathRequest()).toEqual(expectedAction);
-  });
+    const expectedAction = { type: actionTypes.GET_DB_PATH_REQUEST }
+    expect(actions.getDbPathRequest()).toEqual(expectedAction)
+  })
 
   it("should create GET_DB_PATH_SUCCESS when a valid path is selected", () => {
-    const databasePath = "/tmp/.kobo/KoboReader.sqlite";
+    const databasePath = "/tmp/.kobo/KoboReader.sqlite"
     const expectedAction = {
-      type: actions.GET_DB_PATH_SUCCESS,
+      type: actionTypes.GET_DB_PATH_SUCCESS,
       databasePath,
-    };
-    expect(actions.getDbPathSuccess(databasePath)).toEqual(expectedAction);
-  });
+    }
+    expect(actions.getDbPathSuccess(databasePath)).toEqual(expectedAction)
+  })
 
   it("should create GET_DB_PATH_FAILURE when volume selection is cancelled", () => {
-    const error = "something broke?!";
+    const errorMessage = "something broke?!"
     const expectedAction = {
-      type: actions.GET_DB_PATH_FAILURE,
-      error,
-    };
-    expect(actions.getDbPathFailure(error)).toEqual(expectedAction);
-  });
+      type: actionTypes.GET_DB_PATH_FAILURE,
+      errorMessage,
+    }
+    expect(actions.getDbPathFailure(errorMessage)).toEqual(expectedAction)
+  })
 
   it("should create READ_DB_REQUEST when looking for db at detected db path", () => {
-    const databasePath = "/tmp/.kobo/KoboReader.sqlite";
+    const databasePath = "/tmp/.kobo/KoboReader.sqlite"
     const expectedAction = {
-      type: actions.READ_DB_REQUEST,
+      type: actionTypes.READ_DB_REQUEST,
       databasePath,
-    };
-    expect(actions.readDbRequest(databasePath)).toEqual(expectedAction);
-  });
+    }
+    expect(actions.readDbRequest(databasePath)).toEqual(expectedAction)
+  })
 
   it("should create READ_DB_SUCCESS when successfully read contents of database", () => {
-    const database = { some_contents: true };
+    const database = { some_contents: true }
     const expectedAction = {
-      type: actions.READ_DB_SUCCESS,
+      type: actionTypes.READ_DB_SUCCESS,
       database,
-    };
-    expect(actions.readDbSuccess(database)).toEqual(expectedAction);
-  });
+    }
+    expect(actions.readDbSuccess(database)).toEqual(expectedAction)
+  })
 
   it("should create READ_DB_FAILURE when failed to read database contents", () => {
-    const error = "database is locked up by another process";
+    const errorMessage = "database is locked up by another process"
     const expectedAction = {
-      type: actions.READ_DB_FAILURE,
-      error,
-    };
-    expect(actions.readDbFailure(error)).toEqual(expectedAction);
-  });
-});
+      type: actionTypes.READ_DB_FAILURE,
+      errorMessage,
+    }
+    expect(actions.readDbFailure(errorMessage)).toEqual(expectedAction)
+  })
+})
 
 describe("async actions", () => {
   it("should create GET_DB_PATH_SUCCESS when building db path succeeds", () => {
+    const databasePath = "/tmp/.kobo/KoboReader.sqlite"
     const expectedActions = [
-      { type: actions.GET_DB_PATH_REQUEST },
+      { type: actionTypes.GET_DB_PATH_REQUEST },
       {
-        type: actions.GET_DB_PATH_SUCCESS,
-        databasePath: "/tmp/.kobo/KoboReader.sqlite",
+        type: actionTypes.GET_DB_PATH_SUCCESS,
+        databasePath,
       },
-    ];
+    ]
 
-    const store = mockStore({ database: {} });
+    const store = mockStore({ database: {} })
 
-    const fakeRenderer = { invoke: () => Promise.resolve(["/tmp"]) };
+    const fakeRenderer = { invoke: () => Promise.resolve(["/tmp"]) }
 
     return store.dispatch(actions.getDbPath(fakeRenderer)).then(() => {
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  })
 
   it("should create GET_DB_PATH_FAILURE when fetch database fails", () => {
+    const errorMessage = "something broke?!"
     const expectedActions = [
-      { type: actions.GET_DB_PATH_REQUEST },
-      { type: actions.GET_DB_PATH_FAILURE, error: "something broke?!" },
-    ];
+      { type: actionTypes.GET_DB_PATH_REQUEST },
+      { type: actionTypes.GET_DB_PATH_FAILURE, errorMessage },
+    ]
 
-    const store = mockStore({});
+    const store = mockStore({})
 
-    const fakeRenderer = { invoke: () => Promise.reject("something broke?!") };
+    const fakeRenderer = { invoke: () => Promise.reject("something broke?!") }
 
     return store.dispatch(actions.getDbPath(fakeRenderer)).then(() => {
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
-});
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  })
+})
