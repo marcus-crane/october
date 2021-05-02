@@ -71,7 +71,7 @@ describe("async actions", () => {
       },
     ]
 
-    const store = mockStore({ database: {} })
+    const store = mockStore({})
 
     const fakeRenderer = { invoke: () => Promise.resolve(["/tmp"]) }
 
@@ -80,7 +80,7 @@ describe("async actions", () => {
     })
   })
 
-  it("should create GET_DB_PATH_FAILURE when fetch database fails", () => {
+  it("should create GET_DB_PATH_FAILURE when building db path fails", () => {
     const error = { message: "something broke?!" }
     const expectedActions = [
       { type: actionTypes.GET_DB_PATH_REQUEST },
@@ -94,5 +94,84 @@ describe("async actions", () => {
     return store.dispatch(actions.getDbPath(fakeRenderer)).then(() => {
       expect(store.getActions()).toEqual(expectedActions)
     })
+  })
+
+  it("should create READ_DB_SUCCESS when database is empty", () => {
+    const databasePath = "/tmp/validPath"
+    const database = {}
+    const expectedActions = [
+      { type: actionTypes.READ_DB_REQUEST, databasePath },
+      {
+        type: actionTypes.READ_DB_SUCCESS,
+        database,
+      },
+    ]
+
+    const store = mockStore({})
+
+    const fakeRenderer = { invoke: () => Promise.resolve(database) }
+
+    return store
+      .dispatch(actions.readDb(databasePath, fakeRenderer))
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+  })
+
+  it("should create READ_DB_SUCCESS when database has book entries", () => {
+    const databasePath = "/tmp/validPath"
+    const database = {
+      books: [
+        {
+          Attribution: "Friedrich Nietzsche",
+          Title: "Beyond Good and Evil",
+          VolumeID:
+            "file:///mnt/onboard/Nietzsche, Friedrich/Beyond Good and Evil - Friedrich Nietzsche.kepub.epub",
+          ___PercentRead: 50,
+        },
+        {
+          Attribution: "Voltaire",
+          Title: "Candide",
+          VolumeID: "file:///mnt/onboard/Voltaire/Candide.kepub.epub",
+          ___PercentRead: 100,
+        },
+      ],
+    }
+    const expectedActions = [
+      { type: actionTypes.READ_DB_REQUEST, databasePath },
+      {
+        type: actionTypes.READ_DB_SUCCESS,
+        database,
+      },
+    ]
+
+    const store = mockStore({})
+
+    const fakeRenderer = { invoke: () => Promise.resolve(database) }
+
+    return store
+      .dispatch(actions.readDb(databasePath, fakeRenderer))
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+  })
+
+  it("should create READ_DB_FAILURE when fetching database fails", () => {
+    const databasePath = "/tmp/invalidPath"
+    const error = { message: "database is non existent" }
+    const expectedActions = [
+      { type: actionTypes.READ_DB_REQUEST, databasePath },
+      { type: actionTypes.READ_DB_FAILURE, errorMessage: error.message },
+    ]
+
+    const store = mockStore({})
+
+    const fakeRenderer = { invoke: () => Promise.reject(error) }
+
+    return store
+      .dispatch(actions.readDb(databasePath, fakeRenderer))
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
   })
 })

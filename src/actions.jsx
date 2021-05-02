@@ -68,13 +68,17 @@ export const readDbFailure = (errorMessage) => {
 
 export const readDb = (path, renderer = ipcRenderer) => {
   return (dispatch) => {
-    dispatch(readDbRequest())
+    dispatch(readDbRequest(path))
     return renderer
       .invoke("read-database", { path })
       .then((database) => {
-        console.log(database)
-        return true
+        if (Object.keys(database).length === 0) return {}
+        if (!Object.keys(database).includes("books")) return {} // TODO: Find out what fresh kobo db looks like
+        return {
+          books: database.books,
+        }
       })
+      .then((data) => dispatch(readDbSuccess(data)))
       .catch((error) => dispatch(readDbFailure(error.message)))
   }
 }
