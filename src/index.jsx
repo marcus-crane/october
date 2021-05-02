@@ -12,7 +12,7 @@ import { createLogger } from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
 import reducer from "./reducer.jsx";
-import App from "./app.jsx";
+import DeviceSelection from "./pages/DeviceSelection.jsx";
 
 import "./index.css";
 import "tailwindcss/tailwind.css";
@@ -37,7 +37,7 @@ render(
   <Provider store={store}>
     <LocationProvider history={history}>
       <Router>
-        <App path="/" />
+        <DeviceSelection path="/" />
       </Router>
     </LocationProvider>
   </Provider>,
