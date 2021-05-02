@@ -11,7 +11,9 @@ class DeviceSelection extends Component {
   }
 
   readDatabase() {
-    this.props.readDb("/Users/marcus/Desktop/KoboReader.sqlite")
+    this.props
+      .readDb("/Users/marcus/Desktop/KoboReader.sqlite")
+      .then(() => this.props.history.push("/books"))
   }
 
   render() {

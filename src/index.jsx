@@ -1,11 +1,6 @@
 import React from "react"
 import { render } from "react-dom"
-import {
-  createMemorySource,
-  createHistory,
-  LocationProvider,
-  Router,
-} from "@reach/router"
+import { HashRouter, Route, Switch } from "react-router-dom"
 import { Provider } from "react-redux"
 import { createStore, applyMiddleware, compose } from "redux"
 import { createLogger } from "redux-logger"
@@ -23,9 +18,6 @@ const ROOT_EL = document.getElementById("root")
 const initialState = {}
 const loggerMiddleware = createLogger()
 
-const source = createMemorySource("/")
-const history = createHistory(source)
-
 const store = createStore(
   reducer,
   initialState,
@@ -37,12 +29,10 @@ const store = createStore(
 
 render(
   <Provider store={store}>
-    <LocationProvider history={history}>
-      <Router>
-        <DeviceSelection path="/" />
-        <Bookshelf path="/books" />
-      </Router>
-    </LocationProvider>
+    <HashRouter>
+      <Route exact path="/" component={DeviceSelection} />
+      <Route exact path="/books" component={Bookshelf} />
+    </HashRouter>
   </Provider>,
   ROOT_EL
 )

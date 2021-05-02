@@ -15,26 +15,9 @@ class Bookshelf extends Component {
               alt="Octowise logo, which is a cartoon octopus reading a book."
             />
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-              Octowise
+              OctAHHHwise
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              Sync your Kobo highlights (unofficially) with Readwise
-            </p>
           </div>
-          <div>
-            <button
-              onClick={this.readDatabase}
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Select your mounted Kobo device
-            </button>
-          </div>
-          {this.props.errorMessage && (
-            <p className="text-center text-sm text-red-600 dark:text-red-400">
-              {this.props.errorMessage}
-            </p>
-          )}
         </div>
       </div>
     )
@@ -44,6 +27,7 @@ class Bookshelf extends Component {
 const mapStoreToProps = (store) => {
   return {
     books: store.books,
+    errorMessage: store.errorMessage,
   }
 }
 

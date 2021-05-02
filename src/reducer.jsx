@@ -35,7 +35,7 @@ const readDbSuccess = (store, action) => {
   const { database } = action
   return {
     ...store,
-    database,
+    ...database,
   }
 }
 
