@@ -1,5 +1,4 @@
 import React, { Component } from "react"
-import { Notification } from "electron"
 import { connect } from "react-redux"
 import { getDbPath, readDb } from "../actions.jsx"
 
@@ -42,7 +41,9 @@ class DeviceSelection extends Component {
             </button>
           </div>
           {this.props.errorMessage && (
-            <p className="">{this.props.errorMessage}</p>
+            <p className="text-center text-sm text-red-600 dark:text-red-400">
+              {this.props.errorMessage}
+            </p>
           )}
         </div>
       </div>
