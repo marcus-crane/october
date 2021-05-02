@@ -1,20 +1,28 @@
 import React from "react";
 import { render } from "react-dom";
-import { Router } from "@reach/router";
+import {
+  createMemorySource,
+  createHistory,
+  LocationProvider,
+  Router,
+} from "@reach/router";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose } from "redux";
 import { createLogger } from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
-import reducer from "./reducers";
+import reducer from "./reducer.jsx";
 import App from "./app.jsx";
 
 import "./index.css";
 import "tailwindcss/tailwind.css";
 
 const ROOT_EL = document.getElementById("root");
-const initalState = {};
+const initialState = {};
 const loggerMiddleware = createLogger();
+
+const source = createMemorySource("/");
+const history = createHistory(source);
 
 const store = createStore(
   reducer,
@@ -27,9 +35,11 @@ const store = createStore(
 
 render(
   <Provider store={store}>
-    <Router>
-      <App path="/" />
-    </Router>
+    <LocationProvider history={history}>
+      <Router>
+        <App path="/" />
+      </Router>
+    </LocationProvider>
   </Provider>,
   ROOT_EL
 );
