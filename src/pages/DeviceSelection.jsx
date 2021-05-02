@@ -1,10 +1,18 @@
 import React, { Component } from "react"
+import { Notification } from "electron"
+import { connect } from "react-redux"
+import { getDbPath, readDb } from "../actions.jsx"
 
 import logo from "../logo.png"
 
-export default class DeviceSelection extends Component {
+class DeviceSelection extends Component {
   constructor(props) {
     super(props)
+    this.readDatabase = this.readDatabase.bind(this)
+  }
+
+  readDatabase() {
+    this.props.readDb("/Users/marcus/Desktop/KoboReader.sqlite")
   }
 
   render() {
@@ -26,14 +34,33 @@ export default class DeviceSelection extends Component {
           </div>
           <div>
             <button
+              onClick={this.readDatabase}
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Select your mounted Kobo device
             </button>
           </div>
+          {this.props.errorMessage && (
+            <p className="">{this.props.errorMessage}</p>
+          )}
         </div>
       </div>
     )
   }
 }
+
+const mapStoreToProps = (store) => {
+  return {
+    errorMessage: store.errorMessage,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getDbPath: () => dispatch(getDbPath()),
+    readDb: (path) => dispatch(readDb(path)),
+  }
+}
+
+export default connect(mapStoreToProps, mapDispatchToProps)(DeviceSelection)

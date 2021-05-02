@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron"
 
-import { buildSqlitePath } from "./constants"
+import { buildSqlitePath } from "./constants.jsx"
 
 export const actionTypes = {
   GET_DB_PATH_REQUEST: "GET_DB_PATH_REQUEST",
@@ -41,7 +41,7 @@ export const getDbPath = (renderer = ipcRenderer) => {
         return buildSqlitePath(res[0])
       })
       .then((data) => dispatch(getDbPathSuccess(data)))
-      .catch((error) => dispatch(getDbPathFailure(error)))
+      .catch((error) => dispatch(getDbPathFailure(error.message)))
   }
 }
 
@@ -75,6 +75,6 @@ export const readDb = (path, renderer = ipcRenderer) => {
         console.log(database)
         return true
       })
-      .catch((error) => dispatch(readDbFailure(error)))
+      .catch((error) => dispatch(readDbFailure(error.message)))
   }
 }

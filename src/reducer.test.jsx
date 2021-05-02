@@ -30,4 +30,28 @@ describe("reducer", () => {
     }
     expect(reducer(store, action)).toEqual(expected)
   })
+
+  it("should handle READ_DB_SUCCESS", () => {
+    const databaseContents = { something: true }
+    const expected = {
+      database: databaseContents,
+    }
+    const store = {}
+    const action = {
+      type: actionTypes.READ_DB_SUCCESS,
+      database: databaseContents,
+    }
+    expect(reducer(store, action)).toEqual(expected)
+  })
+
+  it("should handle READ_DB_FAILURE", () => {
+    const errorMessage = "some of undefined is undefined"
+    const expected = { errorMessage }
+    const store = {}
+    const action = {
+      type: actionTypes.READ_DB_FAILURE,
+      errorMessage,
+    }
+    expect(reducer(store, action)).toEqual(expected)
+  })
 })

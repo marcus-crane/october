@@ -81,15 +81,15 @@ describe("async actions", () => {
   })
 
   it("should create GET_DB_PATH_FAILURE when fetch database fails", () => {
-    const errorMessage = "something broke?!"
+    const error = { message: "something broke?!" }
     const expectedActions = [
       { type: actionTypes.GET_DB_PATH_REQUEST },
-      { type: actionTypes.GET_DB_PATH_FAILURE, errorMessage },
+      { type: actionTypes.GET_DB_PATH_FAILURE, errorMessage: error.message },
     ]
 
     const store = mockStore({})
 
-    const fakeRenderer = { invoke: () => Promise.reject("something broke?!") }
+    const fakeRenderer = { invoke: () => Promise.reject(error) }
 
     return store.dispatch(actions.getDbPath(fakeRenderer)).then(() => {
       expect(store.getActions()).toEqual(expectedActions)
