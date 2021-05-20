@@ -4,6 +4,7 @@
   <br>
 
   <h1>Octowise</h1>
+  <h3>Strongly a WIP and not yet functional</h3>
   A small electron application for pulling Kobo highlights and sending them to Readwise 
 </div>
 
