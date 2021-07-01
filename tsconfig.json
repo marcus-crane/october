@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@main/*": ["main/*"],
+      "@renderer/*": ["renderer/*"],
+      "@preload/*": ["preload/*"]
+    }
+  },
+  "exclude": ["node_modules", "app", "dist"]
+}

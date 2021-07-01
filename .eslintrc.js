@@ -5,41 +5,45 @@ module.exports = {
     }
   },
   "env": {
-      "browser": true,
-      "es2021": true,
-      "node": true
+    "browser": true,
+    "es2021": true,
+    "node": true
   },
   "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "prettier"
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier"
   ],
   "parserOptions": {
-      "ecmaFeatures": {
-          "jsx": true
-      },
-      "ecmaVersion": 12,
-      "sourceType": "module"
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
   "plugins": [
-      "react"
+    "react"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "app/**"
   ],
   "rules": {
-      "indent": [
-          "error",
-          2
-      ],
-      "linebreak-style": [
-          "error",
-          "unix"
-      ],
-      "quotes": [
-          "error",
-          "double"
-      ],
-      "semi": [
-          "error",
-          "never"
-      ]
+    "indent": [
+      "error",
+      2
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ]
   }
 }

@@ -1,0 +1,16 @@
+{
+  "name": "octowise",
+  "version": "1.0.0",
+  "description": "An application for syncing Kindle highlights between various sources",
+  "main": "index.js",
+  "repository": "git@github.com:marcus-crane/octowise",
+  "author": "Marcus Crane <marcus@utf9k.net>",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^7.4.1",
+    "electron-updater": "^4.3.9"
+  },
+  "devDependencies": {
+    "electron": "^13.1.4"
+  }
+}

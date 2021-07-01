@@ -1,6 +1,10 @@
 node_modules
 .DS_Store
-out
-.webpack
-yarn-error.log
-*.log
+dist
+dist-ssr
+*.local
+pack
+app/*
+!app/package.json
+!app/yarn.lock
+!app/package-lock.json
