@@ -37,7 +37,7 @@ const createWindow = async () => {
 
   const pageUrl = isDevelopment
     ? "http://localhost:3000"
-    : pathToFileURL(join(__dirname, "../renderer/index.html")).toString() // TODO: Check new URL alternative
+    : pathToFileURL(join(__dirname, "./renderer/index.html")).toString()
 
   await mainWindow.loadURL(pageUrl)
 }
