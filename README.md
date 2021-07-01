@@ -12,7 +12,7 @@
 
 **App layout**
 
-I found the following repos used in terms of how to lay out this application, and other various development things
+I found the following repos useful in terms of how to lay out this application, and other various development things
 
 - [cawa-93/vite-electron-builder](https://github.com/cawa-93/vite-electron-builder)
 - [jctaoo/vite-electron-esbuild-starter](https://github.com/jctaoo/vite-electron-esbuild-starter)
