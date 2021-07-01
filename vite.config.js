@@ -21,6 +21,10 @@ export default defineConfig({
         replacement: resolve(__dirname, "src/renderer"),
       },
       {
+        find: "@preload",
+        replacement: resolve(__dirname, "src/preload"),
+      },
+      {
         find: "@common",
         replacement: resolve(__dirname, "src/common"),
       },
