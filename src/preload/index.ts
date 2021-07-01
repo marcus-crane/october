@@ -1,6 +1,11 @@
-import { contextBridge } from 'electron'
+import { contextBridge } from "electron"
 
-const refObjectName = 'electron'
+const refObjectName = "electron"
+
+const api = {
+  versions: process.versions,
+  environment: process.env.NODE_ENV
+}
 
 if (process.env.NODE_ENV === "development") {
   contextBridge.exposeInMainWorld(refObjectName, api)
@@ -9,7 +14,7 @@ if (process.env.NODE_ENV === "development") {
     if (typeof obj === "object" && obj !== null) {
       Object.keys(obj).forEach(prop => {
         const val = obj[prop]
-        if ((typeof val === 'object' || typeof val === 'function') && !Object.isFrozen(val)) {
+        if ((typeof val === "object" || typeof val === "function") && !Object.isFrozen(val)) {
           deepFreeze(val)
         }
       })
