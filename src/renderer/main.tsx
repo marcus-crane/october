@@ -2,6 +2,9 @@ import React from "react"
 import { render } from "react-dom"
 import App from './App'
 
+import "./index.css"
+import "tailwindcss/tailwind.css"
+
 const ROOT_EL = document.getElementById("root")
 
 render(
