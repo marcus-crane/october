@@ -4,6 +4,7 @@
     "allowJs": true,
     "esModuleInterop": true,
     "baseUrl": "./src",
+    "jsx": "react",
     "paths": {
       "@main/*": ["main/*"],
       "@renderer/*": ["renderer/*"],

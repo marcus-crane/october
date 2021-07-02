@@ -8,9 +8,9 @@ import thunkMiddleware from "redux-thunk"
 import "./index.css"
 import "tailwindcss/tailwind.css"
 
-import reducer from "./reducers/index.tsx"
+import reducer from "./reducers/index"
 
-import Router from "./router.tsx"
+import Router from "./router"
 
 const ROOT_EL = document.getElementById("root")
 const initialState = {}

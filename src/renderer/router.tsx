@@ -1,7 +1,7 @@
 import React from "react"
 import { HashRouter, Route, Switch } from "react-router-dom"
 
-import DeviceSelector from "./pages/DeviceSelector.tsx"
+import DeviceSelector from "./pages/DeviceSelector"
 
 const Router = props => (
   <HashRouter>
