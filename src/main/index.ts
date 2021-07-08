@@ -3,6 +3,8 @@ import { pathToFileURL } from "url"
 
 import { app, BrowserWindow, ipcMain, dialog } from "electron"
 
+import { bookQuery } from "../renderer/constants"
+
 const isDevelopment = process.env.NODE_ENV === "development"
 
 const isSingleInstance = app.requestSingleInstanceLock()
@@ -70,4 +72,22 @@ if (!isDevelopment) {
 
 ipcMain.handle("select-mounted-volume", () => {
   dialog.showOpenDialogSync({ properties: ["openDirectory"] })
+})
+
+ipcMain.handle("read-sqlite-database", () => {
+  if (!fs.existsSync(path)) {
+    throw Error(
+      "Couldn't find a Kobo database. Are you sure this is a Kindle device?"
+    )
+  }
+  const db = new Database(path, {
+    readonly: true,
+    fileMustExist: true,
+    verbose: console.error,
+  })
+
+  const bookQuery = db.Prepare(bookQuery)
+  const books = bookQuery.all()
+
+  return { books }
 })
