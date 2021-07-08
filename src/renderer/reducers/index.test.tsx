@@ -37,18 +37,19 @@ describe("reducer", () => {
     const store = {}
     const action = {
       type: actionTypes.READ_DATABASE_SUCCESS,
-      database
+      database,
     }
     expect(reducer(store, action)).toEqual(expected)
   })
 
   it("should handle READ_DATABASE_FAILURE", () => {
-    const errorMessage = "is your database running? maybe it got lost under the sofa cushions"
+    const errorMessage =
+      "is your database running? maybe it got lost under the sofa cushions"
     const expected = { errorMessage }
     const store = {}
     const action = {
       type: actionTypes.READ_DATABASE_FAILURE,
-      errorMessage
+      errorMessage,
     }
     expect(reducer(store, action)).toEqual(expected)
   })

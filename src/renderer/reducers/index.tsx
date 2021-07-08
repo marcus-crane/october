@@ -35,7 +35,7 @@ const readDatabaseSuccess = (store, action) => {
   const { database } = action
   return {
     ...store,
-    database
+    database,
   }
 }
 
@@ -43,6 +43,6 @@ const readDatabaseFailure = (store, action) => {
   const { errorMessage } = action
   return {
     ...store,
-    errorMessage
+    errorMessage,
   }
 }
