@@ -7,7 +7,8 @@ const app = new Application({
   args: ["."],
 })
 
-app.start()
+app
+  .start()
   .then(async () => {
     const isVisible = await app.browserWindow.isVisible()
     assert.ok(isVisible, "Main window is not visible")
@@ -20,7 +21,11 @@ app.start()
 
   .then(async () => {
     const content = await app.client.$("#app")
-    assert.notStrictEqual(await content.getHTML(), "<div id=\"app\"></div>", "Window content is empty")
+    assert.notStrictEqual(
+      await content.getHTML(),
+      '<div id="app"></div>',
+      "Window content is empty"
+    )
   })
 
   .then(() => {
@@ -31,7 +36,7 @@ app.start()
 
   .then(() => process.exit(0))
 
-  .catch(err => {
+  .catch((err) => {
     console.error(err)
     if (app && app.isRunning()) {
       app.stop()

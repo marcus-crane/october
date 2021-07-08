@@ -4,7 +4,7 @@ const refObjectName = "electron"
 
 const api = {
   versions: process.versions,
-  environment: process.env.NODE_ENV
+  environment: process.env.NODE_ENV,
 }
 
 if (process.env.NODE_ENV === "development") {
@@ -12,9 +12,12 @@ if (process.env.NODE_ENV === "development") {
 } else {
   const deepFreeze = (obj) => {
     if (typeof obj === "object" && obj !== null) {
-      Object.keys(obj).forEach(prop => {
+      Object.keys(obj).forEach((prop) => {
         const val = obj[prop]
-        if ((typeof val === "object" || typeof val === "function") && !Object.isFrozen(val)) {
+        if (
+          (typeof val === "object" || typeof val === "function") &&
+          !Object.isFrozen(val)
+        ) {
           deepFreeze(val)
         }
       })

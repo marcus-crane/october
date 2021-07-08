@@ -5,7 +5,7 @@ import { buildSqlitePath } from "../constants"
 export const actionTypes = {
   SELECT_DEVICE_PATH_REQUEST: "SELECT_DEVICE_PATH_REQUEST",
   SELECT_DEVICE_PATH_SUCCESS: "SELECT_DEVICE_PATH_SUCCESS",
-  SELECT_DEVICE_PATH_FAILURE: "SELECT_DEVICE_PATH_FAILURE"
+  SELECT_DEVICE_PATH_FAILURE: "SELECT_DEVICE_PATH_FAILURE",
 }
 
 export const selectDevicePathRequest = () => {
@@ -15,29 +15,29 @@ export const selectDevicePathRequest = () => {
 export const selectDevicePathSuccess = (databasePath) => {
   return {
     type: actionTypes.SELECT_DEVICE_PATH_SUCCESS,
-    databasePath
+    databasePath,
   }
 }
 
 export const selectDevicePathFailure = (errorMessage) => {
   return {
     type: actionTypes.SELECT_DEVICE_PATH_FAILURE,
-    errorMessage
+    errorMessage,
   }
 }
 
 export const selectDevicePath = (renderer = ipcRenderer) => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(selectDevicePathRequest())
     return renderer
       .invoke("select-mounted-volume")
-      .then(res => {
+      .then((res) => {
         if (res === undefined) {
           return Promise.reject("Device selection was aborted.")
         }
         return buildSqlitePath(res[0])
       })
-      .then(data => dispatch(selectDevicePathSuccess(data)))
-      .catch(err => dispatch(selectDevicePathFailure(err.message)))
+      .then((data) => dispatch(selectDevicePathSuccess(data)))
+      .catch((err) => dispatch(selectDevicePathFailure(err.message)))
   }
 }

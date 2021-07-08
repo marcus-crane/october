@@ -10,7 +10,7 @@ const mockStore = configureMockStore(middlewares)
 const { actionTypes } = actions
 
 describe("regular actions", () => {
-	it("should create SELECT_DEVICE_PATH_REQUEST when user invokes device volume selection", () => {
+  it("should create SELECT_DEVICE_PATH_REQUEST when user invokes device volume selection", () => {
     const expectedAction = { type: actionTypes.SELECT_DEVICE_PATH_REQUEST }
     expect(actions.selectDevicePathRequest()).toEqual(expectedAction)
   })
@@ -19,18 +19,22 @@ describe("regular actions", () => {
     const databasePath = "/tmp/.kobo/KoboReader.sqlite"
     const expectedAction = {
       type: actionTypes.SELECT_DEVICE_PATH_SUCCESS,
-      databasePath
+      databasePath,
     }
-    expect(actions.selectDevicePathSuccess(databasePath)).toEqual(expectedAction)
+    expect(actions.selectDevicePathSuccess(databasePath)).toEqual(
+      expectedAction
+    )
   })
 
   it("should create SELECT_DEVICE_PATH_FAILURE when user back out of volume selection", () => {
     const errorMessage = "something broke?!"
     const expectedAction = {
       type: actionTypes.SELECT_DEVICE_PATH_FAILURE,
-      errorMessage
+      errorMessage,
     }
-    expect(actions.selectDevicePathFailure(errorMessage)).toEqual(expectedAction)
+    expect(actions.selectDevicePathFailure(errorMessage)).toEqual(
+      expectedAction
+    )
   })
 })
 
@@ -39,37 +43,41 @@ describe("async actions", () => {
     const databasePath = "/tmp/.kobo/KoboReader.sqlite"
     const expectedActions = [
       { type: actionTypes.SELECT_DEVICE_PATH_REQUEST },
-      { 
+      {
         type: actionTypes.SELECT_DEVICE_PATH_SUCCESS,
-        databasePath
-      }
+        databasePath,
+      },
     ]
 
     const store = mockStore({})
 
-    const fakeIpcRenderer = { invoke: () => Promise.resolve([ "/tmp" ]) }
+    const fakeIpcRenderer = { invoke: () => Promise.resolve(["/tmp"]) }
 
-    return store.dispatch(actions.selectDevicePath(fakeIpcRenderer)).then(() => {
-      expect(store.getActions()).toEqual(expectedActions)
-    })
+    return store
+      .dispatch(actions.selectDevicePath(fakeIpcRenderer))
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
   })
 
   it("should create SELECT_DEVICE_PATH_FAILURE when a user backs out or something goes wrong", () => {
     const error = { message: "something broke?!" }
     const expectedActions = [
       { type: actionTypes.SELECT_DEVICE_PATH_REQUEST },
-      { 
+      {
         type: actionTypes.SELECT_DEVICE_PATH_FAILURE,
-        errorMessage: error.message
-      }
+        errorMessage: error.message,
+      },
     ]
 
     const store = mockStore({})
 
     const fakeIpcRenderer = { invoke: () => Promise.reject(error) }
 
-    return store.dispatch(actions.selectDevicePath(fakeIpcRenderer)).then(() => {
-      expect(store.getActions()).toEqual(expectedActions)
-    })
+    return store
+      .dispatch(actions.selectDevicePath(fakeIpcRenderer))
+      .then(() => {
+        expect(store.getActions()).toEqual(expectedActions)
+      })
   })
 })

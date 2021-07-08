@@ -1,9 +1,5 @@
 {
   "extends": "../../tsconfig.json",
-  "include": [
-    "../main/**/*"
-  ],
-  "exclude": [
-    "../renderer/**/*"
-  ]
+  "include": ["../main/**/*"],
+  "exclude": ["../renderer/**/*"]
 }

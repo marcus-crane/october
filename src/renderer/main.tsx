@@ -21,7 +21,7 @@ const store = createStore(
   initialState,
   compose(
     applyMiddleware(thunkMiddleware, loggerMiddleware),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
+    window.devToolsExtension ? window.devToolsExtension() : (f) => f
   )
 )
 

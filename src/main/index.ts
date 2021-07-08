@@ -23,7 +23,7 @@ const createWindow = async () => {
     show: false, // Window is shown when 'ready-to-show' is fired
     webPreferences: {
       contextIsolation: isDevelopment, // Spectron tests require this to be disabled
-      enableRemoteModule: isDevelopment // Same as above
+      enableRemoteModule: isDevelopment, // Same as above
     },
   })
 
@@ -55,15 +55,17 @@ app.on("window-all-closed", () => {
   }
 })
 
-app.whenReady()
+app
+  .whenReady()
   .then(createWindow)
-  .catch(e => console.error(`Failed to create window: ${e}`))
+  .catch((e) => console.error(`Failed to create window: ${e}`))
 
 if (!isDevelopment) {
-  app.whenReady()
+  app
+    .whenReady()
     .then(() => import("electron-updater"))
     .then(({ autoUpdater }) => autoUpdater.checkForUpdatesAndNotify())
-    .catch(e => console.error(`Failed to check for updates: ${e}`))
+    .catch((e) => console.error(`Failed to check for updates: ${e}`))
 }
 
 ipcMain.handle("select-mounted-volume", () => {
