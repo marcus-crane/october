@@ -16,7 +16,7 @@
     "pack:win": "yarn run build && yarn run rebuild && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -c ./electron-builder.js --win",
     "pack:mac": "yarn run build && yarn run rebuild && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -c ./electron-builder.js --mac",
     "pack:linux": "yarn run build && yarn run rebuild && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -c ./electron-builder.js --linux",
-    "lint": "eslint . --ext js,ts",
+    "lint": "eslint --config=jest.config.js . --ext js,ts",
     "rebuild": "electron-rebuild -m ./app",
     "postinstall": "electron-builder install-app-deps",
     "prettier": "prettier -w ."
