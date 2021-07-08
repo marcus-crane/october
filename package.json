@@ -9,7 +9,7 @@
     "dev": "cross-env NODE_ENV=development elecrun --vite",
     "preview": "yarn build && cross-env NODE_ENV=production electron ./app/",
     "build": "elecrun build && vite build",
-    "test": "jest --config=jest.config.js",
+    "test": "jest --config=jest.config.js --globals='{\"ts-jest\": {\"diagnostics\": false}}'",
     "clean": "elecrun clean",
     "pack": "yarn run build && yarn run rebuild && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -c ./electron-builder.js --win --linux",
     "pack:all": "yarn run build && yarn run rebuild && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -c ./electron-builder.js --win --linux --mac",
