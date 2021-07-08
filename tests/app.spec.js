@@ -23,7 +23,7 @@ app
     const content = await app.client.$("#app")
     assert.notStrictEqual(
       await content.getHTML(),
-      '<div id="app"></div>',
+      "<div id=\"app\"></div>",
       "Window content is empty"
     )
   })
