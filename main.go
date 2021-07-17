@@ -2,11 +2,43 @@ package main
 
 import (
   _ "embed"
+  "github.com/pgaskin/koboutils/v2/kobo"
   "github.com/wailsapp/wails"
 )
 
+type Kobo struct {
+  Name       string
+  Storage    int
+  DisplayPPI int
+  MntPath    string
+}
+
 func basic() string {
   return "Hello World!"
+}
+
+func detectKobo() Kobo {
+  kobos, err := kobo.Find()
+  if err != nil {
+    panic(err)
+  }
+  for _, koboPath := range kobos {
+    _, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
+    if err != nil {
+      panic(err)
+    }
+    device, found := kobo.DeviceByID(deviceId)
+    if !found {
+      return Kobo{}
+    }
+    return Kobo{
+      Name:       device.Name(),
+      Storage:    device.StorageGB(),
+      DisplayPPI: device.DisplayPPI(),
+      MntPath:    koboPath,
+    }
+  }
+  return Kobo{}
 }
 
 //go:embed frontend/dist/app.js
@@ -26,5 +58,6 @@ func main() {
     Colour: "#131313",
   })
   app.Bind(basic)
+  app.Bind(detectKobo)
   app.Run()
 }
