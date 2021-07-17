@@ -13,32 +13,38 @@ type Kobo struct {
   MntPath    string
 }
 
+type DetectedKobos struct {
+  Kobos      []Kobo
+}
+
 func basic() string {
   return "Hello World!"
 }
 
-func detectKobo() Kobo {
-  kobos, err := kobo.Find()
+func detectKobo() DetectedKobos {
+  kobos := DetectedKobos{}
+  koboList, err := kobo.Find()
   if err != nil {
     panic(err)
   }
-  for _, koboPath := range kobos {
+  for _, koboPath := range koboList {
     _, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
     if err != nil {
       panic(err)
     }
     device, found := kobo.DeviceByID(deviceId)
     if !found {
-      return Kobo{}
+      continue
     }
-    return Kobo{
+    kobo := Kobo{
       Name:       device.Name(),
       Storage:    device.StorageGB(),
       DisplayPPI: device.DisplayPPI(),
       MntPath:    koboPath,
     }
+    kobos.Kobos = append(kobos.Kobos, kobo)
   }
-  return Kobo{}
+  return kobos
 }
 
 //go:embed frontend/dist/app.js
