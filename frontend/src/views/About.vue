@@ -1,5 +1,11 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="home">
+    <img
+      @click="getMessage"
+      alt="Vue logo"
+      src="../assets/logo.png"
+      :style="{ height: '400px' }"
+    />
+    <HelloWorld :msg="message" />
   </div>
 </template>

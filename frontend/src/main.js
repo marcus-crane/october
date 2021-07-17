@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import "./index.css"
+
 // import wails runtime
 import * as Wails from '@wailsapp/runtime';
 

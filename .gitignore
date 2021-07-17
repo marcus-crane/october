@@ -1,2 +1,3 @@
 node_modules
 build/octowise
+.DS_Store
