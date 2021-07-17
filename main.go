@@ -2,6 +2,7 @@ package main
 
 import (
   _ "embed"
+
   "github.com/pgaskin/koboutils/v2/kobo"
   "github.com/wailsapp/wails"
 )
@@ -47,11 +48,31 @@ func detectKobo() DetectedKobos {
   return kobos
 }
 
+func selectKobo(devicePath string) bool {
+  _, _, deviceId, err := kobo.ParseKoboVersion(devicePath)
+  if err != nil {
+    panic(err)
+  }
+  device, found := kobo.DeviceByID(deviceId)
+  if !found {
+    panic("device detached?")
+  }
+  selectedKobo = Kobo{
+    Name:       device.Name(),
+    Storage:    device.StorageGB(),
+    DisplayPPI: device.DisplayPPI(),
+    MntPath:    devicePath,
+  }
+  return true
+}
+
 //go:embed frontend/dist/app.js
 var js string
 
 //go:embed frontend/dist/app.css
 var css string
+
+var selectedKobo Kobo
 
 func main() {
 
@@ -65,5 +86,6 @@ func main() {
   })
   app.Bind(basic)
   app.Bind(detectKobo)
+  app.Bind(selectKobo)
   app.Run()
 }

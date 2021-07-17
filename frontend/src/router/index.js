@@ -1,6 +1,6 @@
 import { createRouter, createMemoryHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import About from '../views/About.vue'
+import Overview from '../views/Overview.vue'
 
 
 const routes = [
@@ -10,10 +10,10 @@ const routes = [
     component: Home
   },
   {
-    path: '/about',
-    name: 'About',
+    path: '/overview',
+    name: 'Overview',
     // You can only use pre-loading to add routes, not the on-demand loading method.
-    component: About
+    component: Overview
   }
 ]
 

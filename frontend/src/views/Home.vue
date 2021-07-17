@@ -17,8 +17,8 @@
       <h1 class="text-3xl font-bold ">Select your Kobo</h1>
       <button @click="detectDevices" class="">Don't see your device? Click here to scan for devices.</button>
       <ul>
-        <li v-for="device in devices" :key="device.Name">
-          <a href="#" class="bg-red-200 hover:bg-red-500 hover:shadow-lg group block rounded-lg p-4">
+        <li v-for="device in devices" :key="device.MntPath" @click="selectDevice(device)">
+          <a class="bg-red-200 hover:bg-red-500 hover:shadow-lg group block rounded-lg p-4">
             <dl>
               <div>
                 <dt class="sr-only">Title</dt>
@@ -53,6 +53,16 @@ export default {
         .then(res => {
           console.log(res)
           this.devices = res.Kobos
+        })
+        .catch(err => console.log(err))
+    },
+    selectDevice(device) {
+      window.backend
+        .selectKobo(device.MntPath)
+        .then(res => {
+          if (res) {
+            this.$router.push('overview')
+          }
         })
         .catch(err => console.log(err))
     }
