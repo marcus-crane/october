@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.logo-animation {
+  animation: floatAnimation 5s linear infinite;
+}
+
+@keyframes floatAnimation {
+  0,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
