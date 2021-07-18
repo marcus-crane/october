@@ -14,7 +14,7 @@
       </p>
     </div>
     <div className="space-y-4 text-center">
-      <h1 class="text-3xl font-bold ">Select your Kobo</h1>
+      <h1 class="text-3xl font-bold">Select your Kobo</h1>
       <button @click="detectDevices" class="">Don't see your device? Click here to scan for devices.</button>
       <ul>
         <li v-for="device in devices" :key="device.MntPath" @click="selectDevice(device)">

@@ -2,7 +2,11 @@ package main
 
 import (
   _ "embed"
+  "fmt"
 
+  "gorm.io/driver/sqlite"
+  "gorm.io/gorm"
+  "gorm.io/gorm/clause"
   "github.com/pgaskin/koboutils/v2/kobo"
   "github.com/wailsapp/wails"
 )
@@ -16,6 +20,37 @@ type Kobo struct {
 
 type DetectedKobos struct {
   Kobos      []Kobo
+}
+
+type Bookmark struct {
+  BookmarkID string `gorm:"column:BookmarkID"`
+  VolumeID   string
+  ContentID  string
+  StartContainerPath string
+  StartContainerChild string
+  StartContainerChildIndex string
+  StartOffset string
+  EndContainerPath string
+  EndContainerChildIndex string
+  EndOffset string
+  Text string
+  Annotation string
+  ExtraAnnotationData string
+  DateCreated string
+  ChapterProgress string
+  Hidden string
+  Version string
+  DateModified string
+  Creator string
+  UUID string
+  UserID string
+  SyncTime string
+  Published string
+  ContextString string
+}
+
+func (Bookmark) TableName() string {
+  return "Bookmark"
 }
 
 func basic() string {
@@ -66,6 +101,40 @@ func selectKobo(devicePath string) bool {
   return true
 }
 
+func getBasicKoboDetails() Kobo {
+  return selectedKobo
+}
+
+func getHighlightCount() int64 {
+  var bookmarks []Bookmark
+  dbPath := fmt.Sprintf("%s/.kobo/KoboReader.sqlite", selectedKobo.MntPath)
+  db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+  if err != nil {
+    panic(err)
+  }
+  result := db.Find(&bookmarks)
+  if result.Error != nil {
+    panic(err)
+  }
+  return result.RowsAffected
+}
+
+func getMostRecentHighlight() Bookmark {
+  var bookmark Bookmark
+  dbPath := fmt.Sprintf("%s/.kobo/KoboReader.sqlite", selectedKobo.MntPath)
+  db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+  if err != nil {
+    panic(err)
+  }
+  result := db.Clauses(clause.OrderBy{
+    Expression: clause.Expr{SQL: "RANDOM()",},
+  }).Take(&bookmark)
+  if result.Error != nil {
+    panic(err)
+  }
+  return bookmark
+}
+
 //go:embed frontend/dist/app.js
 var js string
 
@@ -87,5 +156,8 @@ func main() {
   app.Bind(basic)
   app.Bind(detectKobo)
   app.Bind(selectKobo)
+  app.Bind(getBasicKoboDetails)
+  app.Bind(getHighlightCount)
+  app.Bind(getMostRecentHighlight)
   app.Run()
 }
