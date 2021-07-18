@@ -4,8 +4,9 @@
   <br>
 
   <h1>Octowise</h1>
-  <h3>Not functional yet!</h3>
   A small [Wails](https://github.com/wailsapp/wails) application for retrieving Kobo highlights
+
+  It **isn't** functional yet and the codebase is very messy from successfully testing out Wails. Things are just thrown in there rather than set up nicely.
 </div>
 
 ## Credits
