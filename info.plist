@@ -9,4 +9,5 @@
 	<key>CFBundleShortVersionString</key><string>0.1.0</string>
 	<key>CFBundleIconFile</key><string>iconfile</string>
 	<key>NSHighResolutionCapable</key><string>true</string>
+	<key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
 </dict></plist>
