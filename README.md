@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="Octowise logo" src="assets/icon.png" height="240" />
+  <img alt="Octowise logo" src="appicon.png" height="240" />
 
   <br>
 
