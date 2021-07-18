@@ -4,18 +4,11 @@
   <br>
 
   <h1>Octowise</h1>
-  <h3>Strongly a WIP and not yet functional</h3>
-  A small electron application for pulling Kobo highlights and sending them to Readwise 
+  <h3>Not functional yet!</h3>
+  A small [Wails](https://github.com/wailsapp/wails) application for retrieving Kobo highlights
 </div>
 
 ## Credits
-
-**App layout**
-
-I found the following repos useful in terms of how to lay out this application, and other various development things
-
-- [cawa-93/vite-electron-builder](https://github.com/cawa-93/vite-electron-builder)
-- [jctaoo/vite-electron-esbuild-starter](https://github.com/jctaoo/vite-electron-esbuild-starter)
 
 **Logo**
 
