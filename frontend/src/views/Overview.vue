@@ -28,20 +28,20 @@ export default {
   },
   methods: {
     fetchDeviceDetails() {
-      window.backend
-        .getBasicKoboDetails()
+      window.backend.Kobo
+        .GetBasicKoboDetails()
         .then(res => this.device = res)
         .catch(err => console.log(err))
     },
     fetchHighlightCount() {
-      window.backend
-        .getHighlightCount()
+      window.backend.Bookmark
+        .GetHighlightCount()
         .then(res => this.highlightCount = res)
         .catch(err => console.log(err))
     },
     getRandomHighlight() {
-      window.backend
-        .getMostRecentHighlight()
+      window.backend.Bookmark
+        .GetMostRecentHighlight()
         .then(res => {
           this.highlight = res
           console.log(res)
