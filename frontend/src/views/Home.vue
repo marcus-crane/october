@@ -71,19 +71,23 @@ export default {
         .catch(err => console.log(err))
     },
     loadDatabaseFile() {
-      window.backend.Database
+      window.backend.Kobo
         .SelectLocalDatabase()
-        .then(res => this.localPath = res)
+        .then(this.navigateToOverview)
+        .catch(err => console.log(err))
+    },
+    navigateToOverview() {
+      window.backend.Kobo
+        .ConnectToKoboDB()
+        .then(res => {
+          if (res) this.$router.push('overview')
+        })
         .catch(err => console.log(err))
     },
     selectDevice(device) {
       window.backend.Kobo
         .SelectKobo(device.MntPath)
-        .then(res => {
-          if (res) {
-            this.$router.push('overview')
-          }
-        })
+        .then(this.navigateToOverview)
         .catch(err => console.log(err))
     }
   },

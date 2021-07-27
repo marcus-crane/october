@@ -1,6 +1,11 @@
 package main
 
-import "github.com/pgaskin/koboutils/v2/kobo"
+import (
+  "fmt"
+
+  "github.com/pgaskin/koboutils/v2/kobo"
+  "github.com/wailsapp/wails"
+)
 
 var selectedKobo Kobo
 
@@ -9,6 +14,8 @@ type Kobo struct {
   Storage    int
   DisplayPPI int
   MntPath    string
+  DbPath     string
+  runtime    *wails.Runtime
 }
 
 type DetectedKobos struct {
@@ -17,6 +24,11 @@ type DetectedKobos struct {
 
 func NewKobo() *Kobo {
   return &Kobo{}
+}
+
+func (k *Kobo) WailsInit(runtime *wails.Runtime) error {
+  k.runtime = runtime
+  return nil
 }
 
 func (Kobo) DetectKobo() DetectedKobos {
@@ -39,6 +51,7 @@ func (Kobo) DetectKobo() DetectedKobos {
       Storage:    device.StorageGB(),
       DisplayPPI: device.DisplayPPI(),
       MntPath:    koboPath,
+      DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", koboPath),
     }
     kobos.Kobos = append(kobos.Kobos, kobo)
   }
@@ -59,6 +72,23 @@ func (Kobo) SelectKobo(devicePath string) bool {
     Storage:    device.StorageGB(),
     DisplayPPI: device.DisplayPPI(),
     MntPath:    devicePath,
+    DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath),
+  }
+  return true
+}
+
+func (k *Kobo) ConnectToKoboDB() bool {
+  return OpenDatabase(selectedKobo.DbPath)
+}
+
+func (k *Kobo) SelectLocalDatabase() bool {
+  dbPath := k.runtime.Dialog.SelectFile()
+  selectedKobo = Kobo{
+    Name: "Local Database",
+    Storage: 0,
+    DisplayPPI: 0,
+    MntPath: dbPath,
+    DbPath: dbPath,
   }
   return true
 }

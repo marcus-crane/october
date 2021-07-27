@@ -2,10 +2,7 @@ package main
 
 import (
   _ "embed"
-  "fmt"
 
-  "gorm.io/driver/sqlite"
-  "gorm.io/gorm"
   "gorm.io/gorm/clause"
 )
 
@@ -46,30 +43,20 @@ func (Bookmark) TableName() string {
 
 func (Bookmark) GetHighlightCount() int64 {
   var bookmarks []Bookmark
-  dbPath := fmt.Sprintf("%s/.kobo/KoboReader.sqlite", selectedKobo.MntPath)
-  db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
-  if err != nil {
-    panic(err)
-  }
-  result := db.Find(&bookmarks)
+  result := DBConn.Find(&bookmarks)
   if result.Error != nil {
-    panic(err)
+    panic(result.Error)
   }
   return result.RowsAffected
 }
 
 func (Bookmark) GetMostRecentHighlight() Bookmark {
   var bookmark Bookmark
-  dbPath := fmt.Sprintf("%s/.kobo/KoboReader.sqlite", selectedKobo.MntPath)
-  db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
-  if err != nil {
-    panic(err)
-  }
-  result := db.Clauses(clause.OrderBy{
+  result := DBConn.Clauses(clause.OrderBy{
     Expression: clause.Expr{SQL: "RANDOM()",},
   }).Take(&bookmark)
   if result.Error != nil {
-    panic(err)
+    panic(result.Error)
   }
   return bookmark
 }
