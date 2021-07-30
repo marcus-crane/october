@@ -5,6 +5,7 @@
     <br />
     <p>{{ highlightCount }} highlights on device</p>
     <br />
+    <button class="p-3 px-4 rounded-md border text-white font-bold text-lg bg-purple-600" @click="navigateToSettings">Settings</button>
     <button class="p-3 px-4 rounded-md border text-white font-bold text-lg bg-purple-600" @click="getRandomHighlight">Fetch a new highlight</button>
     <br />
     <br />
@@ -27,6 +28,9 @@ export default {
     }
   },
   methods: {
+    navigateToSettings() {
+      this.$router.push('settings')
+    },
     fetchDeviceDetails() {
       window.backend.Kobo
         .GetBasicKoboDetails()
