@@ -29,6 +29,7 @@ func main() {
   app.Bind(basic)
   app.Bind(NewKobo())
   app.Bind(NewBookmark())
+  app.Bind(NewContent())
   app.Bind(NewDatabase())
   app.Run()
 }

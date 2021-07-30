@@ -2,17 +2,16 @@
   <div className="min-h-screen p-16 bg-gray-100 dark:bg-gray-800">
     <h1 class="text-3xl font-bold">{{ device.Name }}</h1>
     <p>Mounted at {{ device.MntPath }}</p>
-    <br />
     <p>{{ highlightCount }} highlights on device</p>
-    <br />
-    <button class="p-3 px-4 rounded-md border text-white font-bold text-lg bg-purple-600" @click="navigateToSettings">Settings</button>
-    <button class="p-3 px-4 rounded-md border text-white font-bold text-lg bg-purple-600" @click="getRandomHighlight">Fetch a new highlight</button>
+    <button class="p-2 rounded-md border text-white font-normal text-sm bg-purple-600" @click="navigateToSettings">Settings</button>
     <br />
     <br />
-    <blockquote class="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
-      {{ highlight.Text }}
-      <p class="pt-8 text-md font-md">— {{ highlight.VolumeID }}</p>
-    </blockquote>
+    <ul>
+      <li v-for="item in items" :key="item.BookID">
+        <p>{{ item.Title }}</p>
+        <progress :value="item.PercentRead" max="100"></progress> {{ item.PercentRead }}%
+      </li>
+    </ul>
 
   </div>
 </template>
@@ -24,7 +23,7 @@ export default {
     return {
       device: {},
       highlightCount: 0,
-      highlight: {}
+      items: {}
     }
   },
   methods: {
@@ -43,20 +42,20 @@ export default {
         .then(res => this.highlightCount = res)
         .catch(err => console.log(err))
     },
-    getRandomHighlight() {
-      window.backend.Bookmark
-        .GetMostRecentHighlight()
+    getAllItems() {
+      window.backend.Content
+        .GetAllItems()
         .then(res => {
-          this.highlight = res
+          this.items = res
           console.log(res)
         })
-        .catch(err => console.log(err))
     }
   },
   mounted: function() {
     this.$nextTick(this.fetchDeviceDetails)
     this.$nextTick(this.fetchHighlightCount)
     this.$nextTick(this.getRandomHighlight)
+    this.$nextTick(this.getAllItems)
   }
 };
 </script>
