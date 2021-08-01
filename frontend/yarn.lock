@@ -5431,7 +5431,7 @@
   optionalDependencies:
     "graceful-fs" "^4.1.6"
 
-"jsonfile@^6.0.1":
+"jsonfile@^6.0.1", "jsonfile@^6.1.0":
   "integrity" "sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ=="
   "resolved" "https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz"
   "version" "6.1.0"
