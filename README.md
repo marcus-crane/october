@@ -5,6 +5,8 @@
 # October
 > Easily access your Kobo highlights
 
+## What is October?
+
 **⚠️ UNDER CONSTRUCTION**
 
 This application does not work yet. There is no point compiling it!
