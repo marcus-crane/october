@@ -1,12 +1,13 @@
 <div align="center">
   <img alt="October logo" src="appicon.png" height="240" />
-
-  <br>
-
-  <h1>October</h1>
-  <p><strong>⚠️ UNDER CONSTRUCTION</strong> This application does not work yet. There is no point compiling it.</p>
 </div>
 
+# October
+> Easily access your Kobo highlights
+
+**⚠️ UNDER CONSTRUCTION**
+
+This application does not work yet. There is no point compiling it!
 
 A small [Wails](https://github.com/wailsapp/wails) application for retrieving Kobo highlights. It also offers the ability to sync your highlights with [Readwise](https://readwise.io).
 
