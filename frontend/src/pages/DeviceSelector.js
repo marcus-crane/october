@@ -1,11 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from '../logo.png'
 
 export default function DeviceSelector() {
   const navigate = useNavigate()
   const [devices, setDevices] = useState([])
-  detectDevices()
+
+  // We need a "flat" state to check if we should do a re-render or not.
+  // Device metadata itself is not flat so React can't easily tell if state is "new" or not
+  // ie; we'd have to recurse through devices to see if anything is new.
+  // As a proxy, we'll use the number of connected devices although this will mean if you unplug a device
+  // and plug in a new one, without closing the application, you'd have to manually click update.
+  // That really shouldn't be an issue though and works good enough for now.
+  useEffect(() => detectDevices(), [devices.length])
 
   function detectDevices() {
     window.go.main.KoboService.DetectKobos()
@@ -23,12 +30,7 @@ export default function DeviceSelector() {
     window.go.main.KoboService.SelectKobo(path)
       .then(success => {
         if (success === true) {
-          window.go.main.KoboService.GetSelectedKobo()
-            .then(kobo => {
-              console.log(kobo)
-              navigate("/overview")
-            })
-            .catch(err => console.log(err))
+          navigate("/overview")
         } else {
           console.log("Failed to select Kobo")
         }
