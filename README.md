@@ -15,9 +15,17 @@ A small [Wails](https://github.com/wailsapp/wails) application for retrieving Ko
 
 ## Screenshots
 
+<details><summary>Device selection</summary>
+
 ![](./docs/selector.png)
 
+</details>
+
+<details><summary>Device overview</summary>
+
 ![](./docs/overview.png)
+
+</details>
 
 ## Credits
 
