@@ -1,9 +1,9 @@
 <div align="center">
-  <img alt="Octowise logo" src="appicon.png" height="240" />
+  <img alt="October logo" src="appicon.png" height="240" />
 
   <br>
 
-  <h1>Octowise</h1>
+  <h1>October</h1>
   A small <a href="https://github.com/wailsapp/wails">Wails</a> application for retrieving Kobo highlights
 
   It **isn't** functional yet and the codebase is very messy from successfully testing out Wails. Things are just thrown in there rather than set up nicely.
