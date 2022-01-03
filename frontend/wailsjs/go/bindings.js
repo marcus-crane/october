@@ -5,6 +5,13 @@ const go = {
   "main": {
     "KoboService": {
       /**
+       * CountDeviceBookmarks
+       * @returns {Promise<number>}  - Go Type: int64
+       */
+      "CountDeviceBookmarks": () => {
+        return window.go.main.KoboService.CountDeviceBookmarks();
+      },
+      /**
        * DetectKobos
        * @returns {Promise<Array<Kobo>>}  - Go Type: []main.Kobo
        */

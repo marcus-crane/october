@@ -1,6 +1,7 @@
 interface go {
   "main": {
     "KoboService": {
+		CountDeviceBookmarks():Promise<number>
 		DetectKobos():Promise<Array<Kobo>>
 		GetSelectedKobo():Promise<Kobo>
 		ListDeviceBookmarks():Promise<Array<Bookmark>>

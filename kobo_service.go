@@ -206,3 +206,12 @@ func (k *KoboService) ListDeviceBookmarks() []Bookmark {
 	k.Bookmarks = bookmarks
 	return bookmarks
 }
+
+func (k *KoboService) CountDeviceBookmarks() int64 {
+  var count int64
+  result := k.ConnectedDB.Model(&Bookmark{}).Count(&count)
+  if result.Error != nil {
+    log.Print(result.Error)
+  }
+  return count
+}
