@@ -1,7 +1,7 @@
 {
-  "name": "octowise",
+  "name": "october",
   "version": "1.0.0",
-  "description": "The frontend portion of the Octowise application",
+  "description": "The frontend portion of the October application",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.15.0",

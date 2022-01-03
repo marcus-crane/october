@@ -1,5 +1,5 @@
 node_modules
-build
 !build/appicon.png
+build
 .DS_Store
 .idea

@@ -1,8 +1,7 @@
 import React from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 
 export default function Navbar() {
-  const navigate = useNavigate()
   const location = useLocation()
   return (
     <header className="flex p-3">

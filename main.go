@@ -26,7 +26,7 @@ func main() {
 
   // Create application with options
   err = wails.Run(&options.App{
-    Title:  "Kobowise",
+    Title:  "October",
     Width:  1024,
     Height: 768,
     // MinWidth:          720,
@@ -58,7 +58,7 @@ func main() {
       WebviewIsTransparent: true,
       WindowIsTranslucent:  true,
       About: &mac.AboutInfo{
-        Title:   "Octowise",
+        Title:   "October",
         Message: "v1.0.0\nA small Wails application for retrieving Kobo highlights",
         Icon:    icon,
       },

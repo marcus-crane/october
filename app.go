@@ -1,15 +1,16 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"github.com/pkg/errors"
-	"os"
-	"path/filepath"
+  "context"
+  "fmt"
+  "os"
+  "path/filepath"
+
+  "github.com/pkg/errors"
 )
 
 var (
-	configFilename = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "octowise", "octowise.config.json")
+	configFilename = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "october", "october.config.json")
 )
 
 // App struct

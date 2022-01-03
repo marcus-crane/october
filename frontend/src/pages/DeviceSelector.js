@@ -51,10 +51,10 @@ export default function DeviceSelector() {
           <img
             className="mx-auto h-36 w-auto logo-animation"
             src={logo}
-            alt="The Octowise logo, which is a cartoon octopus reading a book."
+            alt="The October logo, which is a cartoon octopus reading a book."
           />
           <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            Octowise
+            October
           </h2>
           <p className="mt-0 text-center text-sm text-gray-600 dark:text-gray-400">
             Easily access your Kobo highlights

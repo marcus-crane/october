@@ -1,4 +1,4 @@
-module kobowise
+module october
 
 go 1.17
 
