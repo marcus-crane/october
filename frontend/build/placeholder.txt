@@ -1,0 +1,3 @@
+This file is here so that Wails can initially bundle.
+It will get deleted when the frontend is compiled
+so it won't be included in the final build
