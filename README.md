@@ -27,9 +27,19 @@ A small [Wails](https://github.com/wailsapp/wails) application for retrieving Ko
 
 </details>
 
-## Credits
+## Special thanks
 
-**Logo**
+### Wails
+
+First and foremost, this project only lives thanks to the continuing efforts of [Lea Anthony](https://twitter.com/leaanthonycymru) and the [Wails](https://wails.io) project.
+
+The first iteration of this project died (of author burnout) from battling too much with [Electron](https://www.electronjs.org/), getting it to integrate nicely with sqlite3 libraries and while trying to adhere to the security model.
+
+In comparison, Wails (especially v2!) has been a lot more fun and gave this project a second life.
+
+With stumbling across it, I probably would've given up entirely!
+
+### Logo
 
 Base assets:
 
