@@ -4,7 +4,7 @@
   <br>
 
   <h1>October</h1>
-  <p>⚠️ UNDER CONSTRUCTION</p>
+  <p><strong>⚠️ UNDER CONSTRUCTION</strong> This application does not work yet. There is no point compiling it.</p>
 
   A small <a href="https://github.com/wailsapp/wails">Wails</a> application for retrieving Kobo highlights
 
@@ -12,11 +12,7 @@
 
 ## Screenshots
 
-**Device Selector**
-
 ![](./docs/selector.png)
-
-**Device overview**
 
 ![](./docs/overview.png)
 
