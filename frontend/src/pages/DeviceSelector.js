@@ -4,21 +4,46 @@ import logo from '../logo.png'
 class DeviceSelector extends Component {
   constructor(props) {
     super(props)
-    this.state = { devices: [] }
+    this.state = {
+      devices: [],
+      selectedKobo: {}
+    }
     this.selectDevice = this.selectDevice.bind(this)
     this.detectDevices = this.detectDevices.bind(this)
+    this.selectLocalDatabase = this.selectLocalDatabase.bind(this)
+    this.getDeviceBookmarks = this.getDeviceBookmarks.bind(this)
+    this.detectDevices()
   }
   detectDevices() {
     window.go.main.KoboService.DetectKobos()
       .then(devices => {
+        console.log(devices)
         if (devices == null) {
           this.setState({ devices: [] })
         }
+        this.setState({ devices })
       })
       .catch(err => console.log(err))
   }
-  selectDevice(name) {
-    console.log(name)
+  getDeviceBookmarks() {
+    window.go.main.KoboService.ListDeviceBookmarks()
+      .then(bookmarks => console.log(bookmarks))
+      .catch(err => console.log(err))
+  }
+  selectDevice(path) {
+    console.log(path)
+    window.go.main.KoboService.SelectKobo(path)
+      .then(success => {
+        if (success === true) {
+          window.go.main.KoboService.GetSelectedKobo()
+            .then(selectedKobo => this.setState({selectedKobo}))
+            .then(() => this.getDeviceBookmarks())
+            .catch(err => console.log(err))
+        } else {
+          console.log("Failed to select Kobo")
+        }
+      })
+      .catch(err => console.log(err))
   }
   selectLocalDatabase() {
     window.go.main.KoboService.PromptForLocalDBPath()
@@ -26,7 +51,6 @@ class DeviceSelector extends Component {
       .catch(err => console.log(err))
   }
   render() {
-    this.detectDevices()
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800 py-12 px-24 grid grid-cols-2 gap-14">
         <div className="space-y-2">
@@ -47,35 +71,35 @@ class DeviceSelector extends Component {
           <button onClick={this.detectDevices}>Don't see your device? Click here to refresh device list.</button>
           <ul>
             {this.state.devices.map(device => (
-              <li key={device.MntPath} onClick={() => this.selectDevice(device.Name)}>
+              <li key={device.mnt_path} onClick={() => this.selectDevice(device.mnt_path)}>
                 <a className="bg-red-200 hover:bg-red-500 group block rounded-lg p-4 mb-2">
                   <dl>
                     <div>
                       <dt className="sr-only">Title</dt>
                       <dd className="border-gray leading-6 font-medium text-black">
-                        {device.Name}
+                        {device.name}
                       </dd>
                       <dt className="sr-only">System Specifications</dt>
                       <dd className="text-sm font-normal">
-                        {device.Storage} GB · {device.DisplayPPI} PPI
+                        {device.storage} GB · {device.display_ppi} PPI
                       </dd>
                     </div>
                   </dl>
                 </a>
               </li>
             ))}
-            {/*<li>*/}
-            {/*  <a onClick={this.selectLocalDatabase} className="bg-red-200 hover:bg-red-500 group block rounded-lg p-4">*/}
-            {/*    <dl>*/}
-            {/*      <div>*/}
-            {/*        <dt className="sr-only">Title</dt>*/}
-            {/*        <dd className="border-gray leading-6 font-medium text-black">*/}
-            {/*          Pick a locally available Kobo database (KoboReader.sqlite)*/}
-            {/*        </dd>*/}
-            {/*      </div>*/}
-            {/*    </dl>*/}
-            {/*  </a>*/}
-            {/*</li>*/}
+            <li>
+              <a onClick={this.selectLocalDatabase} className="bg-red-200 hover:bg-red-500 group block rounded-lg p-4">
+                <dl>
+                  <div>
+                    <dt className="sr-only">Title</dt>
+                    <dd className="border-gray leading-6 font-medium text-black">
+                      Pick a locally available Kobo database (KoboReader.sqlite)
+                    </dd>
+                  </div>
+                </dl>
+              </a>
+            </li>
           </ul>
         </div>
       </div>

@@ -22,3 +22,16 @@ export class Kobo {
         this.db_path = source["db_path"];
     }
 }
+
+export class Bookmark {
+
+
+    static createFrom(source: any = {}) {
+        return new Bookmark(source);
+    }
+
+    constructor(source: any = {}) {
+        if ('string' === typeof source) source = JSON.parse(source);
+
+    }
+}

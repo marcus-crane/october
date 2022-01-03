@@ -12,8 +12,15 @@ const go = {
         return window.go.main.KoboService.DetectKobos();
       },
       /**
+       * GetSelectedKobo
+       * @returns {Promise<Kobo>}  - Go Type: main.Kobo
+       */
+      "GetSelectedKobo": () => {
+        return window.go.main.KoboService.GetSelectedKobo();
+      },
+      /**
        * ListDeviceBookmarks
-       * @returns {Promise<Error>}  - Go Type: error
+       * @returns {Promise<Array<Bookmark>>}  - Go Type: []main.Bookmark
        */
       "ListDeviceBookmarks": () => {
         return window.go.main.KoboService.ListDeviceBookmarks();

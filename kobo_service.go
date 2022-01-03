@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+  "log"
 
-	"github.com/pgaskin/koboutils/v2/kobo"
+  "github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -107,6 +108,7 @@ func (k *KoboService) DetectKobos() []Kobo {
 		panic(err)
 	}
 	for _, koboPath := range connectedKobos {
+    log.Print(koboPath)
 		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
 		if err != nil {
 			panic(err)
@@ -123,6 +125,7 @@ func (k *KoboService) DetectKobos() []Kobo {
 			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", koboPath),
 		})
 	}
+  log.Print(kobos)
 	return kobos
 }
 
@@ -142,7 +145,16 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 		MntPath:    devicePath,
 		DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath),
 	}
+  err = k.OpenDBConnection(k.SelectedKobo.DbPath)
+  if err != nil {
+    panic(err)
+    return false
+  }
 	return true
+}
+
+func (k *KoboService) GetSelectedKobo() Kobo {
+  return k.SelectedKobo
 }
 
 func (k *KoboService) OpenDBConnection(filepath string) error {
@@ -151,7 +163,7 @@ func (k *KoboService) OpenDBConnection(filepath string) error {
 	}
 	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
 	if err != nil {
-		return err
+    panic(err)
 	}
 	k.ConnectedDB = db
 	return nil
@@ -185,12 +197,12 @@ func (k *KoboService) ListDeviceContent() error {
 	return nil
 }
 
-func (k *KoboService) ListDeviceBookmarks() error {
+func (k *KoboService) ListDeviceBookmarks() []Bookmark {
 	var bookmarks []Bookmark
 	result := k.ConnectedDB.Find(&bookmarks)
 	if result.Error != nil {
-		return result.Error
+    log.Print(result.Error)
 	}
 	k.Bookmarks = bookmarks
-	return nil
+	return bookmarks
 }
