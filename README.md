@@ -5,10 +5,10 @@
 
   <h1>October</h1>
   <p><strong>⚠️ UNDER CONSTRUCTION</strong> This application does not work yet. There is no point compiling it.</p>
-
-  A small <a href="https://github.com/wailsapp/wails">Wails</a> application for retrieving Kobo highlights
-
 </div>
+
+
+A small [Wails](https://github.com/wailsapp/wails) application for retrieving Kobo highlights. It also offers the ability to sync your highlights with [Readwise](https://readwise.io).
 
 ## Screenshots
 
