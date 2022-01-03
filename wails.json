@@ -1,0 +1,21 @@
+{
+  "name": "kobowise",
+  "assetdir": "frontend/build",
+  "frontend:build": "npm run build",
+  "frontend:install": "npm install",
+  "frontend:dev": "",
+  "wailsjsdir": "./frontend",
+  "version": "2",
+  "Path": "",
+  "BuildDir": "",
+  "outputfilename": "kobowise",
+  "OutputType": "",
+  "Platform": "",
+  "Author": {
+    "name": "Marcus Crane",
+    "email": "marcus@utf9k.net"
+  },
+  "debounceMS": 100,
+  "devserverurl": "http://localhost:34115",
+  "appargs": ""
+}
