@@ -3,16 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
+	"os"
+	"path/filepath"
+)
+
+var (
+	configFilename = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "octowise", "octowise.config.json")
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
+	settings *settings
+
+	KoboService *KoboService
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp() (*App, error) {
+	settings, err := loadSettings(configFilename)
+	if err != nil {
+		return nil, errors.Wrap(err, "loadSettings")
+	}
+	app := &App{
+		settings: settings,
+	}
+	app.KoboService = NewKoboService(app.ctx)
+	return app, nil
 }
 
 // startup is called at application startup
