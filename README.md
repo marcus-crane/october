@@ -4,10 +4,21 @@
   <br>
 
   <h1>October</h1>
+  <p>⚠️ UNDER CONSTRUCTION</p>
+
   A small <a href="https://github.com/wailsapp/wails">Wails</a> application for retrieving Kobo highlights
 
-  It **isn't** functional yet and the codebase is very messy from successfully testing out Wails. Things are just thrown in there rather than set up nicely.
 </div>
+
+## Screenshots
+
+**Device Selector**
+
+![](./docs/selector.png)
+
+**Device overview**
+
+![](./docs/overview.png)
 
 ## Credits
 
