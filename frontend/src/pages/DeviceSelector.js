@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from "../Components/Navbar"
 import logo from '../logo.png'
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 export default function DeviceSelector() {
   const navigate = useNavigate()
@@ -14,21 +14,22 @@ export default function DeviceSelector() {
   // As a proxy, we'll use the number of connected devices although this will mean if you unplug a device
   // and plug in a new one, without closing the application, you'd have to manually click update.
   // That really shouldn't be an issue though and works good enough for now.
-  useEffect(() => detectDevices(false), [devices.length])
+  useEffect(() => detectDevices(), [devices.length])
 
-  function detectDevices(showToast) {
+  function detectDevices() {
     window.go.main.KoboService.DetectKobos()
       .then(devices => {
-        if (showToast) {
-          toast.info("Refreshed device list")
-        }
         console.log(devices)
         if (devices == null) {
+          toast.info("No devices were found")
           return
         }
         setDevices(devices)
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        toast.error(err)
+        console.log(err)
+      })
   }
   function selectDevice(path) {
     console.log(path)
@@ -37,6 +38,7 @@ export default function DeviceSelector() {
         if (success === true) {
           navigate("/overview")
         } else {
+          toast.error("Something went wrong selecting your Kobo")
           console.log("Failed to select Kobo")
         }
       })
@@ -66,7 +68,7 @@ export default function DeviceSelector() {
         </div>
         <div className="space-y-4 text-center">
           <h1 className="text-3xl font-bold">Select your Kobo</h1>
-          <button onClick={() => detectDevices(true)}>Don't see your device? Click here to refresh device list.</button>
+          <button onClick={detectDevices}>Don't see your device? Click here to refresh device list.</button>
           <ul>
             {devices.map(device => (
               <li key={device.mnt_path}>
