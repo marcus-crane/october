@@ -25,7 +25,7 @@ export default function Overview(props) {
   }
 
   function exportDatabase() {
-    console.log("ah")
+    toast.error("Not implemented yet")
   }
 
   return (

@@ -15,6 +15,17 @@ const contextClass = {
   dark: "bg-white-50 text-gray-700",
 };
 
+const tailwindButton = (extraStyles) => (
+  <div className="-mx-1.5 -my-1.5">
+    <button type="button" className={extraStyles + "inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"}>
+      <span className="sr-only">Dismiss</span>
+      <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </div>
+)
+
 const Router = () => (
   <HashRouter>
     <Routes>
@@ -25,7 +36,12 @@ const Router = () => (
     <ToastContainer
       position={toast.POSITION.BOTTOM_CENTER}
       limit={2}
+      closeButton={({ type }) => {
+        const extraStyles = contextClass[type || "default"]
+        return tailwindButton(extraStyles)
+      }}
       hideProgressBar
+      autoClose={2000}
       pauseOnHover
       transition={Slide}
       bodyClassName={() => "text-sm w-full flex"}
