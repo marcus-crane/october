@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 
 import Router from './router';

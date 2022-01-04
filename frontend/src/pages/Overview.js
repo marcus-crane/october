@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../Components/Navbar";
+import { toast } from "react-toastify"
 
 export default function Overview(props) {
   const [readwiseConfigured, setReadwiseConfigured] = useState(true)
@@ -19,6 +20,7 @@ export default function Overview(props) {
   }, [highlightCount])
 
   function syncWithReadwise() {
+    toast.success("Synced with Readwise")
     console.log("hello")
   }
 
