@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-  "log"
+	"log"
 
-  "github.com/pgaskin/koboutils/v2/kobo"
+	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -28,37 +28,99 @@ type Kobo struct {
 }
 
 type Content struct {
-	ContentID              string `gorm:"column:ContentID"`
-	ContentType            string `gorm:"column:ContentType"`
-	MimeType               string `gorm:"column:MimeType"`
-	BookID                 string
-	BookTitle              string `gorm:"column:BookTitle"`
-	ImageId                string
-	Title                  string
-	Attribution            string
-	Description            string
-	DateCreated            string
-	ShortCoverKey          string
-	AdobeLocation          string `gorm:"column:adobe_location"`
-	Publisher              string
-	IsEncrypted            bool
-	DateLastRead           string
-	FirstTimeReading       bool
-	ChapterIDBookmarked    string
-	ParagraphBookmarked    int
-	BookmarkWordOffset     int
-	NumShortcovers         int
-	VolumeIndex            int `gorm:"column:VolumeIndex"`
-	NumPages               int `gorm:"column:___NumPages"`
-	ReadStatus             int
-	SyncTime               string `gorm:"column:___SyncTime"`
-	UserID                 string `gorm:"column:___UserID"`
-	PublicationId          string
-	FileOffset             int    `gorm:"column:___FileOffset"`
-	FileSize               int    `gorm:"column:___FileSize"`
-	PercentRead            string `gorm:"column:___PercentRead"`
-	ExpirationStatus       int    `gorm:"column:___ExpirationStatus"`
-	CurrentChapterProgress float32
+	ContentID               string `gorm:"column:ContentID"`
+	ContentType             string `gorm:"column:ContentType"`
+	MimeType                string `gorm:"column:MimeType"`
+	BookID                  string
+	BookTitle               string `gorm:"column:BookTitle"`
+	ImageId                 string
+	Title                   string
+	Attribution             string
+	Description             string
+	DateCreated             string
+	ShortCoverKey           string
+	AdobeLocation           string `gorm:"column:adobe_location"`
+	Publisher               string
+	IsEncrypted             bool
+	DateLastRead            string
+	FirstTimeReading        bool
+	ChapterIDBookmarked     string
+	ParagraphBookmarked     int
+	BookmarkWordOffset      int
+	NumShortcovers          int
+	VolumeIndex             int `gorm:"column:VolumeIndex"`
+	NumPages                int `gorm:"column:___NumPages"`
+	ReadStatus              int
+	SyncTime                string `gorm:"column:___SyncTime"`
+	UserID                  string `gorm:"column:___UserID"`
+	PublicationId           string
+	FileOffset              int    `gorm:"column:___FileOffset"`
+	FileSize                int    `gorm:"column:___FileSize"`
+	PercentRead             string `gorm:"column:___PercentRead"`
+	ExpirationStatus        int    `gorm:"column:___ExpirationStatus"`
+	FavouritesIndex         int
+	Accessibility           int
+	ContentURL              string
+	Language                string
+	BookshelfTags           string
+	IsDownloaded            bool
+	FeedbackType            int
+	AverageRating           float64
+	Depth                   int
+	PageProgressDirection   string
+	InWishlist              string
+	ISBN                    int64
+	WishlistedDate          string
+	FeedbackTypeSynced      bool
+	IsSocialEnabled         bool
+	EpubType                string
+	Monetization            string
+	ExternalId              string
+	Series                  string
+	SeriesNumber            string
+	Subtitle                string
+	WordCount               string
+	Fallback                string
+	RestOfBookEstimate      string
+	CurrentChapterEstimate  string
+	CurrentChapterProgress  float32
+	PocketStatus            string
+	UnsyncedPocketChanges   string
+	ImageUrl                string
+	DateAdded               string
+	WorkId                  string
+	Properties              string
+	RenditionSpread         string
+	RatingCount             string
+	ReviewsSyncDate         string
+	MediaOverlay            string
+	RedirectPreviewUrl      bool
+	PreviewFileSize         int
+	EntitlementId           string
+	CrossRevisionId         string
+	DownloadUrl             bool
+	ReadStateSynced         bool
+	TimesStartedReading     int
+	TimeSpentReading        int
+	LastTimeStartedReading  string
+	LastTimeFinishedReading string
+	ApplicableSubscriptions string
+	ExternalIds             string
+	PurchaseRevisionId      string
+	SeriesID                string
+	SeriesNumberFloat       float64
+	AdobeLoanExpiration     string
+	HideFromHomePage        bool
+	IsInternetArchive       bool
+	TitleKana               string `gorm:"column:titleKana"`
+	SubtitleKana            string `gorm:"column:subtitleKana"`
+	SeriesKana              string `gorm:"column:seriesKana"`
+	AttributionKana         string `gorm:"column:attributionKana"`
+	PublisherKana           string `gorm:"column:publisherKana"`
+	IsPurchaseable          bool
+	IsSupported             bool
+	AnnotationsSyncToken    string
+	DateModified            string
 }
 
 type Bookmark struct {
@@ -86,6 +148,7 @@ type Bookmark struct {
 	SyncTime                 string
 	Published                string
 	ContextString            string
+	Type                     string
 }
 
 func (Content) TableName() string {
@@ -108,7 +171,7 @@ func (k *KoboService) DetectKobos() []Kobo {
 		panic(err)
 	}
 	for _, koboPath := range connectedKobos {
-    log.Print(koboPath)
+		log.Print(koboPath)
 		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
 		if err != nil {
 			panic(err)
@@ -125,7 +188,7 @@ func (k *KoboService) DetectKobos() []Kobo {
 			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", koboPath),
 		})
 	}
-  log.Print(kobos)
+	log.Print(kobos)
 	return kobos
 }
 
@@ -145,16 +208,16 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 		MntPath:    devicePath,
 		DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath),
 	}
-  err = k.OpenDBConnection(k.SelectedKobo.DbPath)
-  if err != nil {
-    panic(err)
-    return false
-  }
+	err = k.OpenDBConnection(k.SelectedKobo.DbPath)
+	if err != nil {
+		panic(err)
+		return false
+	}
 	return true
 }
 
 func (k *KoboService) GetSelectedKobo() Kobo {
-  return k.SelectedKobo
+	return k.SelectedKobo
 }
 
 func (k *KoboService) OpenDBConnection(filepath string) error {
@@ -163,7 +226,7 @@ func (k *KoboService) OpenDBConnection(filepath string) error {
 	}
 	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
 	if err != nil {
-    panic(err)
+		panic(err)
 	}
 	k.ConnectedDB = db
 	return nil
@@ -201,17 +264,17 @@ func (k *KoboService) ListDeviceBookmarks() []Bookmark {
 	var bookmarks []Bookmark
 	result := k.ConnectedDB.Find(&bookmarks)
 	if result.Error != nil {
-    log.Print(result.Error)
+		log.Print(result.Error)
 	}
 	k.Bookmarks = bookmarks
 	return bookmarks
 }
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
-  var count int64
-  result := k.ConnectedDB.Model(&Bookmark{}).Count(&count)
-  if result.Error != nil {
-    log.Print(result.Error)
-  }
-  return count
+	var count int64
+	result := k.ConnectedDB.Model(&Bookmark{}).Count(&count)
+	if result.Error != nil {
+		log.Print(result.Error)
+	}
+	return count
 }

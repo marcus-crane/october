@@ -1,12 +1,12 @@
 package main
 
 import (
-  "context"
-  "fmt"
-  "os"
-  "path/filepath"
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
 
-  "github.com/pkg/errors"
+	"github.com/pkg/errors"
 )
 
 var (
