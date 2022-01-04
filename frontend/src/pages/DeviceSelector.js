@@ -28,7 +28,6 @@ export default function DeviceSelector() {
       })
       .catch(err => {
         toast.error(err)
-        console.log(err)
       })
   }
   function selectDevice(path) {
@@ -39,15 +38,14 @@ export default function DeviceSelector() {
           navigate("/overview")
         } else {
           toast.error("Something went wrong selecting your Kobo")
-          console.log("Failed to select Kobo")
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => toast.error(err))
   }
   function selectLocalDatabase() {
     window.go.main.KoboService.PromptForLocalDBPath()
-      .then(result => console.log(result))
-      .catch(err => console.log(err))
+      .then(result => toast.success(result))
+      .catch(err => toast.error(err))
   }
   return (
     <div className="bg-gray-100 dark:bg-gray-800 ">

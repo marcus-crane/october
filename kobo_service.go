@@ -2,21 +2,42 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"strings"
+	"time"
 
+	"github.com/davecgh/go-spew/spew"
+	"github.com/go-resty/resty/v2"
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+var (
+	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
+)
+
 type KoboService struct {
-	ctx          context.Context
 	SelectedKobo Kobo
 	ConnectedDB  *gorm.DB
-	Content      []Content
-	Bookmarks    []Bookmark
+	APIKey       string
+}
+
+type ReadwiseResponse struct {
+	Highlights []Highlight `json:"highlights"`
+}
+
+type Highlight struct {
+	Text          string `json:"text"`
+	Title         string `json:"title"`
+	Author        string `json:"author"`
+	SourceType    string `json:"source_type"`
+	Category      string `json:"category"`
+	Note          string `json:"note,omitempty"`
+	HighlightedAt string `json:"highlighted_at"`
 }
 
 type Kobo struct {
@@ -34,10 +55,10 @@ type Content struct {
 	BookID                  string
 	BookTitle               string `gorm:"column:BookTitle"`
 	ImageId                 string
-	Title                   string
-	Attribution             string
-	Description             string
-	DateCreated             string
+	Title                   string `gorm:"column:Title"`
+	Attribution             string `gorm:"column:Attribution"`
+	Description             string `gorm:"column:Description"`
+	DateCreated             string `gorm:"column:DateCreated"`
 	ShortCoverKey           string
 	AdobeLocation           string `gorm:"column:adobe_location"`
 	Publisher               string
@@ -124,7 +145,7 @@ type Content struct {
 }
 
 type Bookmark struct {
-	BookmarkID               string `gorm:"column:BookmarkID"`
+	BookmarkID               string
 	VolumeID                 string
 	ContentID                string
 	StartContainerPath       string
@@ -138,7 +159,7 @@ type Bookmark struct {
 	Annotation               string
 	ExtraAnnotationData      string
 	DateCreated              string
-	ChapterProgress          string
+	ChapterProgress          float64
 	Hidden                   string
 	Version                  string
 	DateModified             string
@@ -159,9 +180,9 @@ func (Bookmark) TableName() string {
 	return "Bookmark"
 }
 
-func NewKoboService(ctx context.Context) *KoboService {
+func NewKoboService(apiKey string) *KoboService {
 	return &KoboService{
-		ctx: ctx,
+		APIKey: apiKey,
 	}
 }
 func (k *KoboService) DetectKobos() []Kobo {
@@ -233,7 +254,8 @@ func (k *KoboService) OpenDBConnection(filepath string) error {
 }
 
 func (k *KoboService) PromptForLocalDBPath() error {
-	selectedFile, err := runtime.OpenFileDialog(k.ctx, runtime.OpenDialogOptions{
+	var ctx context.Context // noop, this doesn't actually work
+	selectedFile, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
 		Title: "Select local Kobo database",
 		Filters: []runtime.FileFilter{
 			{
@@ -248,26 +270,33 @@ func (k *KoboService) PromptForLocalDBPath() error {
 	return k.OpenDBConnection(selectedFile)
 }
 
-func (k *KoboService) ListDeviceContent() error {
+func (k *KoboService) ListDeviceContent() ([]Content, error) {
 	var content []Content
 	result := k.ConnectedDB.Where(
 		&Content{ContentType: "6", MimeType: "application/x-kobo-epub+zip", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
+	fmt.Println(content)
 	if result.Error != nil {
-		return result.Error
+		return nil, result.Error
 	}
-	k.Content = content
-	return nil
+	return content, nil
 }
 
-func (k *KoboService) ListDeviceBookmarks() []Bookmark {
+func (k *KoboService) ListDeviceBookmarks() ([]Bookmark, error) {
 	var bookmarks []Bookmark
-	result := k.ConnectedDB.Find(&bookmarks)
+	result := k.ConnectedDB.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
-		log.Print(result.Error)
+		return nil, result.Error
 	}
-	k.Bookmarks = bookmarks
-	return bookmarks
+	return bookmarks, nil
+}
+
+func (k *KoboService) BuildContentIndex(content []Content) map[string]Content {
+	contentIndex := make(map[string]Content)
+	for _, item := range content {
+		contentIndex[item.ContentID] = item
+	}
+	return contentIndex
 }
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
@@ -277,4 +306,77 @@ func (k *KoboService) CountDeviceBookmarks() int64 {
 		log.Print(result.Error)
 	}
 	return count
+}
+
+func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
+	content, err := k.ListDeviceContent()
+	if err != nil {
+		return nil, err
+	}
+	contentIndex := k.BuildContentIndex(content)
+	bookmarks, err := k.ListDeviceBookmarks()
+	spew.Dump(bookmarks)
+	spew.Dump(contentIndex)
+	if err != nil {
+		return nil, err
+	}
+	var highlights []Highlight
+	for _, entry := range bookmarks {
+		source := contentIndex[entry.VolumeID]
+		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
+		if err != nil {
+			return nil, err
+		}
+		createdAt := t.Format("2006-01-02T15:04:05-07:00")
+		text := k.NormaliseText(entry.Text)
+		if entry.Annotation != "" && text == "" {
+			text = "Placeholder for attached annotation"
+		}
+		if entry.Annotation == "" && text == "" {
+			fmt.Printf("Ignoring entry from %s", source.Title)
+			continue
+		}
+		if source.Title == "" {
+			fmt.Println("Found no source for ", entry.VolumeID)
+			continue
+		}
+		highlight := Highlight{
+			Text:          text,
+			Title:         source.Title,
+			Author:        source.Attribution,
+			SourceType:    "Kobo",
+			Category:      "books",
+			Note:          entry.Annotation,
+			HighlightedAt: createdAt,
+		}
+		highlights = append(highlights, highlight)
+	}
+	return highlights, nil
+}
+
+func (k *KoboService) NormaliseText(s string) string {
+	s = strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, "\n", " ")
+	return s
+}
+
+func (k *KoboService) SendBookmarksToReadwise() (int, error) {
+	bookmarks, err := k.BuildReadwisePayload()
+	if err != nil {
+		return 0, err
+	}
+	payload := ReadwiseResponse{
+		Highlights: bookmarks,
+	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", fmt.Sprintf("Token %s", k.APIKey)).
+		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
+		SetBody(payload).
+		Post(highlightsEndpoint)
+	fmt.Println(string(resp.Body()))
+	if resp.StatusCode() != 200 {
+		return 0, errors.New(fmt.Sprintf("Received a non-200 status code from Readwise: code %d", resp.StatusCode()))
+	}
+	return len(bookmarks), nil
 }

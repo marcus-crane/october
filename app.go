@@ -30,7 +30,8 @@ func NewApp() (*App, error) {
 	app := &App{
 		settings: settings,
 	}
-	app.KoboService = NewKoboService(app.ctx)
+	apiKey := "<key_goes_here>"
+	app.KoboService = NewKoboService(apiKey)
 	return app, nil
 }
 

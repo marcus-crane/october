@@ -10,18 +10,26 @@ export default function Overview(props) {
   useEffect(() => {
     window.go.main.KoboService.GetSelectedKobo()
       .then(kobo => setSelectedKobo(kobo))
-      .catch(err => console.log(err))
+      .catch(err => toast.error(err))
   }, [selectedKobo.mnt_path])
 
   useEffect(() => {
     window.go.main.KoboService.CountDeviceBookmarks()
       .then(bookmarkCount => setHighlightCount(bookmarkCount))
-      .catch(err => console.log(err))
+      .catch(err => toast.error(err))
   }, [highlightCount])
 
   function syncWithReadwise() {
-    toast.success("Synced with Readwise")
-    console.log("hello")
+    const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
+    window.go.main.KoboService.SendBookmarksToReadwise()
+      .then(res => {
+        if (typeof(res) == "number") {
+          toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false})
+        } else {
+          toast.update(toastId, {render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false})
+        }
+      })
+      .catch(err => toast.update(toastId, {render: err, type: "error", isLoading: false}))
   }
 
   function exportDatabase() {

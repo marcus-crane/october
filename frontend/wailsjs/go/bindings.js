@@ -5,6 +5,21 @@ const go = {
   "main": {
     "KoboService": {
       /**
+       * BuildContentIndex
+       * @param {Array<Content>} arg1 - Go Type: []main.Content
+       * @returns {Promise<Content>}  - Go Type: map[string]main.Content
+       */
+      "BuildContentIndex": (arg1) => {
+        return window.go.main.KoboService.BuildContentIndex(arg1);
+      },
+      /**
+       * BuildReadwisePayload
+       * @returns {Promise<Array<Highlight>|Error>}  - Go Type: []main.Highlight
+       */
+      "BuildReadwisePayload": () => {
+        return window.go.main.KoboService.BuildReadwisePayload();
+      },
+      /**
        * CountDeviceBookmarks
        * @returns {Promise<number>}  - Go Type: int64
        */
@@ -27,17 +42,25 @@ const go = {
       },
       /**
        * ListDeviceBookmarks
-       * @returns {Promise<Array<Bookmark>>}  - Go Type: []main.Bookmark
+       * @returns {Promise<Array<Bookmark>|Error>}  - Go Type: []main.Bookmark
        */
       "ListDeviceBookmarks": () => {
         return window.go.main.KoboService.ListDeviceBookmarks();
       },
       /**
        * ListDeviceContent
-       * @returns {Promise<Error>}  - Go Type: error
+       * @returns {Promise<Array<Content>|Error>}  - Go Type: []main.Content
        */
       "ListDeviceContent": () => {
         return window.go.main.KoboService.ListDeviceContent();
+      },
+      /**
+       * NormaliseText
+       * @param {string} arg1 - Go Type: string
+       * @returns {Promise<string>}  - Go Type: string
+       */
+      "NormaliseText": (arg1) => {
+        return window.go.main.KoboService.NormaliseText(arg1);
       },
       /**
        * OpenDBConnection
@@ -61,6 +84,13 @@ const go = {
        */
       "SelectKobo": (arg1) => {
         return window.go.main.KoboService.SelectKobo(arg1);
+      },
+      /**
+       * SendBookmarksToReadwise
+       * @returns {Promise<number|Error>}  - Go Type: int
+       */
+      "SendBookmarksToReadwise": () => {
+        return window.go.main.KoboService.SendBookmarksToReadwise();
       },
     },
   },

@@ -3,6 +3,8 @@ module october
 go 1.17
 
 require (
+	github.com/davecgh/go-spew v1.1.1
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/wailsapp/wails/v2 v2.0.0-beta.27
@@ -37,7 +39,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.28.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/net v0.0.0-20210510120150-4163338589ed // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 )
 
