@@ -3,4 +3,3 @@ node_modules
 build
 .DS_Store
 .idea
-frontend/build/placeholder.txt
