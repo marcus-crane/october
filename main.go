@@ -26,19 +26,15 @@ func main() {
 
 	// Create application with options
 	err = wails.Run(&options.App{
-		Title:  "October",
-		Width:  1024,
-		Height: 768,
-		// MinWidth:          720,
-		// MinHeight:         570,
-		// MaxWidth:          1280,
-		// MaxHeight:         740,
+		Title:             "October",
+		Width:             1024,
+		Height:            768,
 		DisableResize:     false,
 		Fullscreen:        false,
 		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: false,
-		RGBA:              &options.RGBA{255, 255, 255, 255},
+		RGBA:              &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		Assets:            assets,
 		LogLevel:          logger.DEBUG,
 		OnStartup:         app.startup,
