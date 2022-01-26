@@ -11,7 +11,7 @@
 
 A small [Wails](https://github.com/wailsapp/wails) application for syncing your highlights with [Readwise](https://readwise.io).
 
-Kobo's are notorious for not being user friendly to extract highlights off of. Personally I only send mine to Readwise anyway so this tool does just that in as little as two clicks.
+Kobo eReaders are somewhat notorious for not being user friendly to extract highlights off of. Personally I only send mine to Readwise anyway so this tool does just that in as little as two clicks.
 
 Eventually, if I get around to it, I plan to allow exporting your Kobo database to disc and to various formats if that's useful.
 
@@ -27,11 +27,25 @@ To reflect that, I haven't published v1.0.0 just yet but it's good enough to use
 
 For now, the installation process is pretty barebones. You can find two macOS `.app` files zipped up, one for Intel machines and one for Apple Silicon.
 
+If you use an Intel machine, you'll want the `amd64` zip file. If you use an Apple Silicon / M1 machine, you'll want the `arm64` zip file.
+
+You'll also need to refer to the [Quarantine](#quarantine) step to allow the application to run initially if you're not already familiar.
+
 A Windows build is possible, and will likely be uploaded shortly. I just need to actually find a Windows machine to test on but it should work all the same.
 
 Feel free to file an issue if you'd like to see a Windows build and I can prioritise it.
 
 For Linux users, [Wails](https://wails.io) is almost at the point of releasing Linux beta support so a Linux build should be possible soon but again, I need to set up a Linux distro to test it.
+
+## Quarantine
+
+October isn't signed with a developer certificate (yet) so when running it for the first time, you'll see a popup like this:
+
+![](./docs/quarantine.png)
+
+You'll need to click "Cancel" and then go to System Preferences -> Security and Privacy in order to allow October to run
+
+![](./docs/quarantine_allow.png)
 
 ## Usage
 
