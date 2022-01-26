@@ -7,11 +7,47 @@
 
 ## What is October?
 
-**⚠️ UNDER CONSTRUCTION**
+A small [Wails](https://github.com/wailsapp/wails) application for syncing your highlights with [Readwise](https://readwise.io).
 
-This application does not work yet. There is no point compiling it!
+Kobo's are notorious for not being user friendly to extract highlights off of. Personally I only send mine to Readwise anyway so this tool does just that in as little as two clicks.
 
-A small [Wails](https://github.com/wailsapp/wails) application for retrieving Kobo highlights. It also offers the ability to sync your highlights with [Readwise](https://readwise.io).
+Eventually, if I get around to it, I plan to allow exporting your Kobo database to disc and to various formats if that's useful.
+
+For now, I just use the Readwise functionality the most.
+
+## Early access
+
+While the first release is published, and visually it's fairly polished, the codebase is a bit messier than I'd like.
+
+To reflect that, I haven't published v1.0.0 just yet but it's good enough to use (and I do use it regularly) so feel free to file any issues you run into.
+
+## Installation
+
+For now, the installation process is pretty barebones. You can find two macOS `.app` files zipped up, one for Intel machines and one for Apple Silicon.
+
+A Windows build is possible, and will likely be uploaded shortly. I just need to actually find a Windows machine to test on but it should work all the same.
+
+Feel free to file an issue if you'd like to see a Windows build and I can prioritise it.
+
+For Linux users, [Wails](https://wails.io) is almost at the point of releasing Linux beta support so a Linux build should be possible soon but again, I need to set up a Linux distro to test it.
+
+## Usage
+
+The scope of October is pretty small.
+
+To get started, you'll need to get your Readwise access token from [https://readwise.io/access_token](https://readwise.io/access_token).
+
+Once you've done that, navigate to the Settings page (after selecting your Kobo), save it once and then navigate back to Overview to use the sync functionality.
+
+Your token will be saved locally so you only need to provide it once.
+
+## Kobo Support
+
+Under the hood, I use pgaskin's [koboutils](https://github.com/pgaskin/koboutils) library.
+
+It doesn't support the Sage, Libra 2 or Elipsa however so I've hacked in support temporarily as I got a Libra 2 recently.
+
+It should all work the same but buyer beware and all that. October never writes to your Kobo, just reads so you should be perfectly safe.
 
 ## Screenshots
 
@@ -24,6 +60,12 @@ A small [Wails](https://github.com/wailsapp/wails) application for retrieving Ko
 <details><summary>Device overview</summary>
 
 ![](./docs/overview.png)
+
+</details>
+
+<details><summary>Device overview</summary>
+
+![](./docs/settings.png)
 
 </details>
 
