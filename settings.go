@@ -2,26 +2,22 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
-
-	"github.com/pkg/errors"
 )
 
-type settings struct {
+type Settings struct {
 	sync.Mutex
 
-	path string `json:"-"`
-
-	// AutoUpdate indicates that xbar should automatically
-	// update itself.
-	AutoUpdate bool `json:"autoupdate"`
+	path          string `json:"-"`
+	ReadwiseToken string `json:"readwise_token"`
 }
 
-func loadSettings(path string) (*settings, error) {
-	s := &settings{
+func loadSettings(path string) (*Settings, error) {
+	s := &Settings{
 		path: path,
 	}
 	b, err := ioutil.ReadFile(path)
@@ -39,7 +35,7 @@ func loadSettings(path string) (*settings, error) {
 	return s, nil
 }
 
-func (s *settings) save() error {
+func (s *Settings) save() error {
 	s.Lock()
 	defer s.Unlock()
 	b, err := json.MarshalIndent(s, "", "\t")

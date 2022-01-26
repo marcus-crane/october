@@ -30,6 +30,7 @@ export default function DeviceSelector() {
         toast.error(err)
       })
   }
+
   function selectDevice(path) {
     console.log(path)
     window.go.main.KoboService.SelectKobo(path)
@@ -42,6 +43,7 @@ export default function DeviceSelector() {
       })
       .catch(err => toast.error(err))
   }
+
   function selectLocalDatabase() {
     window.go.main.KoboService.PromptForLocalDBPath()
       .then(result => toast.success(result))
@@ -86,22 +88,22 @@ export default function DeviceSelector() {
                 </a>
               </li>
             ))}
-            <li>
-              <a onClick={selectLocalDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">
-                <dl>
-                  <div>
-                    <dt className="sr-only">Title</dt>
-                    <dd className="border-gray leading-6 font-medium text-black">
-                      Pick a local Kobo database
-                    </dd>
-                    <dt className="sr-only">Description</dt>
-                    <dd className="text-xs text-gray-600 dark:text-gray-400">
-                      Provide your own instance of KoboReader.sqlite3
-                    </dd>
-                  </div>
-                </dl>
-              </a>
-            </li>
+            {/*<li>*/}
+            {/*  <a onClick={selectLocalDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">*/}
+            {/*    <dl>*/}
+            {/*      <div>*/}
+            {/*        <dt className="sr-only">Title</dt>*/}
+            {/*        <dd className="border-gray leading-6 font-medium text-black">*/}
+            {/*          Pick a local Kobo database*/}
+            {/*        </dd>*/}
+            {/*        <dt className="sr-only">Description</dt>*/}
+            {/*        <dd className="text-xs text-gray-600 dark:text-gray-400">*/}
+            {/*          Provide your own instance of KoboReader.sqlite3*/}
+            {/*        </dd>*/}
+            {/*      </div>*/}
+            {/*    </dl>*/}
+            {/*  </a>*/}
+            {/*</li>*/}
           </ul>
         </div>
       </div>

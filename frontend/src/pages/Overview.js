@@ -3,7 +3,7 @@ import Navbar from "../Components/Navbar";
 import { toast } from "react-toastify"
 
 export default function Overview(props) {
-  const [readwiseConfigured, setReadwiseConfigured] = useState(true)
+  const [readwiseConfigured, setReadwiseConfigured] = useState(false)
   const [selectedKobo, setSelectedKobo] = useState({})
   const [highlightCount, setHighlightCount] = useState(0)
 
@@ -19,17 +19,33 @@ export default function Overview(props) {
       .catch(err => toast.error(err))
   }, [highlightCount])
 
+  useEffect(() => {
+    window.go.main.KoboService.CheckReadwiseConfig()
+      .then(result => setReadwiseConfigured(result))
+      .catch(err => toast.error(err))
+  })
+
+  function promptReadwise() {
+    toast.warning("In order to upload to Readwise, you need to configure your token on the Settings page!")
+  }
+
   function syncWithReadwise() {
     const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
     window.go.main.KoboService.SendBookmarksToReadwise()
       .then(res => {
         if (typeof(res) == "number") {
-          toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false})
+          toast.update(toastId, {render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000})
         } else {
-          toast.update(toastId, {render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false})
+          toast.update(toastId, {render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false, autoClose: 3000})
         }
       })
-      .catch(err => toast.update(toastId, {render: err, type: "error", isLoading: false}))
+      .catch(err => {
+        if (err.includes("401")) {
+          toast.update(toastId, {render: `Received 401 Unauthorised from Readwise. Is your access token correct?`, type: "error", isLoading: false, autoClose: 3000})
+        } else {
+          toast.update(toastId, {render: `There was a problem sending your highlights: ${err}`, type: "error", isLoading: false, autoClose: 3000})
+        }
+      })
   }
 
   function exportDatabase() {
@@ -53,7 +69,7 @@ export default function Overview(props) {
           <h3 className="text-md font-medium">What would you like to do?</h3>
           <ul>
             <li>
-              <a onClick={syncWithReadwise} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+              <a onClick={readwiseConfigured ? syncWithReadwise : promptReadwise} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>
                   <div>
                     <dt className="sr-only">Title</dt>
@@ -68,22 +84,22 @@ export default function Overview(props) {
                 </dl>
               </a>
             </li>
-            <li>
-              <a onClick={exportDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">
-                <dl>
-                  <div>
-                    <dt className="sr-only">Title</dt>
-                    <dd className="border-gray leading-6 font-medium text-black">
-                      Export KoboReader.sqlite
-                    </dd>
-                    <dt className="sr-only">Description</dt>
-                    <dd className="text-xs text-gray-600 dark:text-gray-400">
-                      Create a local copy of your Kobo database
-                    </dd>
-                  </div>
-                </dl>
-              </a>
-            </li>
+            {/*<li>*/}
+            {/*  <a onClick={exportDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">*/}
+            {/*    <dl>*/}
+            {/*      <div>*/}
+            {/*        <dt className="sr-only">Title</dt>*/}
+            {/*        <dd className="border-gray leading-6 font-medium text-black">*/}
+            {/*          Export KoboReader.sqlite*/}
+            {/*        </dd>*/}
+            {/*        <dt className="sr-only">Description</dt>*/}
+            {/*        <dd className="text-xs text-gray-600 dark:text-gray-400">*/}
+            {/*          Create a local copy of your Kobo database*/}
+            {/*        </dd>*/}
+            {/*      </div>*/}
+            {/*    </dl>*/}
+            {/*  </a>*/}
+            {/*</li>*/}
           </ul>
         </div>
       </div>

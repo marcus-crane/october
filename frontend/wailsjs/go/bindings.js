@@ -20,6 +20,13 @@ const go = {
         return window.go.main.KoboService.BuildReadwisePayload();
       },
       /**
+       * CheckReadwiseConfig
+       * @returns {Promise<boolean>}  - Go Type: bool
+       */
+      "CheckReadwiseConfig": () => {
+        return window.go.main.KoboService.CheckReadwiseConfig();
+      },
+      /**
        * CountDeviceBookmarks
        * @returns {Promise<number>}  - Go Type: int64
        */
@@ -32,6 +39,13 @@ const go = {
        */
       "DetectKobos": () => {
         return window.go.main.KoboService.DetectKobos();
+      },
+      /**
+       * GetReadwiseToken
+       * @returns {Promise<string>}  - Go Type: string
+       */
+      "GetReadwiseToken": () => {
+        return window.go.main.KoboService.GetReadwiseToken();
       },
       /**
        * GetSelectedKobo
@@ -91,6 +105,14 @@ const go = {
        */
       "SendBookmarksToReadwise": () => {
         return window.go.main.KoboService.SendBookmarksToReadwise();
+      },
+      /**
+       * SetReadwiseToken
+       * @param {string} arg1 - Go Type: string
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "SetReadwiseToken": (arg1) => {
+        return window.go.main.KoboService.SetReadwiseToken(arg1);
       },
     },
   },

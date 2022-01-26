@@ -3,35 +3,39 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
-
+	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
 )
 
 var (
-	configFilename = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "october", "october.config.json")
+	configFilename = "october/config.json"
 )
 
 // App struct
 type App struct {
 	ctx      context.Context
-	settings *settings
+	settings *Settings
 
 	KoboService *KoboService
 }
 
 // NewApp creates a new App application struct
 func NewApp() (*App, error) {
-	settings, err := loadSettings(configFilename)
+	configPath, err := xdg.ConfigFile(configFilename)
 	if err != nil {
-		return nil, errors.Wrap(err, "loadSettings")
+		panic(err)
+	}
+	settings, err := loadSettings(configPath)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load settings")
+	}
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialise settings")
 	}
 	app := &App{
 		settings: settings,
 	}
-	apiKey := "<key_goes_here>"
-	app.KoboService = NewKoboService(apiKey)
+	app.KoboService = NewKoboService(settings)
 	return app, nil
 }
 

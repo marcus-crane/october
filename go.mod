@@ -3,6 +3,7 @@ module github.com/marcus-crane/october
 go 1.17
 
 require (
+	github.com/adrg/xdg v0.4.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.1
