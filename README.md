@@ -3,7 +3,9 @@
 </div>
 
 # October
-> Easily access your Kobo highlights
+> Easily submit your Kobo highlights to Readwise (and eventually more)
+
+![](./docs/selector_main.png)
 
 ## What is October?
 
