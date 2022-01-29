@@ -29,10 +29,7 @@ jobs:
       - run: touch frontend/build/placeholder
       - run: wails build -upx -platform ${{ matrix.platform }}
       - name: Compress binary
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r october-$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')-${{ github.event.release-tag_name }}.zip bin
-          working-directory: build/bin
+        run: cd build/bin && zip october-$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')-${{ github.event.release-tag_name }}.zip October.*
       - uses: octokit/request-action@v2.x
         name: Get latest release from API
         id: get_latest_release
