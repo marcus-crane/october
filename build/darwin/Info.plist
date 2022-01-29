@@ -10,5 +10,5 @@
 	<key>CFBundleIconFile</key><string>iconfile</string>
 	<key>LSMinimumSystemVersion</key><string>10.13.0</string>
 	<key>NSHighResolutionCapable</key><string>true</string>
-	<key>NSHumanReadableCopyright</key><string>Copyright.........</string>
+	<key>NSHumanReadableCopyright</key><string>Copyright 2021 Marcus Crane (marcus@utf9k.net)</string>
 </dict></plist>
