@@ -33,9 +33,11 @@ jobs:
 
       - name: Install gon for macOS notarisation
         run: brew install mitchellh/gon/gon
+        if: ${{ startsWith(matrix.platform, 'darwin') }}
 
       - name: Import code signing certificate from Github Secrets
         uses: Apple-Actions/import-codesign-certs@v1
+        if: ${{ startsWith(matrix.platform, 'darwin') }}
         with:
           p12-file-base64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
           p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
@@ -59,11 +61,11 @@ jobs:
 
       - name: Compress binary
         run: cd build/bin && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October.*
-        if: startsWith(${{ matrix.platform }}, 'windows')
+        if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Notarise macOS app + create dmg
         run: gon -log-level=info gon.config.json
-        if: startsWith(${{ matrix.platform }}, 'darwin')
+        if: ${{ startsWith(matrix.platform, 'darwin') }}
 
       - name: Get latest release from API
         uses: octokit/request-action@v2.x
@@ -85,6 +87,7 @@ jobs:
 
       - name: Upload zip file
         uses: actions/upload-release-asset@v1.0.2
+        if: ${{ startsWith(matrix.platform, 'windows') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
@@ -96,6 +99,7 @@ jobs:
 
       - name: Upload macOS dmg
         uses: actions/upload-release-asset@v1.0.2
+        if: ${{ startsWith(matrix.platform, 'darwin') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
