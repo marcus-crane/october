@@ -14,8 +14,6 @@ jobs:
           - darwin/amd64
           - darwin/arm64
           - darwin/universal
-          - windows/amd64
-          - windows/arm64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
