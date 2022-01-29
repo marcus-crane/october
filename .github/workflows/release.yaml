@@ -30,3 +30,33 @@ jobs:
       - run: mkdir frontend/build
       - run: touch frontend/build/placeholder
       - run: wails build -upx -platform ${{ matrix.platform }}
+      - name: Compress binary
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r october-$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')-${{ github.event.release-tag_name }}.zip bin
+          working-directory: build/bin
+      - uses: octokit/request-action@v2.x
+        name: Get latest release from API
+        id: get_latest_release
+        with:
+          route: GET /repos/{owner}/{repo}/releases/latest
+          owner: marcus-crane
+          repo: october
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release URL
+        id: get_upload_url
+        run: |
+          url=$(echo "$response" | jq -r '.upload_url')
+          echo "::set-output name=url::$url"
+        env:
+          response:  ${{ steps.get_latest_release.outputs.data }}
+      - name: Upload a Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url:  ${{ steps.get_upload_url.outputs.url }}
+          asset_path: ./build/bin/october-$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')-${{ github.event.release-tag_name }}.zip
+          asset_name: october-$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')-${{ github.event.release-tag_name }}.zip
+          asset_content_type: application/gzip
