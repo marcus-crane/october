@@ -14,6 +14,8 @@ jobs:
           - darwin/amd64
           - darwin/arm64
           - darwin/universal
+          - windows/amd64
+          - windows/arm64
     steps:
       - uses: actions/checkout@v2
       - name: Normalise platform tag
@@ -39,7 +41,7 @@ jobs:
         name: Get latest release from API
         id: get_latest_release
         with:
-          route: GET /repos/{owner}/{repo}/releases/${{ github.event.release.tag_name }}
+          route: GET /repos/{owner}/{repo}/releases
           owner: marcus-crane
           repo: october
         env:
@@ -47,7 +49,7 @@ jobs:
       - name: Get release URL
         id: get_upload_url
         run: |
-          url=$(echo "$response" | jq -r '.upload_url')
+          url=$(echo "$response" | jq -r '.[0].upload_url')
           echo "::set-output name=url::$url"
         env:
           response:  ${{ steps.get_latest_release.outputs.data }}
