@@ -1,6 +1,6 @@
 node_modules
-!build/appicon.png
-build
+build/bin
+frontend/build
 .DS_Store
 .idea
 */runtimedev.js
