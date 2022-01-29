@@ -43,12 +43,6 @@ export default function DeviceSelector() {
       })
       .catch(err => toast.error(err))
   }
-
-  function selectLocalDatabase() {
-    window.go.main.KoboService.PromptForLocalDBPath()
-      .then(result => toast.success(result))
-      .catch(err => toast.error(err))
-  }
   return (
     <div className="bg-gray-100 dark:bg-gray-800 ">
       <Navbar />
@@ -72,7 +66,7 @@ export default function DeviceSelector() {
           <ul>
             {devices.map(device => (
               <li key={device.mnt_path}>
-                <a onClick={() => selectDevice(device.mnt_path)} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+                <button onClick={() => selectDevice(device.mnt_path)} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                   <dl>
                     <div>
                       <dt className="sr-only">Title</dt>
@@ -85,7 +79,7 @@ export default function DeviceSelector() {
                       </dd>
                     </div>
                   </dl>
-                </a>
+                </button>
               </li>
             ))}
             {/*<li>*/}

@@ -48,10 +48,6 @@ export default function Overview(props) {
       })
   }
 
-  function exportDatabase() {
-    toast.error("Not implemented yet")
-  }
-
   return (
     <div className="bg-gray-100 dark:bg-gray-800 ">
       <Navbar />
@@ -69,7 +65,7 @@ export default function Overview(props) {
           <h3 className="text-md font-medium">What would you like to do?</h3>
           <ul>
             <li>
-              <a onClick={readwiseConfigured ? syncWithReadwise : promptReadwise} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+              <button onClick={readwiseConfigured ? syncWithReadwise : promptReadwise} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>
                   <div>
                     <dt className="sr-only">Title</dt>
@@ -82,7 +78,7 @@ export default function Overview(props) {
                     </dd>
                   </div>
                 </dl>
-              </a>
+              </button>
             </li>
             {/*<li>*/}
             {/*  <a onClick={exportDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">*/}
