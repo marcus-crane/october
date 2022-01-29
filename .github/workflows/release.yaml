@@ -29,6 +29,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
+      - name: Install gon
+        run: brew install mitchellh/gon/gon
       - run: npm install -g npm
       - run: cd frontend && npm install
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
