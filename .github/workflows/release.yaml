@@ -1,4 +1,4 @@
-name: Release October for Windows/Linux
+name: Release October
 
 on:
   release:
@@ -8,10 +8,25 @@ jobs:
   release:
     name: Release October
     runs-on: macos-latest # We can cross compile but need to be on macOS to notarise
+    strategy:
+      matrix:
+        platform:
+          - darwin/amd64
+          - darwin/arm64
+          - darwin/universal
+          - windows/amd64
+          - windows/arm64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17.2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: npm install -g npm
+      - run: cd frontend && npm install
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
-      - run: wails version
+      - run: mkdir frontend/build
+      - run: touch frontend/build/placeholder
+      - run: wails build -upx -platform ${{ matrix.platform }}
