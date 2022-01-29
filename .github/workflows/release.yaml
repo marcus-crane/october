@@ -7,7 +7,7 @@ on:
 jobs:
   release:
     name: Release October
-    runs-on: macos-12 # We can cross compile but need to be on macOS to notarise
+    runs-on: macos-latest # We can cross compile but need to be on macOS to notarise
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
