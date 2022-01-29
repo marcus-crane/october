@@ -17,28 +17,56 @@ jobs:
           - windows/amd64
           - windows/arm64
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
       - name: Normalise platform tag
         id: normalise_platform
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
-      - uses: actions/setup-go@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
         with:
           go-version: 1.17.2
-      - uses: actions/setup-node@v2
+
+      - name: Install gon for macOS notarisation
+        run: brew install mitchellh/gon/gon
+
+      - name: Import code signing certificate from Github Secrets
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
+          p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
+
+      - name: Install wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Install gon
-        run: brew install mitchellh/gon/gon
-      - run: npm install -g npm
-      - run: cd frontend && npm install
-      - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
-      - run: wails build -upx -platform ${{ matrix.platform }}
+
+      - name: Update npm
+        run: npm install -g npm
+
+      - name: Build frontend assets
+        run: cd frontend && npm install
+
+      - name: Build wails app for ${{ matrix.platform }}
+        run: wails build -upx -platform ${{ matrix.platform }}
+
       - name: Compress binary
         run: cd build/bin && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October.*
-      - uses: octokit/request-action@v2.x
-        name: Get latest release from API
+        if: startsWith(${{ matrix.platform }}, 'windows')
+
+      - name: Notarise macOS app + create dmg
+        run: gon -log-level=info gon.config.json
+        if: startsWith(${{ matrix.platform }}, 'darwin')
+
+      - name: Get latest release from API
+        uses: octokit/request-action@v2.x
         id: get_latest_release
         with:
           route: GET /repos/{owner}/{repo}/releases
@@ -46,6 +74,7 @@ jobs:
           repo: october
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get release URL
         id: get_upload_url
         run: |
@@ -53,7 +82,8 @@ jobs:
           echo "::set-output name=url::$url"
         env:
           response:  ${{ steps.get_latest_release.outputs.data }}
-      - name: Upload a Release Asset
+
+      - name: Upload zip file
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,3 +93,14 @@ jobs:
           asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip
           asset_name: ${{ env.ARTIFACT_NAME }}.zip
           asset_content_type: application/zip
+
+      - name: Upload macOS dmg
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
+        with:
+          upload_url:  ${{ steps.get_upload_url.outputs.url }}
+          asset_path: ./build/bin/October.dmg
+          asset_name: ${{ env.ARTIFACT_NAME }}.dmg
+          asset_content_type: application/x-apple-diskimage
