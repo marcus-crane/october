@@ -39,7 +39,7 @@ jobs:
         name: Get latest release from API
         id: get_latest_release
         with:
-          route: GET /repos/{owner}/{repo}/releases/latest
+          route: GET /repos/{owner}/{repo}/releases/${{ github.event.release.tag_name }}
           owner: marcus-crane
           repo: october
         env:
