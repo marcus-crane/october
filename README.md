@@ -35,9 +35,9 @@ It's also worth nothing that the mac apps are notarised with my developer certif
 
 ### Windows
 
-For Windows, an `amd64` (`x86`/Intel) build is available which most will be what most Windows users will want to use. An `arm64` build is available as well although I don't know that anyone really uses Windows ARM but it's cheap to compile.
-
 > NOTE: I haven't tested either of the Windows builds yet. I plan to set up a VM in future but if you do try them out, please let me know how you get on!
+
+For Windows, an `amd64` (`x86`/Intel) build is available which most will be what most Windows users will want to use. An `arm64` build is available as well although I don't know that anyone really uses Windows ARM but it's cheap to compile.
 
 ### Linux
 
