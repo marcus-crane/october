@@ -66,6 +66,9 @@ jobs:
       - name: Notarise macOS app + create dmg
         run: gon -log-level=info gon.config.json
         if: ${{ startsWith(matrix.platform, 'darwin') }}
+        env:
+          AC_USERNAME: ${{ secrets.AC_USERNAME }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
 
       - name: Get latest release from API
         uses: octokit/request-action@v2.x
