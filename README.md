@@ -25,27 +25,23 @@ To reflect that, I haven't published v1.0.0 just yet but it's good enough to use
 
 ## Installation
 
-For now, the installation process is pretty barebones. You can find two macOS `.app` files zipped up, one for Intel machines and one for Apple Silicon.
+For now, the installation process is pretty barebones. You can find a range of releases under the [releases](https://github.com/marcus-crane/october/releases) tab.
 
-If you use an Intel machine, you'll want the `amd64` zip file. If you use an Apple Silicon / M1 machine, you'll want the `arm64` zip file.
+### macOS
 
-You'll also need to refer to the [Quarantine](#quarantine) step to allow the application to run initially if you're not already familiar.
+For macOS, both platform specific (Intel and macOS Silicon) builds are available as well as a slightly larger [Universal binaries](https://developer.apple.com/documentation/apple-silicon/building-a-universal-macos-binary). If in doubt, just pick the universal `dmg` but if you prefer, you can save a bit of space with a platform specific build.
 
-A Windows build is possible, and will likely be uploaded shortly. I just need to actually find a Windows machine to test on but it should work all the same.
+It's also worth nothing that the mac apps are notarised with my developer certificate so you shouldn't have to go through the quarantine process anymore.
 
-Feel free to file an issue if you'd like to see a Windows build and I can prioritise it.
+### Windows
 
-For Linux users, [Wails](https://wails.io) is almost at the point of releasing Linux beta support so a Linux build should be possible soon but again, I need to set up a Linux distro to test it.
+For Windows, an `amd64` (`x86`/Intel) build is available which most will be what most Windows users will want to use. An `arm64` build is available as well although I don't know that anyone really uses Windows ARM but it's cheap to compile.
 
-## Quarantine
+> NOTE: I haven't tested either of the Windows builds yet. I plan to set up a VM in future but if you do try them out, please let me know how you get on!
 
-October isn't signed with a developer certificate (yet) so when running it for the first time, you'll see a popup like this:
+### Linux
 
-![](./docs/quarantine.png)
-
-You'll need to click "Cancel" and then go to System Preferences -> Security and Privacy in order to allow October to run
-
-![](./docs/quarantine_allow.png)
+For Linux users, [Wails](https://wails.io) has just merged Linux support into the main branch which I plan to test out in a bit. Hopefully Linux builds should be supported soon and my intention is that they'll be available by the time a proper `v1.0.0` ships.
 
 ## Usage
 
