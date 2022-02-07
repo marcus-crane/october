@@ -61,6 +61,22 @@ It doesn't support the Sage, Libra 2 or Elipsa however so I've hacked in support
 
 It should all work the same but buyer beware and all that. October never writes to your Kobo, just reads so you should be perfectly safe.
 
+## Issues
+
+If you're running into issues, feel free to open a Github issue although support is best effort.
+
+For specific issues, I'll likely ask for a copy of your logs to help with debugging.
+
+October saves logs in the following places:
+
+* Windows: `%APPDATA%\Local\october\logs` (unconfirmed)
+* macOS: `$HOME/Library/Application Support/october/logs`
+* Linux: `/usr/local/share/october/logs` (unconfirmed)
+
+For Windows and Linux, I say unconfirmed because I use [github.com/adrg/xdg](https://github.com/adrg/xdg) to add support for xdg paths but I haven't actually run October on those OSes just yet.
+
+Given that, if you do have custom XDG locations, October should honour them out of the box.
+
 ## Screenshots
 
 <details><summary>Device selection</summary>
