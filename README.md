@@ -97,6 +97,16 @@ Given that, if you do have custom XDG locations, October should honour them out 
 
 </details>
 
+## Support
+
+Found October useful? Like most organisms, I have a crippling addition.
+
+Actually, that's not true! I think coffee is overrated but I still enjoy the taste which a lot of people find odd.
+
+Anyway, it's up to you. October will always be open source and never monetised but the social validation gets me going :)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T03E76M)
+
 ## Special thanks
 
 ### Wails
