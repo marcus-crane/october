@@ -105,7 +105,7 @@ Actually, that's not true! I think coffee is overrated but I still enjoy the tas
 
 Anyway, it's up to you. October will always be open source and never monetised but the social validation gets me going :)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/T6T03E76M)
+There are some links in the sidebar you can use.
 
 ## Special thanks
 
