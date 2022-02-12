@@ -371,13 +371,12 @@ func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
 		}
 		if source.Title == "" {
 			sourceFile, err := url.Parse(entry.VolumeID)
-			if err != nil {
-				k.Logger.Errorw("No title. Fallback of using filename failed. Skipping to next item", "source", source, "bookmark", entry)
-				continue
+			if err == nil {
+				filename := path.Base(sourceFile.Path)
+				k.Logger.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
+				source.Title = strings.TrimSuffix(filename, ".epub")
 			}
-			filename := path.Base(sourceFile.Path)
-			k.Logger.Debugw(fmt.Sprintf("No source title. Constructed title from filename: %s", filename))
-			source.Title = strings.TrimSuffix(filename, ".epub")
+			k.Logger.Errorw("No title. Fallback of using filename failed. Not required so will send with no title.", "source", source, "bookmark", entry)
 		}
 		highlight := Highlight{
 			Text:          text,
