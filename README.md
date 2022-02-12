@@ -23,6 +23,8 @@ While the first release is published, and visually it's fairly polished, the cod
 
 To reflect that, I haven't published v1.0.0 just yet but it's good enough to use (and I do use it regularly) so feel free to file any issues you run into.
 
+You can track the progress towards v1.0.0 [here](https://github.com/marcus-crane/october/milestone/1).
+
 ## Installation
 
 For now, the installation process is pretty barebones. You can find a range of releases under the [releases](https://github.com/marcus-crane/october/releases) tab.
