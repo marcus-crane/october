@@ -1,4 +1,4 @@
-interface go {
+export interface go {
   "main": {
     "KoboService": {
 		BuildContentIndex(arg1:Array<Content>):Promise<Content>

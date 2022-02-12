@@ -4,13 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-resty/resty/v2"
-	"go.uber.org/zap"
+	"net/url"
+	"path"
 	"strings"
 	"time"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -32,12 +34,12 @@ type ReadwiseResponse struct {
 
 type Highlight struct {
 	Text          string `json:"text"`
-	Title         string `json:"title"`
-	Author        string `json:"author"`
+	Title         string `json:"title,omitempty"`
+	Author        string `json:"author,omitempty"`
 	SourceType    string `json:"source_type"`
 	Category      string `json:"category"`
 	Note          string `json:"note,omitempty"`
-	HighlightedAt string `json:"highlighted_at"`
+	HighlightedAt string `json:"highlighted_at,omitempty"`
 }
 
 type Kobo struct {
@@ -368,9 +370,13 @@ func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
 			continue
 		}
 		if source.Title == "" {
-			k.Logger.Infow("Bookmark has no source title so skipping to next item", "source", source, "bookmark", entry)
-			fmt.Println("Found no source for ", entry.VolumeID)
-			continue
+			sourceFile, err := url.Parse(entry.VolumeID)
+			if err == nil {
+				filename := path.Base(sourceFile.Path)
+				k.Logger.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
+				source.Title = strings.TrimSuffix(filename, ".epub")
+			}
+			k.Logger.Errorw("No title. Fallback of using filename failed. Not required so will send with no title.", "source", source, "bookmark", entry)
 		}
 		highlight := Highlight{
 			Text:          text,
