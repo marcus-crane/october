@@ -39,7 +39,7 @@ It's also worth nothing that the mac apps are notarised with my developer certif
 
 For Windows, an `amd64` (`x86`/Intel) build is available which most will be what most Windows users will want to use. An `arm64` build is available as well although I don't know that anyone really uses Windows ARM but it's cheap to compile.
 
-You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/en-us/microsoft-edge/webview2/) to be installed. You don't have to do anything additional, October will prompt you to install it the first time you start up October.
+You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/en-us/microsoft-edge/webview2/) to be installed if you aren't running Windows 11. Windows 11 ships with it included but older versions of Windows will need to install it. You don't have to do anything additional, October will prompt you to install it the first time you start up October. It's a one time thing as October uses WebView2 to display its UI.
 
 ![](./docs/webview-win.png)
 
