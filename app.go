@@ -3,10 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"os"
+	"runtime"
+	"time"
+
 	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"time"
 )
 
 var (
@@ -48,7 +52,10 @@ func NewApp() (*App, error) {
 	logPath, err := xdg.DataFile(logFile)
 	config := zap.NewProductionConfig()
 	if runtime.GOOS == "windows" {
-		zap.RegisterSink("winfile", newWinFileSink)
+		err := zap.RegisterSink("winfile", newWinFileSink)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to register winfile sink")
+		}
 		logPath = "winfile:///" + logPath
 	}
 	config.OutputPaths = []string{"stdout", logPath}
