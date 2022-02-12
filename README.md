@@ -37,9 +37,11 @@ It's also worth nothing that the mac apps are notarised with my developer certif
 
 ### Windows
 
-> NOTE: I haven't tested either of the Windows builds yet. I plan to set up a VM in future but if you do try them out, please let me know how you get on!
-
 For Windows, an `amd64` (`x86`/Intel) build is available which most will be what most Windows users will want to use. An `arm64` build is available as well although I don't know that anyone really uses Windows ARM but it's cheap to compile.
+
+You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/en-us/microsoft-edge/webview2/) to be installed. You don't have to do anything additional, October will prompt you to install it the first time you start up October.
+
+![](./docs/webview-win.png)
 
 ### Linux
 
@@ -71,15 +73,14 @@ For specific issues, I'll likely ask for a copy of your logs to help with debugg
 
 October saves logs in the following places:
 
-* Windows: `%APPDATA%\Local\october\logs` (unconfirmed)
+* Windows: `C:\Users\<username>\AppData\Local\october\logs`
 * macOS: `$HOME/Library/Application Support/october/logs`
-* Linux: `/usr/local/share/october/logs` (unconfirmed)
-
-For Windows and Linux, I say unconfirmed because I use [github.com/adrg/xdg](https://github.com/adrg/xdg) to add support for xdg paths but I haven't actually run October on those OSes just yet.
 
 Given that, if you do have custom XDG locations, October should honour them out of the box.
 
 ## Screenshots
+
+### macOS
 
 <details><summary>Device selection</summary>
 
@@ -93,9 +94,29 @@ Given that, if you do have custom XDG locations, October should honour them out 
 
 </details>
 
-<details><summary>Device overview</summary>
+<details><summary>Device settings</summary>
 
 ![](./docs/settings.png)
+
+</details>
+
+### Windows
+
+<details><summary>Device selection</summary>
+
+![](./docs/selector-win.png)
+
+</details>
+
+<details><summary>Device overview</summary>
+
+![](./docs/overview-win.png)
+
+</details>
+
+<details><summary>Device settings</summary>
+
+![](./docs/settings-win.png)
 
 </details>
 
