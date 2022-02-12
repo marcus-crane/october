@@ -45,7 +45,13 @@ You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/
 
 ### Linux
 
-For Linux users, [Wails](https://wails.io) has just merged Linux support into the main branch which I plan to test out in a bit. Hopefully Linux builds should be supported soon and my intention is that they'll be available by the time a proper `v1.0.0` ships.
+For Linux users, [Wails](https://wails.io) is just in the final phases of polishing up initial Linux support.
+
+A Linux build should be available not too long from now, although I still need to figure out how to do packaging.
+
+Until then, here's a sneak peek. I've successfully used the dev build to upload highlights :)
+
+![](./docs/overview-linux.png)
 
 ## Usage
 
@@ -75,8 +81,15 @@ October saves logs in the following places:
 
 * Windows: `C:\Users\<username>\AppData\Local\october\logs`
 * macOS: `$HOME/Library/Application Support/october/logs`
+* Linux: `$HOME/.local/share/october/logs` (unreleased)
 
-Given that, if you do have custom XDG locations, October should honour them out of the box.
+Your config file, currently just containing your Readwise token, is stored in the following places:
+
+* Windows: `C:\Users\<username>\AppData\Local\october\config.json`
+* macOS: `$HOME/Library/Application Support/october/config.json`
+* Linux: `$HOME/.config/october/config.json` (unreleased)
+
+Given that, if you set custom XDG locations, October should honour them out of the box.
 
 ## Screenshots
 
@@ -117,6 +130,10 @@ Given that, if you do have custom XDG locations, October should honour them out 
 <details><summary>Device settings</summary>
 
 ![](./docs/settings-win.png)
+
+### Linux
+  
+Coming soon
 
 </details>
 
