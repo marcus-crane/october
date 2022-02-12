@@ -41,6 +41,8 @@ For Windows, an `amd64` (`x86`/Intel) build is available which most will be what
 
 You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/en-us/microsoft-edge/webview2/) to be installed. You don't have to do anything additional, October will prompt you to install it the first time you start up October.
 
+![](./docs/webview-win.png)
+
 ### Linux
 
 For Linux users, [Wails](https://wails.io) has just merged Linux support into the main branch which I plan to test out in a bit. Hopefully Linux builds should be supported soon and my intention is that they'll be available by the time a proper `v1.0.0` ships.
