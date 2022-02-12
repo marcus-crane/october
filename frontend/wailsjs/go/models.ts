@@ -16,12 +16,12 @@ export class Content {
 }
 export class Highlight {
     text: string;
-    title: string;
-    author: string;
+    title?: string;
+    author?: string;
     source_type: string;
     category: string;
     note?: string;
-    highlighted_at: string;
+    highlighted_at?: string;
 
     static createFrom(source: any = {}) {
         return new Highlight(source);
