@@ -33,17 +33,17 @@ export default function Overview(props) {
     const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
     window.go.main.KoboService.SendBookmarksToReadwise()
       .then(res => {
-        if (typeof(res) == "number") {
-          toast.update(toastId, {render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000})
+        if (typeof (res) == "number") {
+          toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000 })
         } else {
-          toast.update(toastId, {render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false, autoClose: 3000})
+          toast.update(toastId, { render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false, autoClose: 3000 })
         }
       })
       .catch(err => {
         if (err.includes("401")) {
-          toast.update(toastId, {render: `Received 401 Unauthorised from Readwise. Is your access token correct?`, type: "error", isLoading: false, autoClose: 3000})
+          toast.update(toastId, { render: `Received 401 Unauthorised from Readwise. Is your access token correct?`, type: "error", isLoading: false, autoClose: 3000 })
         } else {
-          toast.update(toastId, {render: `There was a problem sending your highlights: ${err}`, type: "error", isLoading: false, autoClose: 3000})
+          toast.update(toastId, { render: `There was a problem sending your highlights: ${err}`, type: "error", isLoading: false, autoClose: 3000 })
         }
       })
   }
