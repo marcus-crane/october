@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from "../Components/Navbar"
+import Navbar from "../components/Navbar"
 import logo from '../logo.png'
 import { toast } from "react-toastify";
 
@@ -82,22 +82,22 @@ export default function DeviceSelector() {
                 </button>
               </li>
             ))}
-            {/*<li>*/}
-            {/*  <a onClick={selectLocalDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">*/}
-            {/*    <dl>*/}
-            {/*      <div>*/}
-            {/*        <dt className="sr-only">Title</dt>*/}
-            {/*        <dd className="border-gray leading-6 font-medium text-black">*/}
-            {/*          Pick a local Kobo database*/}
-            {/*        </dd>*/}
-            {/*        <dt className="sr-only">Description</dt>*/}
-            {/*        <dd className="text-xs text-gray-600 dark:text-gray-400">*/}
-            {/*          Provide your own instance of KoboReader.sqlite3*/}
-            {/*        </dd>*/}
-            {/*      </div>*/}
-            {/*    </dl>*/}
-            {/*  </a>*/}
-            {/*</li>*/}
+            <li>
+              <a onClick={selectLocalDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">
+                <dl>
+                  <div>
+                    <dt className="sr-only">Title</dt>
+                    <dd className="border-gray leading-6 font-medium text-black">
+                      Pick a local Kobo database
+                    </dd>
+                    <dt className="sr-only">Description</dt>
+                    <dd className="text-xs text-gray-600 dark:text-gray-400">
+                      Provide your own instance of KoboReader.sqlite3
+                    </dd>
+                  </div>
+                </dl>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
