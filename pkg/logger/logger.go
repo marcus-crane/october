@@ -12,6 +12,7 @@ import (
 )
 
 var logFile = fmt.Sprintf("october/logs/%s.log", time.Now().Format("2006-01-02"))
+var Log *zap.SugaredLogger
 
 // newWinFileSink creates a log sink on Windows machines as zap, by default,
 // doesn't support Windows paths. A workaround is to create a fake winfile
@@ -22,7 +23,7 @@ func newWinFileSink(u *url.URL) (zap.Sink, error) {
 	return os.OpenFile(u.Path[1:], os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 }
 
-func Init() *zap.SugaredLogger {
+func Init() {
 	logPath, err := xdg.DataFile(logFile)
 	config := zap.NewProductionConfig()
 	if runtime.GOOS == "windows" {
@@ -38,5 +39,5 @@ func Init() *zap.SugaredLogger {
 		panic("failed to initialise logger")
 	}
 	defer logger.Sync()
-	return logger.Sugar()
+	Log = logger.Sugar()
 }
