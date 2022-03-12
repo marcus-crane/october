@@ -11,6 +11,8 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+
+	"github.com/marcus-crane/october/pkg/settings"
 )
 
 var (
@@ -20,7 +22,7 @@ var (
 // App struct
 type App struct {
 	ctx      context.Context
-	settings *Settings
+	settings *settings.Settings
 	logger   *zap.SugaredLogger
 
 	KoboService *KoboService
@@ -41,7 +43,7 @@ func NewApp() (*App, error) {
 	if err != nil {
 		panic(err)
 	}
-	settings, err := loadSettings(configPath)
+	loadedSettings, err := settings.LoadSettings(configPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load settings")
 	}
@@ -66,10 +68,10 @@ func NewApp() (*App, error) {
 	defer logger.Sync()
 	sugaredLogger := logger.Sugar()
 	app := &App{
-		settings: settings,
+		settings: loadedSettings,
 		logger:   sugaredLogger,
 	}
-	app.KoboService = NewKoboService(settings, sugaredLogger)
+	app.KoboService = NewKoboService(loadedSettings, sugaredLogger)
 	app.logger.Debugw("October is fully initialised")
 	return app, nil
 }

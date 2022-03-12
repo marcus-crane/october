@@ -10,11 +10,14 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/pgaskin/koboutils/v2/kobo"
+	pgakobo "github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+  "github.com/marcus-crane/october/pkg/kobo"
+	"github.com/marcus-crane/october/pkg/settings"
 )
 
 var (
@@ -22,189 +25,41 @@ var (
 )
 
 type KoboService struct {
-	SelectedKobo Kobo
+	SelectedKobo kobo.Kobo
 	ConnectedDB  *gorm.DB
-	Settings     *Settings
+	Settings     *settings.Settings
 	Logger       *zap.SugaredLogger
 }
 
 type ReadwiseResponse struct {
-	Highlights []Highlight `json:"highlights"`
+	Highlights []kobo.Highlight `json:"highlights"`
 }
 
-type Highlight struct {
-	Text          string `json:"text"`
-	Title         string `json:"title,omitempty"`
-	Author        string `json:"author,omitempty"`
-	SourceType    string `json:"source_type"`
-	Category      string `json:"category"`
-	Note          string `json:"note,omitempty"`
-	HighlightedAt string `json:"highlighted_at,omitempty"`
-}
 
-type Kobo struct {
-	Name       string `json:"name"`
-	Storage    int    `json:"storage"`
-	DisplayPPI int    `json:"display_ppi"`
-	MntPath    string `json:"mnt_path"`
-	DbPath     string `json:"db_path"`
-}
 
-type Content struct {
-	ContentID               string `gorm:"column:ContentID"`
-	ContentType             string `gorm:"column:ContentType"`
-	MimeType                string `gorm:"column:MimeType"`
-	BookID                  string
-	BookTitle               string `gorm:"column:BookTitle"`
-	ImageId                 string
-	Title                   string `gorm:"column:Title"`
-	Attribution             string `gorm:"column:Attribution"`
-	Description             string `gorm:"column:Description"`
-	DateCreated             string `gorm:"column:DateCreated"`
-	ShortCoverKey           string
-	AdobeLocation           string `gorm:"column:adobe_location"`
-	Publisher               string
-	IsEncrypted             bool
-	DateLastRead            string
-	FirstTimeReading        bool
-	ChapterIDBookmarked     string
-	ParagraphBookmarked     int
-	BookmarkWordOffset      int
-	NumShortcovers          int
-	VolumeIndex             int `gorm:"column:VolumeIndex"`
-	NumPages                int `gorm:"column:___NumPages"`
-	ReadStatus              int
-	SyncTime                string `gorm:"column:___SyncTime"`
-	UserID                  string `gorm:"column:___UserID"`
-	PublicationId           string
-	FileOffset              int    `gorm:"column:___FileOffset"`
-	FileSize                int    `gorm:"column:___FileSize"`
-	PercentRead             string `gorm:"column:___PercentRead"`
-	ExpirationStatus        int    `gorm:"column:___ExpirationStatus"`
-	FavouritesIndex         int
-	Accessibility           int
-	ContentURL              string
-	Language                string
-	BookshelfTags           string
-	IsDownloaded            bool
-	FeedbackType            int
-	AverageRating           float64
-	Depth                   int
-	PageProgressDirection   string
-	InWishlist              string
-	ISBN                    int64
-	WishlistedDate          string
-	FeedbackTypeSynced      bool
-	IsSocialEnabled         bool
-	EpubType                string
-	Monetization            string
-	ExternalId              string
-	Series                  string
-	SeriesNumber            string
-	Subtitle                string
-	WordCount               string
-	Fallback                string
-	RestOfBookEstimate      string
-	CurrentChapterEstimate  string
-	CurrentChapterProgress  float32
-	PocketStatus            string
-	UnsyncedPocketChanges   string
-	ImageUrl                string
-	DateAdded               string
-	WorkId                  string
-	Properties              string
-	RenditionSpread         string
-	RatingCount             string
-	ReviewsSyncDate         string
-	MediaOverlay            string
-	RedirectPreviewUrl      bool
-	PreviewFileSize         int
-	EntitlementId           string
-	CrossRevisionId         string
-	DownloadUrl             bool
-	ReadStateSynced         bool
-	TimesStartedReading     int
-	TimeSpentReading        int
-	LastTimeStartedReading  string
-	LastTimeFinishedReading string
-	ApplicableSubscriptions string
-	ExternalIds             string
-	PurchaseRevisionId      string
-	SeriesID                string
-	SeriesNumberFloat       float64
-	AdobeLoanExpiration     string
-	HideFromHomePage        bool
-	IsInternetArchive       bool
-	TitleKana               string `gorm:"column:titleKana"`
-	SubtitleKana            string `gorm:"column:subtitleKana"`
-	SeriesKana              string `gorm:"column:seriesKana"`
-	AttributionKana         string `gorm:"column:attributionKana"`
-	PublisherKana           string `gorm:"column:publisherKana"`
-	IsPurchaseable          bool
-	IsSupported             bool
-	AnnotationsSyncToken    string
-	DateModified            string
-}
-
-type Bookmark struct {
-	BookmarkID               string
-	VolumeID                 string
-	ContentID                string
-	StartContainerPath       string
-	StartContainerChild      string
-	StartContainerChildIndex string
-	StartOffset              string
-	EndContainerPath         string
-	EndContainerChildIndex   string
-	EndOffset                string
-	Text                     string
-	Annotation               string
-	ExtraAnnotationData      string
-	DateCreated              string
-	ChapterProgress          float64
-	Hidden                   string
-	Version                  string
-	DateModified             string
-	Creator                  string
-	UUID                     string
-	UserID                   string
-	SyncTime                 string
-	Published                string
-	ContextString            string
-	Type                     string
-}
-
-func (Content) TableName() string {
-	return "Content"
-}
-
-func (Bookmark) TableName() string {
-	return "Bookmark"
-}
-
-func NewKoboService(settings *Settings, logger *zap.SugaredLogger) *KoboService {
+func NewKoboService(settings *settings.Settings, logger *zap.SugaredLogger) *KoboService {
 	return &KoboService{
 		Settings: settings,
 		Logger:   logger,
 	}
 }
 
-func (k *KoboService) DetectKobos() []Kobo {
-	var kobos []Kobo
-	connectedKobos, err := kobo.Find()
+func (k *KoboService) DetectKobos() []kobo.Kobo {
+	var kobos []kobo.Kobo
+	connectedKobos, err := pgakobo.Find()
 	if err != nil {
 		k.Logger.Errorw("Failed to check for Kobos", "error", err)
 		panic(err)
 	}
 	k.Logger.Debugw("Found %d Kobos", len(connectedKobos))
 	for _, koboPath := range connectedKobos {
-		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
+		_, _, deviceId, err := pgakobo.ParseKoboVersion(koboPath)
 		k.Logger.Debugw("Found Kobo with Device ID of %s", deviceId)
 		if err != nil {
 			k.Logger.Errorw("Failed to parse Kobo version", "error", err)
 			panic(err)
 		}
-		device, found := kobo.DeviceByID(deviceId)
+		device, found := pgakobo.DeviceByID(deviceId)
 		if !found {
 			fallbackKobo, err := GetKoboFallbackMetadata(deviceId, koboPath)
 			if err != nil {
@@ -215,7 +70,7 @@ func (k *KoboService) DetectKobos() []Kobo {
 			continue
 		}
 		k.Logger.Infof(fmt.Sprintf("Detected a %s", device.Name()))
-		kobos = append(kobos, Kobo{
+		kobos = append(kobos, kobo.Kobo{
 			Name:       device.Name(),
 			Storage:    device.StorageGB(),
 			DisplayPPI: device.DisplayPPI(),
@@ -227,12 +82,12 @@ func (k *KoboService) DetectKobos() []Kobo {
 }
 
 func (k *KoboService) SelectKobo(devicePath string) bool {
-	_, _, deviceId, err := kobo.ParseKoboVersion(devicePath)
+	_, _, deviceId, err := pgakobo.ParseKoboVersion(devicePath)
 	if err != nil {
 		panic(err)
 	}
-	device, found := kobo.DeviceByID(deviceId)
-	foundKobo := Kobo{}
+	device, found := pgakobo.DeviceByID(deviceId)
+	foundKobo := kobo.Kobo{}
 	if !found {
 		fallbackKobo, err := GetKoboFallbackMetadata(deviceId, devicePath)
 		if err != nil {
@@ -240,7 +95,7 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 		}
 		foundKobo = fallbackKobo
 	} else {
-		foundKobo = Kobo{
+		foundKobo = kobo.Kobo{
 			Name:       device.Name(),
 			Storage:    device.StorageGB(),
 			DisplayPPI: device.DisplayPPI(),
@@ -260,7 +115,7 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 	return true
 }
 
-func (k *KoboService) GetSelectedKobo() Kobo {
+func (k *KoboService) GetSelectedKobo() kobo.Kobo {
 	return k.SelectedKobo
 }
 
@@ -295,11 +150,11 @@ func (k *KoboService) PromptForLocalDBPath() error {
 	return k.OpenDBConnection(selectedFile)
 }
 
-func (k *KoboService) ListDeviceContent() ([]Content, error) {
-	var content []Content
+func (k *KoboService) ListDeviceContent() ([]kobo.Content, error) {
+	var content []kobo.Content
 	k.Logger.Debugw("Retrieving content from device")
 	result := k.ConnectedDB.Where(
-		&Content{ContentType: "6", MimeType: "application/x-kobo-epub+zip", VolumeIndex: -1},
+		&kobo.Content{ContentType: "6", MimeType: "application/x-kobo-epub+zip", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		k.Logger.Errorw("Failed to retrieve content from device", "error", result.Error)
@@ -309,8 +164,8 @@ func (k *KoboService) ListDeviceContent() ([]Content, error) {
 	return content, nil
 }
 
-func (k *KoboService) ListDeviceBookmarks() ([]Bookmark, error) {
-	var bookmarks []Bookmark
+func (k *KoboService) ListDeviceBookmarks() ([]kobo.Bookmark, error) {
+	var bookmarks []kobo.Bookmark
 	k.Logger.Debugw("Retrieving bookmarks from device")
 	result := k.ConnectedDB.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
@@ -321,9 +176,9 @@ func (k *KoboService) ListDeviceBookmarks() ([]Bookmark, error) {
 	return bookmarks, nil
 }
 
-func (k *KoboService) BuildContentIndex(content []Content) map[string]Content {
+func (k *KoboService) BuildContentIndex(content []kobo.Content) map[string]kobo.Content {
 	k.Logger.Debugw("Building an index out of device content")
-	contentIndex := make(map[string]Content)
+	contentIndex := make(map[string]kobo.Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
@@ -333,14 +188,14 @@ func (k *KoboService) BuildContentIndex(content []Content) map[string]Content {
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
 	var count int64
-	result := k.ConnectedDB.Model(&Bookmark{}).Count(&count)
+	result := k.ConnectedDB.Model(&kobo.Bookmark{}).Count(&count)
 	if result.Error != nil {
 		k.Logger.Errorw("Failed to count bookmarks on device", "error", result.Error)
 	}
 	return count
 }
 
-func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
+func (k *KoboService) BuildReadwisePayload() ([]kobo.Highlight, error) {
 	content, err := k.ListDeviceContent()
 	if err != nil {
 		return nil, err
@@ -350,7 +205,7 @@ func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
 	if err != nil {
 		return nil, err
 	}
-	var highlights []Highlight
+	var highlights []kobo.Highlight
 	k.Logger.Infow(fmt.Sprintf("Starting to build Readwise payload out of %d bookmarks", len(bookmarks)))
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
@@ -379,7 +234,7 @@ func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
 			k.Logger.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
-		highlight := Highlight{
+		highlight := kobo.Highlight{
 			Text:          text,
 			Title:         source.Title,
 			Author:        source.Attribution,
@@ -400,7 +255,7 @@ func (k *KoboService) GetReadwiseToken() string {
 }
 func (k *KoboService) SetReadwiseToken(token string) error {
 	k.Settings.ReadwiseToken = token
-	if err := k.Settings.save(); err != nil {
+	if err := k.Settings.Save(); err != nil {
 		k.Logger.Errorw("Failed to save Readwise token", "error", err)
 		return err
 	}
@@ -439,8 +294,8 @@ func (k *KoboService) SendBookmarksToReadwise() (int, error) {
 	return len(bookmarks), nil
 }
 
-func getKoboFallbackSkus() map[string]Kobo {
-	return map[string]Kobo{
+func getKoboFallbackSkus() map[string]kobo.Kobo {
+	return map[string]kobo.Kobo{
 		"00000000-0000-0000-0000-000000000383": {Name: "Kobo Sage", Storage: 32, DisplayPPI: 300},
 		"00000000-0000-0000-0000-000000000387": {Name: "Kobo Elipsa", Storage: 32, DisplayPPI: 227},
 		"00000000-0000-0000-0000-000000000388": {Name: "Kobo Libra 2", Storage: 32, DisplayPPI: 300},
@@ -463,10 +318,10 @@ func (k *KoboService) CheckReadwiseConfig() bool {
 	return true
 }
 
-func GetKoboFallbackMetadata(deviceId string, devicePath string) (Kobo, error) {
+func GetKoboFallbackMetadata(deviceId string, devicePath string) (kobo.Kobo, error) {
 	fallbackSkus := getKoboFallbackSkus()
 	if !deviceIdInSkuList(deviceId) {
-		return Kobo{}, errors.New("no kobo found with that device id")
+		return kobo.Kobo{}, errors.New("no kobo found with that device id")
 	}
 	deviceInfo := fallbackSkus[deviceId]
 	deviceInfo.MntPath = devicePath

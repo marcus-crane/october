@@ -1,12 +1,13 @@
-package main
+package settings
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/pkg/errors"
 )
 
 type Settings struct {
@@ -16,7 +17,7 @@ type Settings struct {
 	ReadwiseToken string `json:"readwise_token"`
 }
 
-func loadSettings(path string) (*Settings, error) {
+func LoadSettings(path string) (*Settings, error) {
 	s := &Settings{
 		path: path,
 	}
@@ -35,7 +36,7 @@ func loadSettings(path string) (*Settings, error) {
 	return s, nil
 }
 
-func (s *Settings) save() error {
+func (s *Settings) Save() error {
 	s.Lock()
 	defer s.Unlock()
 	b, err := json.MarshalIndent(s, "", "\t")
