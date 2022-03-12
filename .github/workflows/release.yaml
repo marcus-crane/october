@@ -65,7 +65,7 @@ jobs:
         if: ${{ startsWith(matrix.platform , 'darwin') }}
 
       - name: Build Windows NSIS installer
-        run: wails build -upx ${{ -platform ${{ matrix.platform }}
+        run: wails build -upx -platform ${{ matrix.platform }} -nsis
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
