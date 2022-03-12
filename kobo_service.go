@@ -16,7 +16,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-  "github.com/marcus-crane/october/pkg/kobo"
+	"github.com/marcus-crane/october/pkg/kobo"
 	"github.com/marcus-crane/october/pkg/settings"
 )
 
@@ -34,8 +34,6 @@ type KoboService struct {
 type ReadwiseResponse struct {
 	Highlights []kobo.Highlight `json:"highlights"`
 }
-
-
 
 func NewKoboService(settings *settings.Settings, logger *zap.SugaredLogger) *KoboService {
 	return &KoboService{
