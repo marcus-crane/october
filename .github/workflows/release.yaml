@@ -69,7 +69,7 @@ jobs:
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
-        run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October.*
+        run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Notarise macOS app + create dmg
