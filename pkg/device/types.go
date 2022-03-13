@@ -1,4 +1,4 @@
-package kobo
+package device
 
 type Highlight struct {
 	Text          string `json:"text"`

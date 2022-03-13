@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/marcus-crane/october/pkg/kobo"
+	"github.com/marcus-crane/october/pkg/device"
 	"github.com/pkg/errors"
 
 	"github.com/marcus-crane/october/pkg/logger"
@@ -14,7 +14,7 @@ var (
 	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
 )
 
-func SendBookmarksToReadwise(bookmarks []kobo.Highlight, token string) (int, error) {
+func SendBookmarksToReadwise(bookmarks []device.Highlight, token string) (int, error) {
 	payload := Response{
 		Highlights: bookmarks,
 	}

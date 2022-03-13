@@ -10,17 +10,17 @@ import (
 	"time"
 
 	"github.com/marcus-crane/october/pkg/logger"
-	pgakobo "github.com/pgaskin/koboutils/v2/kobo"
+	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/marcus-crane/october/pkg/kobo"
+	"github.com/marcus-crane/october/pkg/device"
 	"github.com/marcus-crane/october/pkg/settings"
 )
 
 type KoboService struct {
-	SelectedKobo kobo.Kobo
+	SelectedKobo device.Kobo
 	ConnectedDB  *gorm.DB
 	Settings     *settings.Settings
 }
@@ -31,22 +31,22 @@ func NewKoboService(settings *settings.Settings) *KoboService {
 	}
 }
 
-func (k *KoboService) DetectKobos() []kobo.Kobo {
-	var kobos []kobo.Kobo
-	connectedKobos, err := pgakobo.Find()
+func (k *KoboService) DetectKobos() []device.Kobo {
+	var kobos []device.Kobo
+	connectedKobos, err := kobo.Find()
 	if err != nil {
 		logger.Log.Errorw("Failed to check for Kobos", "error", err)
 		panic(err)
 	}
 	logger.Log.Debugw("Found %d Kobos", len(connectedKobos))
 	for _, koboPath := range connectedKobos {
-		_, _, deviceId, err := pgakobo.ParseKoboVersion(koboPath)
+		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
 		logger.Log.Debugw("Found Kobo with Device ID of %s", deviceId)
 		if err != nil {
 			logger.Log.Errorw("Failed to parse Kobo version", "error", err)
 			panic(err)
 		}
-		device, found := pgakobo.DeviceByID(deviceId)
+		deviceDetail, found := kobo.DeviceByID(deviceId)
 		if !found {
 			fallbackKobo, err := GetKoboFallbackMetadata(deviceId, koboPath)
 			if err != nil {
@@ -56,25 +56,25 @@ func (k *KoboService) DetectKobos() []kobo.Kobo {
 			kobos = append(kobos, fallbackKobo)
 			continue
 		}
-		logger.Log.Infof(fmt.Sprintf("Detected a %s", device.Name()))
-		kobos = append(kobos, kobo.Kobo{
-			Name:       device.Name(),
-			Storage:    device.StorageGB(),
-			DisplayPPI: device.DisplayPPI(),
+		logger.Log.Infof(fmt.Sprintf("Detected a %s", deviceDetail.Name()))
+		kobos = append(kobos, device.Kobo{
+			Name:       deviceDetail.Name(),
+			Storage:    deviceDetail.StorageGB(),
+			DisplayPPI: deviceDetail.DisplayPPI(),
 			MntPath:    koboPath,
-			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", koboPath),
+			DbPath:     fmt.Sprintf("%s/.device/KoboReader.sqlite", koboPath),
 		})
 	}
 	return kobos
 }
 
 func (k *KoboService) SelectKobo(devicePath string) bool {
-	_, _, deviceId, err := pgakobo.ParseKoboVersion(devicePath)
+	_, _, deviceId, err := kobo.ParseKoboVersion(devicePath)
 	if err != nil {
 		panic(err)
 	}
-	device, found := pgakobo.DeviceByID(deviceId)
-	foundKobo := kobo.Kobo{}
+	deviceFound, found := kobo.DeviceByID(deviceId)
+	foundKobo := device.Kobo{}
 	if !found {
 		fallbackKobo, err := GetKoboFallbackMetadata(deviceId, devicePath)
 		if err != nil {
@@ -82,27 +82,27 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 		}
 		foundKobo = fallbackKobo
 	} else {
-		foundKobo = kobo.Kobo{
-			Name:       device.Name(),
-			Storage:    device.StorageGB(),
-			DisplayPPI: device.DisplayPPI(),
+		foundKobo = device.Kobo{
+			Name:       deviceFound.Name(),
+			Storage:    deviceFound.StorageGB(),
+			DisplayPPI: deviceFound.DisplayPPI(),
 			MntPath:    devicePath,
-			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath),
+			DbPath:     fmt.Sprintf("%s/.device/KoboReader.sqlite", devicePath),
 		}
 	}
 	k.SelectedKobo = foundKobo
-	logger.Log.Infow(fmt.Sprintf("User has selected %s", k.SelectedKobo.Name), "kobo", k.SelectedKobo)
+	logger.Log.Infow(fmt.Sprintf("User has selected %s", k.SelectedKobo.Name), "device", k.SelectedKobo)
 
 	err = k.OpenDBConnection(k.SelectedKobo.DbPath)
 	if err != nil {
-		logger.Log.Errorw(fmt.Sprintf("Failed to open a connection to %s", k.SelectedKobo.DbPath), "kobo", k.SelectedKobo)
+		logger.Log.Errorw(fmt.Sprintf("Failed to open a connection to %s", k.SelectedKobo.DbPath), "device", k.SelectedKobo)
 		return false
 	}
 	logger.Log.Infow(fmt.Sprintf("Successfully opened connection to %s", k.SelectedKobo.DbPath))
 	return true
 }
 
-func (k *KoboService) GetSelectedKobo() kobo.Kobo {
+func (k *KoboService) GetSelectedKobo() device.Kobo {
 	return k.SelectedKobo
 }
 
@@ -137,11 +137,11 @@ func (k *KoboService) PromptForLocalDBPath() error {
 	return k.OpenDBConnection(selectedFile)
 }
 
-func (k *KoboService) ListDeviceContent() ([]kobo.Content, error) {
-	var content []kobo.Content
+func (k *KoboService) ListDeviceContent() ([]device.Content, error) {
+	var content []device.Content
 	logger.Log.Debugw("Retrieving content from device")
 	result := k.ConnectedDB.Where(
-		&kobo.Content{ContentType: "6", MimeType: "application/x-kobo-epub+zip", VolumeIndex: -1},
+		&device.Content{ContentType: "6", MimeType: "application/x-device-epub+zip", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		logger.Log.Errorw("Failed to retrieve content from device", "error", result.Error)
@@ -151,8 +151,8 @@ func (k *KoboService) ListDeviceContent() ([]kobo.Content, error) {
 	return content, nil
 }
 
-func (k *KoboService) ListDeviceBookmarks() ([]kobo.Bookmark, error) {
-	var bookmarks []kobo.Bookmark
+func (k *KoboService) ListDeviceBookmarks() ([]device.Bookmark, error) {
+	var bookmarks []device.Bookmark
 	logger.Log.Debugw("Retrieving bookmarks from device")
 	result := k.ConnectedDB.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
@@ -163,9 +163,9 @@ func (k *KoboService) ListDeviceBookmarks() ([]kobo.Bookmark, error) {
 	return bookmarks, nil
 }
 
-func (k *KoboService) BuildContentIndex(content []kobo.Content) map[string]kobo.Content {
+func (k *KoboService) BuildContentIndex(content []device.Content) map[string]device.Content {
 	logger.Log.Debugw("Building an index out of device content")
-	contentIndex := make(map[string]kobo.Content)
+	contentIndex := make(map[string]device.Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
@@ -175,14 +175,14 @@ func (k *KoboService) BuildContentIndex(content []kobo.Content) map[string]kobo.
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
 	var count int64
-	result := k.ConnectedDB.Model(&kobo.Bookmark{}).Count(&count)
+	result := k.ConnectedDB.Model(&device.Bookmark{}).Count(&count)
 	if result.Error != nil {
 		logger.Log.Errorw("Failed to count bookmarks on device", "error", result.Error)
 	}
 	return count
 }
 
-func (k *KoboService) BuildReadwisePayload() ([]kobo.Highlight, error) {
+func (k *KoboService) BuildReadwisePayload() ([]device.Highlight, error) {
 	content, err := k.ListDeviceContent()
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (k *KoboService) BuildReadwisePayload() ([]kobo.Highlight, error) {
 	if err != nil {
 		return nil, err
 	}
-	var highlights []kobo.Highlight
+	var highlights []device.Highlight
 	logger.Log.Infow(fmt.Sprintf("Starting to build Readwise payload out of %d bookmarks", len(bookmarks)))
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
@@ -221,7 +221,7 @@ func (k *KoboService) BuildReadwisePayload() ([]kobo.Highlight, error) {
 			logger.Log.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
-		highlight := kobo.Highlight{
+		highlight := device.Highlight{
 			Text:          text,
 			Title:         source.Title,
 			Author:        source.Attribution,
@@ -243,12 +243,9 @@ func (k *KoboService) NormaliseText(s string) string {
 	return s
 }
 
-func getKoboFallbackSkus() map[string]kobo.Kobo {
-	return map[string]kobo.Kobo{
-		"00000000-0000-0000-0000-000000000383": {Name: "Kobo Sage", Storage: 32, DisplayPPI: 300},
-		"00000000-0000-0000-0000-000000000387": {Name: "Kobo Elipsa", Storage: 32, DisplayPPI: 227},
-		"00000000-0000-0000-0000-000000000388": {Name: "Kobo Libra 2", Storage: 32, DisplayPPI: 300},
-	}
+func getKoboFallbackSkus() map[string]device.Kobo {
+	// No fallbacks currently as everything is covered by pgaskin/koboutils
+	return map[string]device.Kobo{}
 }
 
 func deviceIdInSkuList(deviceId string) bool {
@@ -260,13 +257,13 @@ func deviceIdInSkuList(deviceId string) bool {
 	return false
 }
 
-func GetKoboFallbackMetadata(deviceId string, devicePath string) (kobo.Kobo, error) {
+func GetKoboFallbackMetadata(deviceId string, devicePath string) (device.Kobo, error) {
 	fallbackSkus := getKoboFallbackSkus()
 	if !deviceIdInSkuList(deviceId) {
-		return kobo.Kobo{}, errors.New("no kobo found with that device id")
+		return device.Kobo{}, errors.New("no device found with that device id")
 	}
 	deviceInfo := fallbackSkus[deviceId]
 	deviceInfo.MntPath = devicePath
-	deviceInfo.DbPath = fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath)
+	deviceInfo.DbPath = fmt.Sprintf("%s/.device/KoboReader.sqlite", devicePath)
 	return deviceInfo, nil
 }

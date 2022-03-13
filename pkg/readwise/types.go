@@ -1,7 +1,7 @@
 package readwise
 
-import "github.com/marcus-crane/october/pkg/kobo"
+import "github.com/marcus-crane/october/pkg/device"
 
 type Response struct {
-	Highlights []kobo.Highlight `json:"highlights"`
+	Highlights []device.Highlight `json:"highlights"`
 }
