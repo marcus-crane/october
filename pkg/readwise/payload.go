@@ -1,9 +1,41 @@
 package readwise
 
-import "github.com/marcus-crane/october/pkg/device"
+import (
+	"fmt"
+	"time"
 
-func BuildPayload(bookmarks []device.Bookmark, contentIndex []map[string]device.Content) (Response, error) {
+	"github.com/marcus-crane/october/pkg/device"
+	"github.com/marcus-crane/october/pkg/logger"
+)
+
+var (
+	sourceCategory = "books"
+	sourceType     = "OctoberForKobo"
+)
+
+func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Content) (Response, error) {
 	var payload Response
+	for _, entry := range bookmarks {
+		source := contentIndex[entry.VolumeID]
+		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
+		if err != nil {
+			logger.Log.Errorw(fmt.Sprintf("Failed to parse timestamp %s from bookmark", entry.DateCreated), "bookmark", entry)
+			return Response{}, err
+		}
+		createdAt := t.Format("2006-01-02T15:04:05-07:00")
+		text := NormaliseText(entry.Text)
+		highlight := device.Highlight{
+			Text:          text,
+			Title:         source.Title,
+			Author:        source.Attribution,
+			SourceType:    sourceType,
+			Category:      sourceCategory,
+			Note:          entry.Annotation,
+			HighlightedAt: createdAt,
+		}
+		logger.Log.Debugw("Succesfully built highlight", "highlight", highlight)
+		payload.Highlights = append(payload.Highlights, highlight)
+	}
 	return payload, nil
 }
 
