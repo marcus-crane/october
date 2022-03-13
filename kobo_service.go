@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -24,7 +23,8 @@ type KoboService struct {
 
 func NewKoboService(settings *settings.Settings) *KoboService {
 	return &KoboService{
-		Settings: settings,
+		Settings:       settings,
+		ConnectedKobos: map[string]device.Kobo{},
 	}
 }
 
@@ -39,17 +39,18 @@ func (k *KoboService) DetectKobos() []device.Kobo {
 		panic(err)
 	}
 	kobos := device.GetKoboMetadata(connectedKobos)
-	for _, kobo := range kobos {
-		k.ConnectedKobos[kobo.MntPath] = kobo
+	for _, kb := range kobos {
+		logger.Log.Infow("Found Kobo", "device", kb)
+		k.ConnectedKobos[kb.MntPath] = kb
 	}
 	return kobos
 }
 
 func (k *KoboService) SelectKobo(devicePath string) error {
-	// We assume this matches a read device, instead of eg; a local sqlite db
-	if strings.Contains(devicePath, ".kobo/KoboReader.sqlite") {
-		k.SelectedKobo = k.ConnectedKobos[devicePath]
+	if val, ok := k.ConnectedKobos[devicePath]; ok {
+		k.SelectedKobo = val
 	} else {
+		logger.Log.Info("Trying to access local db")
 		k.SelectedKobo = device.Kobo{
 			Name:       "Local Database",
 			Storage:    0,
@@ -58,7 +59,7 @@ func (k *KoboService) SelectKobo(devicePath string) error {
 			DbPath:     devicePath,
 		}
 	}
-	if err := db.OpenConnection(devicePath); err != nil {
+	if err := db.OpenConnection(k.SelectedKobo.DbPath); err != nil {
 		logger.Log.Errorw("Failed to open DB connection", "error", err)
 		return err
 	}
@@ -88,11 +89,25 @@ func (k *KoboService) PromptForLocalDBPath() error {
 	return k.SelectKobo(selectedFile)
 }
 
+func (k *KoboService) FindBooksOnDevice(bookIDs []string) ([]device.Content, error) {
+	var content []device.Content
+	logger.Log.Debugw("Retrieving books that have been uploaded to Readwise previously")
+	result := db.Conn.Where(
+		&device.Content{ContentType: "6", VolumeIndex: -1},
+	).Where("ContentID IN ?", bookIDs).Order("___PercentRead desc, title asc").Find(&content)
+	if result.Error != nil {
+		logger.Log.Errorw("Failed to retrieve content from device", "error", result.Error)
+		return nil, result.Error
+	}
+	logger.Log.Debugw(fmt.Sprintf("Successfully retrieved %d books from device DB", len(content)))
+	return content, nil
+}
+
 func (k *KoboService) ListDeviceContent() ([]device.Content, error) {
 	var content []device.Content
 	logger.Log.Debugw("Retrieving content from device")
 	result := db.Conn.Where(
-		&device.Content{ContentType: "6", MimeType: "application/x-device-epub+zip", VolumeIndex: -1},
+		&device.Content{ContentType: "6", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		logger.Log.Errorw("Failed to retrieve content from device", "error", result.Error)
@@ -120,7 +135,7 @@ func (k *KoboService) BuildContentIndex(content []device.Content) map[string]dev
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
-	logger.Log.Debugw(fmt.Sprintf("Built an index out with %d items", len(contentIndex)))
+	logger.Log.Debugw(fmt.Sprintf("Built an index out of %d items", len(contentIndex)))
 	return contentIndex
 }
 
@@ -165,5 +180,13 @@ func (k *KoboService) ForwardToReadwise() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return readwise.SendBookmarks(payload, k.Settings.ReadwiseToken)
+	numUploads, err := readwise.SendBookmarks(payload, k.Settings.ReadwiseToken)
+	if err != nil {
+		return 0, err
+	}
+	_, err = readwise.RetrieveUploadedBooks(k.Settings.ReadwiseToken)
+	if err != nil {
+		return numUploads, fmt.Errorf(fmt.Sprintf("Successfully uploaded %d bookmarks but failed to upload covers", numUploads))
+	}
+	return numUploads, nil
 }

@@ -25,10 +25,11 @@ func TestBuildPayload_NoBookmarks(t *testing.T) {
 }
 
 func TestBuildPayload_BookmarksPresent(t *testing.T) {
-	highlights := []device.Highlight{{
+	highlights := []Highlight{{
 		Text:          "Hello World",
 		Title:         "A Book",
 		Author:        "Computer",
+		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
 		SourceType:    sourceType,
 		Category:      sourceCategory,
 		Note:          "Making a note here",
@@ -44,10 +45,11 @@ func TestBuildPayload_BookmarksPresent(t *testing.T) {
 }
 
 func TestBuildPayload_HandleAnnotationOnly(t *testing.T) {
-	highlights := []device.Highlight{{
+	highlights := []Highlight{{
 		Text:          "Placeholder for attached annotation",
 		Title:         "A Book",
 		Author:        "Computer",
+		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
 		SourceType:    sourceType,
 		Category:      sourceCategory,
 		Note:          "Making a note here",
@@ -63,10 +65,11 @@ func TestBuildPayload_HandleAnnotationOnly(t *testing.T) {
 }
 
 func TestBuildPayload_TitleFallback(t *testing.T) {
-	highlights := []device.Highlight{{
+	highlights := []Highlight{{
 		Text:          "Hello World",
 		Title:         "Good Book - An Author",
 		Author:        "",
+		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
 		SourceType:    sourceType,
 		Category:      sourceCategory,
 		Note:          "Making a note here",
@@ -82,10 +85,11 @@ func TestBuildPayload_TitleFallback(t *testing.T) {
 }
 
 func TestBuildPayload_TitleFallbackFailure(t *testing.T) {
-	highlights := []device.Highlight{{
+	highlights := []Highlight{{
 		Text:          "Hello World",
 		Title:         "Unknown Book",
 		Author:        "Unknown Author",
+		SourceURL:     "\t",
 		SourceType:    sourceType,
 		Category:      sourceCategory,
 		Note:          "Making a note here",

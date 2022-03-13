@@ -25,7 +25,7 @@ func newWinFileSink(u *url.URL) (zap.Sink, error) {
 
 func Init() {
 	logPath, err := xdg.DataFile(logFile)
-	config := zap.NewProductionConfig()
+	config := zap.NewDevelopmentConfig()
 	if runtime.GOOS == "windows" {
 		err := zap.RegisterSink("winfile", newWinFileSink)
 		if err != nil {

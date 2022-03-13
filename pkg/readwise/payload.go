@@ -20,6 +20,7 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 	var payload Response
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
+		logger.Log.Infow("Parsing entry", "source", source)
 		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
 		if err != nil {
 			logger.Log.Errorw(fmt.Sprintf("Failed to parse timestamp %s from bookmark", entry.DateCreated), "bookmark", entry)
@@ -58,16 +59,17 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
 	sendhighlight:
-		highlight := device.Highlight{
+		highlight := Highlight{
 			Text:          text,
 			Title:         source.Title,
 			Author:        source.Attribution,
+			SourceURL:     entry.VolumeID,
 			SourceType:    sourceType,
 			Category:      sourceCategory,
 			Note:          entry.Annotation,
 			HighlightedAt: createdAt,
 		}
-		logger.Log.Debugw("Succesfully built highlight", "highlight", highlight)
+		logger.Log.Debugw("Successfully built highlights", "highlight", highlight)
 		payload.Highlights = append(payload.Highlights, highlight)
 	}
 	logger.Log.Infow(fmt.Sprintf("Successfully parsed %d highlights", len(payload.Highlights)))

@@ -41,6 +41,14 @@ const go = {
         return window.go.main.KoboService.DetectKobos();
       },
       /**
+       * FindBooksOnDevice
+       * @param {Array<string>} arg1 - Go Type: []string
+       * @returns {Promise<Array<Content>|Error>}  - Go Type: []device.Content
+       */
+      "FindBooksOnDevice": (arg1) => {
+        return window.go.main.KoboService.FindBooksOnDevice(arg1);
+      },
+      /**
        * ForwardToReadwise
        * @returns {Promise<number|Error>}  - Go Type: int
        */

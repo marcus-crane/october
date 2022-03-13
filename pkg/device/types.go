@@ -1,15 +1,5 @@
 package device
 
-type Highlight struct {
-	Text          string `json:"text"`
-	Title         string `json:"title,omitempty"`
-	Author        string `json:"author,omitempty"`
-	SourceType    string `json:"source_type"`
-	Category      string `json:"category"`
-	Note          string `json:"note,omitempty"`
-	HighlightedAt string `json:"highlighted_at,omitempty"`
-}
-
 type Kobo struct {
 	Name       string `json:"name"`
 	Storage    int    `json:"storage"`
@@ -60,7 +50,7 @@ type Content struct {
 	Depth                   int
 	PageProgressDirection   string
 	InWishlist              string
-	ISBN                    int64
+	ISBN                    string
 	WishlistedDate          string
 	FeedbackTypeSynced      bool
 	IsSocialEnabled         bool
