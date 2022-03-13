@@ -31,6 +31,18 @@ export default function Settings() {
       .catch(err => toast.error(err))
   }
 
+  function checkReadwiseTokenValid() {
+    const toastId = toast.loading("Contacting the Readwise API...")
+    window.go.main.KoboService.CheckTokenValidity()
+      .then(apiError => {
+        if (apiError === null) {
+          toast.update(toastId, { render: "Successfully authenticated against the Readwise API", type: "success", isLoading: false, autoClose: 2000 })
+        }
+        throw apiError
+      })
+      .catch(err => toast.update(toastId, { render: err.message(), type: "error", isLoading: false, autoClose: 2000 }))
+  }
+
   return (
     <div className="bg-gray-100 dark:bg-gray-800 ">
       <Navbar />
@@ -68,6 +80,23 @@ export default function Settings() {
                   className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Save
+                </button>
+              </form>
+            </div>
+          </div>
+          <div className="bg-white shadow sm:rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Validate your Readwise token</h3>
+              <div className="mt-2 max-w-xl text-sm text-gray-500">
+                <p>Make a call to the Readwise API to check that your token is valid and correctly entered</p>
+              </div>
+              <form onSubmit={(e) => e.preventDefault()} className="mt-5 sm:flex sm:items-center">
+                <button
+                  onClick={checkReadwiseTokenValid}
+                  type="submit"
+                  className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:text-sm"
+                >
+                  Validate Readwise token
                 </button>
               </form>
             </div>

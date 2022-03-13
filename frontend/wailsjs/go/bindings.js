@@ -20,6 +20,13 @@ const go = {
         return window.go.main.KoboService.CheckReadwiseConfig();
       },
       /**
+       * CheckTokenValidity
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "CheckTokenValidity": () => {
+        return window.go.main.KoboService.CheckTokenValidity();
+      },
+      /**
        * CountDeviceBookmarks
        * @returns {Promise<number>}  - Go Type: int64
        */
@@ -39,6 +46,13 @@ const go = {
        */
       "ForwardToReadwise": () => {
         return window.go.main.KoboService.ForwardToReadwise();
+      },
+      /**
+       * GetReadwiseToken
+       * @returns {Promise<string>}  - Go Type: string
+       */
+      "GetReadwiseToken": () => {
+        return window.go.main.KoboService.GetReadwiseToken();
       },
       /**
        * GetSelectedKobo
@@ -83,6 +97,14 @@ const go = {
        */
       "SetContext": (arg1) => {
         return window.go.main.KoboService.SetContext(arg1);
+      },
+      /**
+       * SetReadwiseToken
+       * @param {string} arg1 - Go Type: string
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "SetReadwiseToken": (arg1) => {
+        return window.go.main.KoboService.SetReadwiseToken(arg1);
       },
     },
   },

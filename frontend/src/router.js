@@ -43,6 +43,7 @@ const Router = () => (
       hideProgressBar
       autoClose={3000}
       pauseOnHover
+      style={{ width: "475px" }}
       transition={Slide}
       bodyClassName={() => "text-sm w-screen flex p-2"}
       toastClassName={({ type }) => contextClass[type || "default"] +

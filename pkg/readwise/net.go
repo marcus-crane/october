@@ -10,10 +10,11 @@ import (
 )
 
 var (
+	authEndpoint       = "https://readwise.io/api/v2/auth/"
 	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
 )
 
-func SendBookmarksToReadwise(payload Response, token string) (int, error) {
+func SendBookmarks(payload Response, token string) (int, error) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
@@ -29,4 +30,21 @@ func SendBookmarksToReadwise(payload Response, token string) (int, error) {
 	}
 	logger.Log.Infow(fmt.Sprintf("Successfully sent %d bookmarks to Readwise", len(payload.Highlights)))
 	return len(payload.Highlights), nil
+}
+
+func CheckTokenValidity(token string) error {
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
+		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
+		Get(authEndpoint)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 204 {
+		logger.Log.Error("Received a non-204 response from Readwise", "status", resp.StatusCode(), "response", string(resp.Body()))
+		return err
+	}
+	logger.Log.Info("Successfully authenticated with the Readwise API")
+	return nil
 }

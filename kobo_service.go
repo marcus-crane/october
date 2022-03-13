@@ -133,6 +133,20 @@ func (k *KoboService) CountDeviceBookmarks() int64 {
 	return count
 }
 
+func (k *KoboService) CheckTokenValidity() error {
+	if !k.CheckReadwiseConfig() {
+		return fmt.Errorf("readwise token is empty")
+	}
+	return readwise.CheckTokenValidity(k.Settings.ReadwiseToken)
+}
+
+func (k *KoboService) GetReadwiseToken() string {
+	return k.Settings.ReadwiseToken
+}
+func (k *KoboService) SetReadwiseToken(token string) error {
+	return k.Settings.SetReadwiseToken(token)
+}
+
 func (k *KoboService) CheckReadwiseConfig() bool {
 	return k.Settings.ReadwiseTokenExists()
 }
@@ -151,5 +165,5 @@ func (k *KoboService) ForwardToReadwise() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return readwise.SendBookmarksToReadwise(payload, k.Settings.ReadwiseToken)
+	return readwise.SendBookmarks(payload, k.Settings.ReadwiseToken)
 }
