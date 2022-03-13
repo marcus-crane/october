@@ -2,6 +2,9 @@ package readwise
 
 import (
 	"fmt"
+	"net/url"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/marcus-crane/october/pkg/device"
@@ -24,6 +27,19 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 		}
 		createdAt := t.Format("2006-01-02T15:04:05-07:00")
 		text := NormaliseText(entry.Text)
+		if source.Title == "" {
+			sourceFile, err := url.Parse(entry.VolumeID)
+			if err != nil {
+				logger.Log.Errorw("Failed to retrieve epub title. This is not a hard requirement so will send a payload with a dummy title.", "source", source, "bookmark", entry)
+				source.Title = "Unknown Book"
+				source.Attribution = "Unknown Author"
+				goto sendhighlight
+			}
+			filename := path.Base(sourceFile.Path)
+			logger.Log.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
+			source.Title = strings.TrimSuffix(filename, ".epub")
+		}
+	sendhighlight:
 		highlight := device.Highlight{
 			Text:          text,
 			Title:         source.Title,
