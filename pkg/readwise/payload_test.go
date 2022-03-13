@@ -43,8 +43,25 @@ func TestBuildPayload_BookmarksPresent(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-// While Kepubs have a title in the Kobo database, the same can't be guaranteed for epubs at all.
-// In that event, we just fall back to using the filename
+func TestBuildPayload_HandleAnnotationOnly(t *testing.T) {
+	highlights := []device.Highlight{{
+		Text:          "Placeholder for attached annotation",
+		Title:         "A Book",
+		Author:        "Computer",
+		SourceType:    sourceType,
+		Category:      sourceCategory,
+		Note:          "Making a note here",
+		HighlightedAt: "2006-01-02T15:04:05+00:00",
+	}}
+	expected := Response{Highlights: highlights}
+	contentIndex := map[string]device.Content{"mnt://kobo/blah/Good Book - An Author.epub": {ContentID: "mnt://kobo/blah/Good Book - An Author.epub", Title: "A Book", Attribution: "Computer"}}
+	bookmarks := []device.Bookmark{
+		{VolumeID: "mnt://kobo/blah/Good Book - An Author.epub", DateCreated: "2006-01-02T15:04:05.000", Annotation: "Making a note here"},
+	}
+	var actual, _ = BuildPayload(bookmarks, contentIndex)
+	assert.Equal(t, expected, actual)
+}
+
 func TestBuildPayload_TitleFallback(t *testing.T) {
 	highlights := []device.Highlight{{
 		Text:          "Hello World",
@@ -64,10 +81,6 @@ func TestBuildPayload_TitleFallback(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-// While extremely unlike, we should handle the case where a VolumeID doesn't have a suffix. This condition is only
-// triggered for completely busted names such as control codes given url.Parse will happen take URLs without a protocol
-// or even just arbitrary strings. That reminds me though:
-// TODO: Test exports with non-epub files
 func TestBuildPayload_TitleFallbackFailure(t *testing.T) {
 	highlights := []device.Highlight{{
 		Text:          "Hello World",
@@ -82,6 +95,16 @@ func TestBuildPayload_TitleFallbackFailure(t *testing.T) {
 	contentIndex := map[string]device.Content{"\t": {ContentID: "\t"}}
 	bookmarks := []device.Bookmark{
 		{VolumeID: "\t", Text: "Hello World", DateCreated: "2006-01-02T15:04:05.000", Annotation: "Making a note here"},
+	}
+	var actual, _ = BuildPayload(bookmarks, contentIndex)
+	assert.Equal(t, expected, actual)
+}
+
+func TestBuildPayload_SkipMalformedBookmarks(t *testing.T) {
+	var expected Response
+	contentIndex := map[string]device.Content{"mnt://kobo/blah/Good Book - An Author.epub": {ContentID: "mnt://kobo/blah/Good Book - An Author.epub"}}
+	bookmarks := []device.Bookmark{
+		{VolumeID: "mnt://kobo/blah/Good Book - An Author.epub", DateCreated: "2006-01-02T15:04:05.000"},
 	}
 	var actual, _ = BuildPayload(bookmarks, contentIndex)
 	assert.Equal(t, expected, actual)
