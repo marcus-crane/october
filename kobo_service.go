@@ -38,34 +38,6 @@ func (k *KoboService) DetectKobos() []device.Kobo {
 		logger.Log.Errorw("Failed to check for Kobos", "error", err)
 		panic(err)
 	}
-	logger.Log.Debugw("Found %d Kobos", len(connectedKobos))
-	for _, koboPath := range connectedKobos {
-		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
-		logger.Log.Debugw("Found Kobo with Device ID of %s", deviceId)
-		if err != nil {
-			logger.Log.Errorw("Failed to parse Kobo version", "error", err)
-			panic(err)
-		}
-		deviceDetail, found := kobo.DeviceByID(deviceId)
-		if !found {
-			fallbackKobo, err := GetKoboFallbackMetadata(deviceId, koboPath)
-			if err != nil {
-				continue
-			}
-			logger.Log.Infow(fmt.Sprintf("Found a %s through fallback method", fallbackKobo.Name))
-			kobos = append(kobos, fallbackKobo)
-			continue
-		}
-		logger.Log.Infof(fmt.Sprintf("Detected a %s", deviceDetail.Name()))
-		kobos = append(kobos, device.Kobo{
-			Name:       deviceDetail.Name(),
-			Storage:    deviceDetail.StorageGB(),
-			DisplayPPI: deviceDetail.DisplayPPI(),
-			MntPath:    koboPath,
-			DbPath:     fmt.Sprintf("%s/.device/KoboReader.sqlite", koboPath),
-		})
-	}
-	return kobos
 }
 
 func (k *KoboService) SelectKobo(devicePath string) bool {
@@ -104,19 +76,6 @@ func (k *KoboService) SelectKobo(devicePath string) bool {
 
 func (k *KoboService) GetSelectedKobo() device.Kobo {
 	return k.SelectedKobo
-}
-
-func (k *KoboService) OpenDBConnection(filepath string) error {
-	if filepath == "" {
-		filepath = k.SelectedKobo.DbPath
-	}
-	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
-	if err != nil {
-		logger.Log.Errorw(fmt.Sprintf("Failed to open DB connection to %s", filepath), "error", err)
-		panic(err)
-	}
-	k.ConnectedDB = db
-	return nil
 }
 
 func (k *KoboService) PromptForLocalDBPath() error {
@@ -235,35 +194,4 @@ func (k *KoboService) BuildReadwisePayload() ([]device.Highlight, error) {
 	}
 	logger.Log.Infow(fmt.Sprintf("Successfully parsed %d highlights", len(highlights)))
 	return highlights, nil
-}
-
-func (k *KoboService) NormaliseText(s string) string {
-	s = strings.TrimSpace(s)
-	s = strings.ReplaceAll(s, "\n", " ")
-	return s
-}
-
-func getKoboFallbackSkus() map[string]device.Kobo {
-	// No fallbacks currently as everything is covered by pgaskin/koboutils
-	return map[string]device.Kobo{}
-}
-
-func deviceIdInSkuList(deviceId string) bool {
-	for k, _ := range getKoboFallbackSkus() {
-		if k == deviceId {
-			return true
-		}
-	}
-	return false
-}
-
-func GetKoboFallbackMetadata(deviceId string, devicePath string) (device.Kobo, error) {
-	fallbackSkus := getKoboFallbackSkus()
-	if !deviceIdInSkuList(deviceId) {
-		return device.Kobo{}, errors.New("no device found with that device id")
-	}
-	deviceInfo := fallbackSkus[deviceId]
-	deviceInfo.MntPath = devicePath
-	deviceInfo.DbPath = fmt.Sprintf("%s/.device/KoboReader.sqlite", devicePath)
-	return deviceInfo, nil
 }
