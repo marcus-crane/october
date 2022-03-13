@@ -32,13 +32,26 @@ export default function DeviceSelector() {
   }
 
   function selectDevice(path) {
-    console.log(path)
     window.go.main.KoboService.SelectKobo(path)
-      .then(success => {
-        if (success === true) {
+      .then(error => {
+        if (error === null) {
           navigate("/overview")
         } else {
+          console.log(error)
           toast.error("Something went wrong selecting your Kobo")
+        }
+      })
+      .catch(err => toast.error(err))
+  }
+
+  function selectLocalDatabase() {
+    window.go.main.KoboService.PromptForLocalDBPath()
+      .then(error => {
+        if (error === null) {
+          navigate("/overview")
+        } else {
+          console.log(error)
+          toast.error("Something went wrong selecting your local sqlite database")
         }
       })
       .catch(err => toast.error(err))
@@ -88,11 +101,11 @@ export default function DeviceSelector() {
                   <div>
                     <dt className="sr-only">Title</dt>
                     <dd className="border-gray leading-6 font-medium text-black">
-                      Pick a local Kobo database
+                      Load in a local Kobo database (advanced)
                     </dd>
                     <dt className="sr-only">Description</dt>
                     <dd className="text-xs text-gray-600 dark:text-gray-400">
-                      Provide your own instance of KoboReader.sqlite3
+                      Provide an instance of KoboReader.sqlite3
                     </dd>
                   </div>
                 </dl>

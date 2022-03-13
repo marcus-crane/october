@@ -37,13 +37,12 @@ func NewApp() (*App, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialise settings")
 	}
-	sugaredLogger := logger.Init()
+	logger.Init()
 	app := &App{
 		settings: loadedSettings,
-		logger:   sugaredLogger,
 	}
-	app.KoboService = NewKoboService(loadedSettings, sugaredLogger)
-	app.logger.Debugw("October is fully initialised")
+	app.KoboService = NewKoboService(loadedSettings)
+	logger.Log.Debugw("October is fully initialised")
 	return app, nil
 }
 
@@ -51,16 +50,17 @@ func NewApp() (*App, error) {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
-	a.logger.Infow("Starting up October")
+	a.KoboService.SetContext(ctx)
+	logger.Log.Infow("Starting up October")
 }
 
 // domReady is called after the front-end dom has been loaded
 func (a App) domReady(ctx context.Context) {
 	// Add your action here
-	a.logger.Debugw("Frontend DOM is ready")
+	logger.Log.Debugw("Frontend DOM is ready")
 }
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
-	a.logger.Infow("Shutting down October")
+	logger.Log.Infow("Shutting down October")
 }

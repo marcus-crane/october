@@ -7,6 +7,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
+	github.com/stretchr/testify v1.7.0
 	github.com/wailsapp/wails/v2 v2.0.0-beta.33
 	go.uber.org/zap v1.20.0
 	gorm.io/driver/sqlite v1.2.6
@@ -27,6 +28,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/klauspost/compress v1.12.2 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/leaanthony/go-ansi-parser v1.0.1 // indirect
 	github.com/leaanthony/go-common-file-dialog v1.0.3 // indirect
 	github.com/leaanthony/go-webview2 v1.0.3-0.20220125181555-00f20a61c17d // indirect
@@ -37,8 +39,8 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.1 // indirect
 	github.com/savsgio/gotils v0.0.0-20200117113501-90175b0fbe3f // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.28.0 // indirect
@@ -47,6 +49,7 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 

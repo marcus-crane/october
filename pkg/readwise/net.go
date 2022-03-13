@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/marcus-crane/october/pkg/device"
 	"github.com/pkg/errors"
 
 	"github.com/marcus-crane/october/pkg/logger"
@@ -14,10 +13,7 @@ var (
 	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
 )
 
-func SendBookmarksToReadwise(bookmarks []device.Highlight, token string) (int, error) {
-	payload := Response{
-		Highlights: bookmarks,
-	}
+func SendBookmarksToReadwise(payload Response, token string) (int, error) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
@@ -31,6 +27,6 @@ func SendBookmarksToReadwise(bookmarks []device.Highlight, token string) (int, e
 		logger.Log.Errorw("Received a non-200 response from Readwise", "status", resp.StatusCode(), "response", string(resp.Body()))
 		return 0, errors.New(fmt.Sprintf("Received a non-200 status code from Readwise: code %d", resp.StatusCode()))
 	}
-	logger.Log.Infow(fmt.Sprintf("Successfully sent %d bookmarks to Readwise", len(bookmarks)))
-	return len(bookmarks), nil
+	logger.Log.Infow(fmt.Sprintf("Successfully sent %d bookmarks to Readwise", len(payload.Highlights)))
+	return len(payload.Highlights), nil
 }

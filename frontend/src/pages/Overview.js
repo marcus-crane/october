@@ -31,7 +31,7 @@ export default function Overview(props) {
 
   function syncWithReadwise() {
     const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
-    window.go.main.KoboService.SendBookmarksToReadwise()
+    window.go.main.KoboService.ForwardToReadwise()
       .then(res => {
         if (typeof (res) == "number") {
           toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000 })
@@ -57,9 +57,16 @@ export default function Overview(props) {
           <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
             {selectedKobo.name}
           </h2>
-          <p className="mt-0 text-center text-sm text-gray-600 dark:text-gray-400">
-            {selectedKobo.storage} GB · {selectedKobo.display_ppi} PPI
-          </p>
+          {selectedKobo.storage !== 0 && selectedKobo.display_ppi !== 0 && (
+            <p className="mt-0 text-center text-sm text-gray-600 dark:text-gray-400">
+              {selectedKobo.storage} GB · {selectedKobo.display_ppi} PPI
+            </p>
+          )}
+          {selectedKobo.storage === 0 && selectedKobo.display_ppi === 0 && (
+            <p className="mt-0 text-center text-sm text-gray-600 dark:text-gray-400">
+              Dang, that's some hardcore hacker stuff!
+            </p>
+          )}
         </div>
         <div className="space-y-4 text-center">
           <h3 className="text-md font-medium">What would you like to do?</h3>
