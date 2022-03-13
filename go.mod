@@ -15,6 +15,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fasthttp/websocket v0.0.0-20200320073529-1554a54587ab // indirect
 	github.com/gabriel-vasile/mimetype v1.3.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
@@ -35,7 +36,9 @@ require (
 	github.com/leaanthony/winc v0.0.0-20220208061147-37b059b9dc3b // indirect
 	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20200117113501-90175b0fbe3f // indirect
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.28.0 // indirect
@@ -44,6 +47,7 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 // replace github.com/wailsapp/wails/v2 v2.0.0-beta.27 => /Users/marcus/Code/go/pkg/mod/github.com/wailsapp/wails/v2@v2.0.0-beta.27
