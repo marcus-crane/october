@@ -47,11 +47,10 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 			if err != nil {
 				// While extremely unlikely, we should handle the case where a VolumeID doesn't have a suffix. This condition is only
 				// triggered for completely busted names such as control codes given url.Parse will happen take URLs without a protocol
-				// or even just arbitrary strings. That reminds me though:
+				// or even just arbitrary strings. Given we don't set a title here, we will use the Readwise fallback which is to add
+				// these highlights to a book called "Quotes" and let the user figure out their metadata situation. That reminds me though:
 				// TODO: Test exports with non-epub files
 				logger.Log.Errorw("Failed to retrieve epub title. This is not a hard requirement so will send a payload with a dummy title.", "source", source, "bookmark", entry)
-				source.Title = "Unknown Book"
-				source.Attribution = "Unknown Author"
 				goto sendhighlight
 			}
 			filename := path.Base(sourceFile.Path)
