@@ -87,8 +87,6 @@ func TestBuildPayload_TitleFallback(t *testing.T) {
 func TestBuildPayload_TitleFallbackFailure(t *testing.T) {
 	highlights := []Highlight{{
 		Text:          "Hello World",
-		Title:         "Unknown Book",
-		Author:        "Unknown Author",
 		SourceURL:     "\t",
 		SourceType:    sourceType,
 		Category:      sourceCategory,

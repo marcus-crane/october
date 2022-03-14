@@ -118,7 +118,7 @@ func UploadCover(encodedCover string, bookId int, token string) error {
 	}
 	if resp.StatusCode() != 200 {
 		logger.Log.Errorw("Received a non-200 response from Readwise", "status", resp.StatusCode(), "response", string(resp.Body()))
-		return fmt.Errorf("failed to upload cover for book with id %s", bookId)
+		return fmt.Errorf("failed to upload cover for book with id %d", bookId)
 	}
 	return nil
 }
