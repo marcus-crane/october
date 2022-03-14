@@ -20,13 +20,16 @@ export default function Settings() {
   }
 
   function saveReadwiseToken() {
+    console.log("calling save token")
     window.go.main.KoboService.SetReadwiseToken(tokenInput)
       .then(saveIssue => {
+        console.log(saveIssue)
         if (saveIssue === null) {
           setToken(token)
           toast.success("Changes saved successfully")
+        } else {
+          throw saveIssue
         }
-        throw saveIssue
       })
       .catch(err => toast.error(err))
   }
@@ -37,8 +40,9 @@ export default function Settings() {
       .then(apiError => {
         if (apiError === null) {
           toast.update(toastId, { render: "Successfully authenticated against the Readwise API", type: "success", isLoading: false, autoClose: 2000 })
+        } else {
+          throw apiError
         }
-        throw apiError
       })
       .catch(err => toast.update(toastId, { render: err.message(), type: "error", isLoading: false, autoClose: 2000 }))
   }
@@ -61,9 +65,6 @@ export default function Settings() {
               </div>
               <form onSubmit={(e) => e.preventDefault()} className="mt-5 sm:flex sm:items-center">
                 <div className="w-full sm:max-w-xs">
-                  <label htmlFor="token" className="sr-only">
-                    Email
-                  </label>
                   <input
                     onChange={(e) => setTokenInput(e.target.value)}
                     type="text"

@@ -20,10 +20,13 @@ type CoverUpdate struct {
 }
 
 type BookListResponse struct {
-	Count   int `json:"count"`
-	Results struct {
-		ID        int    `json:"id"`
-		CoverURL  string `json:"cover_image_url"`
-		SourceURL string `json:"source_url"`
-	}
+	Count   int             `json:"count"`
+	Results []BookListEntry `json:"results"`
+}
+
+type BookListEntry struct {
+	ID        int    `json:"id"`
+	Title     string `json:"title"`
+	CoverURL  string `json:"cover_image_url"`
+	SourceURL string `json:"source_url"`
 }

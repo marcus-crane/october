@@ -6,7 +6,7 @@ export interface go {
 		CheckTokenValidity():Promise<Error>
 		CountDeviceBookmarks():Promise<number>
 		DetectKobos():Promise<Array<Kobo>>
-		FindBooksOnDevice(arg1:Array<string>):Promise<Array<Content>|Error>
+		FindBookOnDevice(arg1:string):Promise<Content|Error>
 		ForwardToReadwise():Promise<number|Error>
 		GetReadwiseToken():Promise<string>
 		GetSelectedKobo():Promise<Kobo>

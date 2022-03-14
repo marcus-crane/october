@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/adrg/xdg"
 	"github.com/marcus-crane/october/pkg/logger"
@@ -38,6 +39,7 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "failed to initialise settings")
 	}
 	logger.Init()
+	logger.Log.Debug(fmt.Sprintf("Logs available at %s", configPath))
 	app := &App{
 		settings: loadedSettings,
 	}
