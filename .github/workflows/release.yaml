@@ -61,11 +61,11 @@ jobs:
         run: cd frontend && npm install
 
       - name: Build wails app for macOS
-        run: wails build -upx -platform ${{ matrix.platform }}
+        run: wails build -platform ${{ matrix.platform }}
         if: ${{ startsWith(matrix.platform , 'darwin') }}
 
       - name: Build Windows NSIS installer
-        run: wails build -upx -platform ${{ matrix.platform }} -nsis
+        run: wails build -platform ${{ matrix.platform }} -nsis
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
