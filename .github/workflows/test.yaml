@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   lint:
-    name: lint
+    name: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
