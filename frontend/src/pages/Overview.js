@@ -41,9 +41,21 @@ export default function Overview(props) {
       })
       .catch(err => {
         if (err.includes("401")) {
-          toast.update(toastId, { render: `Received 401 Unauthorised from Readwise. Is your access token correct?`, type: "error", isLoading: false, autoClose: 3000 })
+          toast.update(toastId, {
+            render: `Received 401 Unauthorised from Readwise. Is your access token correct?`,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000
+          })
+        } else if (err.includes("failed to upload covers")) {
+          toast.update(toastId, {render: err, type: "warning", isLoading: false, autoClose: 3000})
         } else {
-          toast.update(toastId, { render: `There was a problem sending your highlights: ${err}`, type: "error", isLoading: false, autoClose: 3000 })
+          toast.update(toastId, {
+            render: `There was a problem sending your highlights: ${err}`,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000
+          })
         }
       })
   }
