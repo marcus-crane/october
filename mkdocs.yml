@@ -10,6 +10,7 @@ copyright: Copyright &copy; 2022 Marcus Crane
 
 theme:
   name: material
+  language: en
   logo: logo.png
   custom_dir: theme
   features:
