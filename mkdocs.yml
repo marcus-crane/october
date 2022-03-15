@@ -1,0 +1,30 @@
+site_name: October
+
+repo_url: https://github.com/marcus-crane/october
+repo_name: marcus-crane/october
+
+theme:
+  name: material
+  logo: logo.png
+  features:
+    - navigation.tabs
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  plugins:
+    - privacy:
+      enabled: true
+    - search
+
