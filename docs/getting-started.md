@@ -1,5 +1,5 @@
 ---
-template: overrides/home.html
+template: overrides/main.html
 title: Getting started
 ---
 
