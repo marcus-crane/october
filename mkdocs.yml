@@ -38,6 +38,7 @@ theme:
     - privacy:
         enabled: true
     - search
+    - social
 
 markdown_extensions:
   - abbr
