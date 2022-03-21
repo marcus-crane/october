@@ -9,5 +9,5 @@ mac_redirect = f"/download/mac/latest https://github.com/marcus-crane/october/re
 win_redirect = f"/download/win/latest https://github.com/marcus-crane/october/releases/download/{version}/october-windows-amd64-{version}.dmg"
 
 with open("site/_redirects", "w") as file:
-    file.write(mac_redirect)
-    file.write(win_redirect)
+    file.write(mac_redirect + "\n")
+    file.write(win_redirect + "\n")
