@@ -13,9 +13,19 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
+      - run: pip install requests
       - uses: actions/cache@v2
         with:
           key: ${{ github.ref }}
           path: .cache
       - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git Pillow cairosvg
-      - run: mkdocs gh-deploy --force
+      - run: mkdocs build
+      - name: Generate Netlify redirects file
+        run: python scripts/generate-redirects.py
+      - uses: jsmrcaga/action-netlify-deploy@master
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_DEPLOY_MESSAGE: "Prod deploy v${{ github.ref }}"
+          build_directory: "site"
+          NETLIFY_DEPLOY_TO_PROD: true
