@@ -1,4 +1,7 @@
 name: Publish docs
+env:
+  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 on:
   push:
     branches:
@@ -22,10 +25,5 @@ jobs:
       - run: mkdocs build
       - name: Generate Netlify redirects file
         run: python scripts/generate-redirects.py
-      - uses: jsmrcaga/action-netlify-deploy@master
-        with:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_DEPLOY_MESSAGE: "Prod deploy v${{ github.ref }}"
-          build_directory: "site"
-          NETLIFY_DEPLOY_TO_PROD: true
+      - name: Deploy site to Netlify
+        run: npx -y netlify-cli deploy --dir=site --prod --message="Prod deploy v${{ github.ref }}"
