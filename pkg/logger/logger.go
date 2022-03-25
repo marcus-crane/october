@@ -23,7 +23,6 @@ func newWinFileSink(u *url.URL) (zap.Sink, error) {
 	return os.OpenFile(u.Path[1:], os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 }
 
-//nolint:errcheck // logger.Sync will create files so nothing to check
 func Init() {
 	logPath, err := xdg.DataFile(logFile)
 	if err != nil {
@@ -43,6 +42,6 @@ func Init() {
 		panic("failed to initialise logger")
 	}
 
-	defer logger.Sync()
+	defer logger.Sync() //nolint:errcheck // logger.Sync will create files so nothing to check
 	Log = logger.Sugar()
 }
