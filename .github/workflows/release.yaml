@@ -36,7 +36,7 @@ jobs:
         if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
-        run: brew install mitchellh/gon/gon
+        run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
         if: ${{ startsWith(matrix.platform, 'darwin') }}
 
       - name: Import code signing certificate from Github Secrets
