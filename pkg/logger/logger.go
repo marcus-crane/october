@@ -25,6 +25,9 @@ func newWinFileSink(u *url.URL) (zap.Sink, error) {
 
 func Init() {
 	logPath, err := xdg.DataFile(logFile)
+	if err != nil {
+		panic(err)
+	}
 	config := zap.NewDevelopmentConfig()
 	if runtime.GOOS == "windows" {
 		err := zap.RegisterSink("winfile", newWinFileSink)
@@ -38,6 +41,11 @@ func Init() {
 	if err != nil {
 		panic("failed to initialise logger")
 	}
-	defer logger.Sync()
+	defer func(logger *zap.Logger) {
+		err := logger.Sync()
+		if err != nil {
+			panic(err)
+		}
+	}(logger)
 	Log = logger.Sugar()
 }

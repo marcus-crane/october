@@ -27,7 +27,11 @@ func TestMain(m *testing.M) {
 // We receive a tempdir from the test runner itself, which will handle cleanup for us.
 func setupTmpKobo(dir string, deviceId string) string {
 	content := []byte(deviceId)
-	os.Mkdir(filepath.Join(dir, ".kobo"), 0777)
+	err := os.Mkdir(filepath.Join(dir, ".kobo"), 0777)
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
 	tmpfn := filepath.Join(dir, ".kobo", "version")
 	if err := ioutil.WriteFile(tmpfn, content, 0666); err != nil {
 		log.Fatal(err)

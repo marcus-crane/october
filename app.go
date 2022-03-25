@@ -6,10 +6,8 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/marcus-crane/october/pkg/logger"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
-
 	"github.com/marcus-crane/october/pkg/settings"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -20,7 +18,6 @@ var (
 type App struct {
 	ctx      context.Context
 	settings *settings.Settings
-	logger   *zap.SugaredLogger
 
 	KoboService *KoboService
 }

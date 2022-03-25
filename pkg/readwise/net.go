@@ -3,6 +3,7 @@ package readwise
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -73,11 +74,16 @@ func RetrieveUploadedBooks(token string) (BookListResponse, error) {
 		Header: headers,
 	}
 	res, err := client.Do(&request)
-	defer res.Body.Close()
 	if err != nil {
 		logger.Log.Error(err)
 		return bookList, err
 	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(res.Body)
 	b, err := httputil.DumpResponse(res, true)
 	if err != nil {
 		logger.Log.Error(err)

@@ -23,8 +23,5 @@ func (s *Settings) SetReadwiseToken(token string) error {
 }
 
 func (s *Settings) ReadwiseTokenExists() bool {
-	if s.ReadwiseToken == "" {
-		return false
-	}
-	return true
+	return s.ReadwiseToken != ""
 }
