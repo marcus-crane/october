@@ -8,6 +8,7 @@ export interface go {
 		DetectKobos():Promise<Array<Kobo>>
 		FindBookOnDevice(arg1:string):Promise<Content|Error>
 		ForwardToReadwise():Promise<number|Error>
+		GetCoverUploadStatus():Promise<boolean>
 		GetReadwiseToken():Promise<string>
 		GetSelectedKobo():Promise<Kobo>
 		ListDeviceBookmarks():Promise<Array<Bookmark>|Error>
@@ -15,6 +16,7 @@ export interface go {
 		PromptForLocalDBPath():Promise<Error>
 		SelectKobo(arg1:string):Promise<Error>
 		SetContext(arg1:Context):Promise<void>
+		SetCoverUploadStatus(arg1:boolean):Promise<Error>
 		SetReadwiseToken(arg1:string):Promise<Error>
     },
   }

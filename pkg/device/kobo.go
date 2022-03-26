@@ -9,17 +9,17 @@ import (
 
 func GetKoboMetadata(detectedPaths []string) []Kobo {
 	var kobos []Kobo
-	logger.Log.Debugw("Found the location of %d possible Kobos", len(detectedPaths))
+	logger.Log.Debugf("Found the location of %d possible Kobos", len(detectedPaths))
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
 			logger.Log.Errorw("Failed to parse Kobo version", "error", err)
 		}
-		logger.Log.Debugw("Found Kobo with Device ID of %s", deviceId)
+		logger.Log.Debugf("Found Kobo with Device ID of %s", deviceId)
 		device, found := kobo.DeviceByID(deviceId)
 		if !found {
 			// We can handle unsupported Kobos in future but at present, there are none
-			logger.Log.Debugw("Unrecognised Kobo with device ID of %s", deviceId)
+			logger.Log.Debugf("Unrecognised Kobo with device ID of %s", deviceId)
 			continue
 		}
 		logger.Log.Infof(fmt.Sprintf("Detected a %s", device.Name()))

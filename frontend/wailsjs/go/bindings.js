@@ -56,6 +56,13 @@ const go = {
         return window.go.main.KoboService.ForwardToReadwise();
       },
       /**
+       * GetCoverUploadStatus
+       * @returns {Promise<boolean>}  - Go Type: bool
+       */
+      "GetCoverUploadStatus": () => {
+        return window.go.main.KoboService.GetCoverUploadStatus();
+      },
+      /**
        * GetReadwiseToken
        * @returns {Promise<string>}  - Go Type: string
        */
@@ -105,6 +112,14 @@ const go = {
        */
       "SetContext": (arg1) => {
         return window.go.main.KoboService.SetContext(arg1);
+      },
+      /**
+       * SetCoverUploadStatus
+       * @param {boolean} arg1 - Go Type: bool
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "SetCoverUploadStatus": (arg1) => {
+        return window.go.main.KoboService.SetCoverUploadStatus(arg1);
       },
       /**
        * SetReadwiseToken

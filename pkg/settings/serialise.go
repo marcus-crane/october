@@ -15,11 +15,13 @@ type Settings struct {
 
 	path          string `json:"-"`
 	ReadwiseToken string `json:"readwise_token"`
+	UploadCovers  bool   `json:"upload_covers"`
 }
 
 func LoadSettings(path string) (*Settings, error) {
 	s := &Settings{
-		path: path,
+		path:         path,
+		UploadCovers: false,
 	}
 	b, err := ioutil.ReadFile(path)
 	if err != nil {

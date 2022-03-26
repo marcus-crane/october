@@ -165,6 +165,13 @@ func (k *KoboService) SetReadwiseToken(token string) error {
 	return k.Settings.SetReadwiseToken(token)
 }
 
+func (k *KoboService) GetCoverUploadStatus() bool {
+	return k.Settings.UploadCovers
+}
+func (k *KoboService) SetCoverUploadStatus(enabled bool) error {
+	return k.Settings.SetCoverUploadStatus(enabled)
+}
+
 func (k *KoboService) CheckReadwiseConfig() bool {
 	return k.Settings.ReadwiseTokenExists()
 }
@@ -191,37 +198,39 @@ func (k *KoboService) ForwardToReadwise() (int, error) {
 	if err != nil {
 		return numUploads, fmt.Errorf(fmt.Sprintf("Successfully uploaded %d bookmarks but failed to upload covers", numUploads))
 	}
-	for _, book := range uploadedBooks.Results {
-		// We don't want to overwrite user uploaded covers or covers already present
-		if !strings.Contains(book.CoverURL, "uploaded_book_covers") {
-			bookDetail, err := k.FindBookOnDevice(book.SourceURL)
-			logger.Log.Info(bookDetail)
-			if err != nil {
-				logger.Log.Error(fmt.Sprintf("Failed to retrieve %s", book.SourceURL))
-				continue
+	if k.Settings.UploadCovers {
+		for _, book := range uploadedBooks.Results {
+			// We don't want to overwrite user uploaded covers or covers already present
+			if !strings.Contains(book.CoverURL, "uploaded_book_covers") {
+				bookDetail, err := k.FindBookOnDevice(book.SourceURL)
+				logger.Log.Info(bookDetail)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to retrieve %s", book.SourceURL))
+					continue
+				}
+				coverID := kobo.ContentIDToImageID(book.SourceURL)
+				coverPath := kobo.CoverTypeLibFull.GeneratePath(false, coverID)
+				absCoverPath := path.Join(k.SelectedKobo.MntPath, "/", coverPath)
+				coverBytes, err := ioutil.ReadFile(absCoverPath)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to load cover for %s. Location %s", book.SourceURL, absCoverPath))
+				}
+				var base64Encoding string
+				mimeType := http.DetectContentType(coverBytes)
+				logger.Log.Info(mimeType)
+				switch mimeType {
+				case "image/jpeg":
+					base64Encoding += "data:image/jpeg;base64,"
+				case "image/png":
+					base64Encoding += "data:image/png;base64,"
+				}
+				base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
+				err = readwise.UploadCover(base64Encoding, book.ID, k.Settings.ReadwiseToken)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to upload cover for %s", book.SourceURL))
+				}
+				logger.Log.Debug(fmt.Sprintf("Successfully uploaded cover for %s", book.SourceURL))
 			}
-			coverID := kobo.ContentIDToImageID(book.SourceURL)
-			coverPath := kobo.CoverTypeLibFull.GeneratePath(false, coverID)
-			absCoverPath := path.Join(k.SelectedKobo.MntPath, "/", coverPath)
-			coverBytes, err := ioutil.ReadFile(absCoverPath)
-			if err != nil {
-				logger.Log.Error(fmt.Sprintf("Failed to load cover for %s. Location %s", book.SourceURL, absCoverPath))
-			}
-			var base64Encoding string
-			mimeType := http.DetectContentType(coverBytes)
-			logger.Log.Info(mimeType)
-			switch mimeType {
-			case "image/jpeg":
-				base64Encoding += "data:image/jpeg;base64,"
-			case "image/png":
-				base64Encoding += "data:image/png;base64,"
-			}
-			base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
-			err = readwise.UploadCover(base64Encoding, book.ID, k.Settings.ReadwiseToken)
-			if err != nil {
-				logger.Log.Error(fmt.Sprintf("Failed to upload cover for %s", book.SourceURL))
-			}
-			logger.Log.Debug(fmt.Sprintf("Successfully uploaded cover for %s", book.SourceURL))
 		}
 	}
 	return numUploads, nil

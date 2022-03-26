@@ -4,17 +4,30 @@ import { toast } from "react-toastify";
 
 export default function Settings() {
   const [token, setToken] = useState("")
+  const [coversUploading, setCoversUploading] = useState(false)
   const [tokenInput, setTokenInput] = useState("")
 
   useEffect(() => {
     getReadwiseToken()
   }, [token])
 
+  useEffect(() => {
+    getCoverUploadStatus()
+  }, [coversUploading])
+
   function getReadwiseToken() {
     window.go.main.KoboService.GetReadwiseToken()
       .then(token => {
         setToken(token)
         setTokenInput(token)
+      })
+      .catch(err => toast.error(err))
+  }
+
+  function getCoverUploadStatus() {
+    window.go.main.KoboService.GetCoverUploadStatus()
+      .then(status => {
+        setCoversUploading(status)
       })
       .catch(err => toast.error(err))
   }
@@ -26,7 +39,22 @@ export default function Settings() {
         console.log(saveIssue)
         if (saveIssue === null) {
           setToken(token)
-          toast.success("Changes saved successfully")
+          toast.success("Readwise token saved successfully")
+        } else {
+          throw saveIssue
+        }
+      })
+      .catch(err => toast.error(err))
+  }
+
+  function saveCoverUploadStatus() {
+    console.log("calling save cover upload status")
+    window.go.main.KoboService.SetCoverUploadStatus(coversUploading)
+      .then(saveIssue => {
+        console.log(saveIssue)
+        if (saveIssue === null) {
+          setCoversUploading(coversUploading)
+          toast.success("Cover upload status saved successfully")
         } else {
           throw saveIssue
         }
@@ -100,6 +128,34 @@ export default function Settings() {
                   Validate Readwise token
                 </button>
               </form>
+            </div>
+          </div>
+          <div className="shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+              <fieldset>
+                <legend className="text-base font-medium text-gray-900">Kobo metadata upload</legend>
+                <div className="mt-4 space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        // TODO: This probably causes the render method to seize up
+                        onChange={e => saveCoverUploadStatus(e.currentTarget.checked)}
+                        checked={coversUploading}
+                        id="comments"
+                        name="comments"
+                        type="checkbox"
+                        className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">
+                      <label htmlFor="comments" className="font-medium text-gray-700">
+                        Upload covers
+                      </label>
+                      <p className="text-gray-500">This will slow down the upload process a bit. It also requires you to have configured Calibre correctly!</p>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
             </div>
           </div>
         </div>
