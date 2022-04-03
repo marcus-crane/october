@@ -2,285 +2,82 @@ package main
 
 import (
 	"context"
-	"errors"
+	"encoding/base64"
 	"fmt"
-	"net/url"
+	"io/ioutil"
+	"net/http"
 	"path"
 	"strings"
-	"time"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-	"go.uber.org/zap"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-)
 
-var (
-	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
+	"github.com/marcus-crane/october/pkg/db"
+	"github.com/marcus-crane/october/pkg/device"
+	"github.com/marcus-crane/october/pkg/logger"
+	"github.com/marcus-crane/october/pkg/readwise"
+	"github.com/marcus-crane/october/pkg/settings"
 )
 
 type KoboService struct {
-	SelectedKobo Kobo
-	ConnectedDB  *gorm.DB
-	Settings     *Settings
-	Logger       *zap.SugaredLogger
+	SelectedKobo   device.Kobo
+	ConnectedKobos map[string]device.Kobo
+	runtimeContext context.Context
+	Settings       *settings.Settings
 }
 
-type ReadwiseResponse struct {
-	Highlights []Highlight `json:"highlights"`
-}
-
-type Highlight struct {
-	Text          string `json:"text"`
-	Title         string `json:"title,omitempty"`
-	Author        string `json:"author,omitempty"`
-	SourceType    string `json:"source_type"`
-	Category      string `json:"category"`
-	Note          string `json:"note,omitempty"`
-	HighlightedAt string `json:"highlighted_at,omitempty"`
-}
-
-type Kobo struct {
-	Name       string `json:"name"`
-	Storage    int    `json:"storage"`
-	DisplayPPI int    `json:"display_ppi"`
-	MntPath    string `json:"mnt_path"`
-	DbPath     string `json:"db_path"`
-}
-
-type Content struct {
-	ContentID               string `gorm:"column:ContentID"`
-	ContentType             string `gorm:"column:ContentType"`
-	MimeType                string `gorm:"column:MimeType"`
-	BookID                  string
-	BookTitle               string `gorm:"column:BookTitle"`
-	ImageId                 string
-	Title                   string `gorm:"column:Title"`
-	Attribution             string `gorm:"column:Attribution"`
-	Description             string `gorm:"column:Description"`
-	DateCreated             string `gorm:"column:DateCreated"`
-	ShortCoverKey           string
-	AdobeLocation           string `gorm:"column:adobe_location"`
-	Publisher               string
-	IsEncrypted             bool
-	DateLastRead            string
-	FirstTimeReading        bool
-	ChapterIDBookmarked     string
-	ParagraphBookmarked     int
-	BookmarkWordOffset      int
-	NumShortcovers          int
-	VolumeIndex             int `gorm:"column:VolumeIndex"`
-	NumPages                int `gorm:"column:___NumPages"`
-	ReadStatus              int
-	SyncTime                string `gorm:"column:___SyncTime"`
-	UserID                  string `gorm:"column:___UserID"`
-	PublicationId           string
-	FileOffset              int    `gorm:"column:___FileOffset"`
-	FileSize                int    `gorm:"column:___FileSize"`
-	PercentRead             string `gorm:"column:___PercentRead"`
-	ExpirationStatus        int    `gorm:"column:___ExpirationStatus"`
-	FavouritesIndex         int
-	Accessibility           int
-	ContentURL              string
-	Language                string
-	BookshelfTags           string
-	IsDownloaded            bool
-	FeedbackType            int
-	AverageRating           float64
-	Depth                   int
-	PageProgressDirection   string
-	InWishlist              string
-	ISBN                    int64
-	WishlistedDate          string
-	FeedbackTypeSynced      bool
-	IsSocialEnabled         bool
-	EpubType                string
-	Monetization            string
-	ExternalId              string
-	Series                  string
-	SeriesNumber            string
-	Subtitle                string
-	WordCount               string
-	Fallback                string
-	RestOfBookEstimate      string
-	CurrentChapterEstimate  string
-	CurrentChapterProgress  float32
-	PocketStatus            string
-	UnsyncedPocketChanges   string
-	ImageUrl                string
-	DateAdded               string
-	WorkId                  string
-	Properties              string
-	RenditionSpread         string
-	RatingCount             string
-	ReviewsSyncDate         string
-	MediaOverlay            string
-	RedirectPreviewUrl      bool
-	PreviewFileSize         int
-	EntitlementId           string
-	CrossRevisionId         string
-	DownloadUrl             bool
-	ReadStateSynced         bool
-	TimesStartedReading     int
-	TimeSpentReading        int
-	LastTimeStartedReading  string
-	LastTimeFinishedReading string
-	ApplicableSubscriptions string
-	ExternalIds             string
-	PurchaseRevisionId      string
-	SeriesID                string
-	SeriesNumberFloat       float64
-	AdobeLoanExpiration     string
-	HideFromHomePage        bool
-	IsInternetArchive       bool
-	TitleKana               string `gorm:"column:titleKana"`
-	SubtitleKana            string `gorm:"column:subtitleKana"`
-	SeriesKana              string `gorm:"column:seriesKana"`
-	AttributionKana         string `gorm:"column:attributionKana"`
-	PublisherKana           string `gorm:"column:publisherKana"`
-	IsPurchaseable          bool
-	IsSupported             bool
-	AnnotationsSyncToken    string
-	DateModified            string
-}
-
-type Bookmark struct {
-	BookmarkID               string
-	VolumeID                 string
-	ContentID                string
-	StartContainerPath       string
-	StartContainerChild      string
-	StartContainerChildIndex string
-	StartOffset              string
-	EndContainerPath         string
-	EndContainerChildIndex   string
-	EndOffset                string
-	Text                     string
-	Annotation               string
-	ExtraAnnotationData      string
-	DateCreated              string
-	ChapterProgress          float64
-	Hidden                   string
-	Version                  string
-	DateModified             string
-	Creator                  string
-	UUID                     string
-	UserID                   string
-	SyncTime                 string
-	Published                string
-	ContextString            string
-	Type                     string
-}
-
-func (Content) TableName() string {
-	return "Content"
-}
-
-func (Bookmark) TableName() string {
-	return "Bookmark"
-}
-
-func NewKoboService(settings *Settings, logger *zap.SugaredLogger) *KoboService {
+func NewKoboService(settings *settings.Settings) *KoboService {
 	return &KoboService{
-		Settings: settings,
-		Logger:   logger,
+		Settings:       settings,
+		ConnectedKobos: map[string]device.Kobo{},
 	}
 }
 
-func (k *KoboService) DetectKobos() []Kobo {
-	var kobos []Kobo
+func (k *KoboService) SetContext(ctx context.Context) {
+	k.runtimeContext = ctx
+}
+
+func (k *KoboService) DetectKobos() []device.Kobo {
 	connectedKobos, err := kobo.Find()
 	if err != nil {
-		k.Logger.Errorw("Failed to check for Kobos", "error", err)
+		logger.Log.Errorw("Failed to check for Kobos", "error", err)
 		panic(err)
 	}
-	k.Logger.Debugw("Found %d Kobos", len(connectedKobos))
-	for _, koboPath := range connectedKobos {
-		_, _, deviceId, err := kobo.ParseKoboVersion(koboPath)
-		k.Logger.Debugw("Found Kobo with Device ID of %s", deviceId)
-		if err != nil {
-			k.Logger.Errorw("Failed to parse Kobo version", "error", err)
-			panic(err)
-		}
-		device, found := kobo.DeviceByID(deviceId)
-		if !found {
-			fallbackKobo, err := GetKoboFallbackMetadata(deviceId, koboPath)
-			if err != nil {
-				continue
-			}
-			k.Logger.Infow(fmt.Sprintf("Found a %s through fallback method", fallbackKobo.Name))
-			kobos = append(kobos, fallbackKobo)
-			continue
-		}
-		k.Logger.Infof(fmt.Sprintf("Detected a %s", device.Name()))
-		kobos = append(kobos, Kobo{
-			Name:       device.Name(),
-			Storage:    device.StorageGB(),
-			DisplayPPI: device.DisplayPPI(),
-			MntPath:    koboPath,
-			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", koboPath),
-		})
+	kobos := device.GetKoboMetadata(connectedKobos)
+	for _, kb := range kobos {
+		logger.Log.Infow("Found Kobo", "device", kb)
+		k.ConnectedKobos[kb.MntPath] = kb
 	}
 	return kobos
 }
 
-func (k *KoboService) SelectKobo(devicePath string) bool {
-	_, _, deviceId, err := kobo.ParseKoboVersion(devicePath)
-	if err != nil {
-		panic(err)
-	}
-	device, found := kobo.DeviceByID(deviceId)
-	foundKobo := Kobo{}
-	if !found {
-		fallbackKobo, err := GetKoboFallbackMetadata(deviceId, devicePath)
-		if err != nil {
-			panic("unknown device? unplugged?")
-		}
-		foundKobo = fallbackKobo
+func (k *KoboService) SelectKobo(devicePath string) error {
+	if val, ok := k.ConnectedKobos[devicePath]; ok {
+		k.SelectedKobo = val
 	} else {
-		foundKobo = Kobo{
-			Name:       device.Name(),
-			Storage:    device.StorageGB(),
-			DisplayPPI: device.DisplayPPI(),
+		logger.Log.Info("Trying to access local db")
+		k.SelectedKobo = device.Kobo{
+			Name:       "Local Database",
+			Storage:    0,
+			DisplayPPI: 0,
 			MntPath:    devicePath,
-			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath),
+			DbPath:     devicePath,
 		}
 	}
-	k.SelectedKobo = foundKobo
-	k.Logger.Infow(fmt.Sprintf("User has selected %s", k.SelectedKobo.Name), "kobo", k.SelectedKobo)
-
-	err = k.OpenDBConnection(k.SelectedKobo.DbPath)
-	if err != nil {
-		k.Logger.Errorw(fmt.Sprintf("Failed to open a connection to %s", k.SelectedKobo.DbPath), "kobo", k.SelectedKobo)
-		return false
+	if err := db.OpenConnection(k.SelectedKobo.DbPath); err != nil {
+		logger.Log.Errorw("Failed to open DB connection", "error", err)
+		return err
 	}
-	k.Logger.Infow(fmt.Sprintf("Successfully opened connection to %s", k.SelectedKobo.DbPath))
-	return true
-}
-
-func (k *KoboService) GetSelectedKobo() Kobo {
-	return k.SelectedKobo
-}
-
-func (k *KoboService) OpenDBConnection(filepath string) error {
-	if filepath == "" {
-		filepath = k.SelectedKobo.DbPath
-	}
-	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
-	if err != nil {
-		k.Logger.Errorw(fmt.Sprintf("Failed to open DB connection to %s", filepath), "error", err)
-		panic(err)
-	}
-	k.ConnectedDB = db
 	return nil
 }
 
+func (k *KoboService) GetSelectedKobo() device.Kobo {
+	return k.SelectedKobo
+}
+
 func (k *KoboService) PromptForLocalDBPath() error {
-	var ctx context.Context // noop, this doesn't actually work
-	k.Logger.Debugw("Asking user to provide path to local sqlite3 DB")
-	selectedFile, err := runtime.OpenFileDialog(ctx, runtime.OpenDialogOptions{
+	logger.Log.Debugw("Asking user to provide path to local sqlite3 DB")
+	selectedFile, err := runtime.OpenFileDialog(k.runtimeContext, runtime.OpenDialogOptions{
 		Title: "Select local Kobo database",
 		Filters: []runtime.FileFilter{
 			{
@@ -290,186 +87,151 @@ func (k *KoboService) PromptForLocalDBPath() error {
 		},
 	})
 	if err != nil {
+		logger.Log.Errorw("Failed to load local Kobo database", "error", err)
 		return err
 	}
-	return k.OpenDBConnection(selectedFile)
+	logger.Log.Info(fmt.Sprintf("Saw db path: %s", selectedFile))
+	return k.SelectKobo(selectedFile)
 }
 
-func (k *KoboService) ListDeviceContent() ([]Content, error) {
-	var content []Content
-	k.Logger.Debugw("Retrieving content from device")
-	result := k.ConnectedDB.Where(
-		&Content{ContentType: "6", MimeType: "application/x-kobo-epub+zip", VolumeIndex: -1},
-	).Order("___PercentRead desc, title asc").Find(&content)
+func (k *KoboService) FindBookOnDevice(bookID string) (device.Content, error) {
+	var content device.Content
+	logger.Log.Debugw("Retrieving books that have been uploaded to Readwise previously")
+	result := db.Conn.Where(&device.Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Find(&content)
 	if result.Error != nil {
-		k.Logger.Errorw("Failed to retrieve content from device", "error", result.Error)
-		return nil, result.Error
+		logger.Log.Errorw("Failed to retrieve content from device", "error", result.Error)
+		return content, result.Error
 	}
-	k.Logger.Debugw(fmt.Sprintf("Successfully retrieved %d pieces of content from device DB", len(content)))
+	logger.Log.Debugw(fmt.Sprintf("Successfully retrieved %s from device DB", content.Title))
 	return content, nil
 }
 
-func (k *KoboService) ListDeviceBookmarks() ([]Bookmark, error) {
-	var bookmarks []Bookmark
-	k.Logger.Debugw("Retrieving bookmarks from device")
-	result := k.ConnectedDB.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
+func (k *KoboService) ListDeviceContent() ([]device.Content, error) {
+	var content []device.Content
+	logger.Log.Debugw("Retrieving content from device")
+	result := db.Conn.Where(
+		&device.Content{ContentType: "6", VolumeIndex: -1},
+	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
-		k.Logger.Errorw("Failed to retrieve bookmarks from device", "error", result.Error)
+		logger.Log.Errorw("Failed to retrieve content from device", "error", result.Error)
 		return nil, result.Error
 	}
-	k.Logger.Debugw(fmt.Sprintf("Successfully retrieved %d pieces of content from device DB", len(bookmarks)))
+	logger.Log.Debugw(fmt.Sprintf("Successfully retrieved %d pieces of content from device DB", len(content)))
+	return content, nil
+}
+
+func (k *KoboService) ListDeviceBookmarks() ([]device.Bookmark, error) {
+	var bookmarks []device.Bookmark
+	logger.Log.Debugw("Retrieving bookmarks from device")
+	result := db.Conn.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
+	if result.Error != nil {
+		logger.Log.Errorw("Failed to retrieve bookmarks from device", "error", result.Error)
+		return nil, result.Error
+	}
+	logger.Log.Debugw(fmt.Sprintf("Successfully retrieved %d pieces of content from device DB", len(bookmarks)))
 	return bookmarks, nil
 }
 
-func (k *KoboService) BuildContentIndex(content []Content) map[string]Content {
-	k.Logger.Debugw("Building an index out of device content")
-	contentIndex := make(map[string]Content)
+func (k *KoboService) BuildContentIndex(content []device.Content) map[string]device.Content {
+	logger.Log.Debugw("Building an index out of device content")
+	contentIndex := make(map[string]device.Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
-	k.Logger.Debugw(fmt.Sprintf("Built an index out with %d items", len(contentIndex)))
+	logger.Log.Debugw(fmt.Sprintf("Built an index out of %d items", len(contentIndex)))
 	return contentIndex
 }
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
 	var count int64
-	result := k.ConnectedDB.Model(&Bookmark{}).Count(&count)
+	result := db.Conn.Model(&device.Bookmark{}).Count(&count)
 	if result.Error != nil {
-		k.Logger.Errorw("Failed to count bookmarks on device", "error", result.Error)
+		logger.Log.Errorw("Failed to count bookmarks on device", "error", result.Error)
 	}
 	return count
 }
 
-func (k *KoboService) BuildReadwisePayload() ([]Highlight, error) {
-	content, err := k.ListDeviceContent()
-	if err != nil {
-		return nil, err
+func (k *KoboService) CheckTokenValidity() error {
+	if !k.CheckReadwiseConfig() {
+		return fmt.Errorf("readwise token is empty")
 	}
-	contentIndex := k.BuildContentIndex(content)
-	bookmarks, err := k.ListDeviceBookmarks()
-	if err != nil {
-		return nil, err
-	}
-	var highlights []Highlight
-	k.Logger.Infow(fmt.Sprintf("Starting to build Readwise payload out of %d bookmarks", len(bookmarks)))
-	for _, entry := range bookmarks {
-		source := contentIndex[entry.VolumeID]
-		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
-		if err != nil {
-			k.Logger.Errorw(fmt.Sprintf("Failed to parse timestamp %s from bookmark", entry.DateCreated), "bookmark", entry)
-			return nil, err
-		}
-		createdAt := t.Format("2006-01-02T15:04:05-07:00")
-		text := k.NormaliseText(entry.Text)
-		if entry.Annotation != "" && text == "" {
-			text = "Placeholder for attached annotation"
-		}
-		if entry.Annotation == "" && text == "" {
-			k.Logger.Infow("Found an entry with no annotation of text so skipping to next item", "source", source, "bookmark", entry)
-			fmt.Printf("Ignoring entry from %s", source.Title)
-			continue
-		}
-		if source.Title == "" {
-			sourceFile, err := url.Parse(entry.VolumeID)
-			if err != nil {
-				k.Logger.Errorw("No title. Fallback of using filename failed. Not required so will send with no title.", "source", source, "bookmark", entry)
-				continue
-			}
-			filename := path.Base(sourceFile.Path)
-			k.Logger.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
-			source.Title = strings.TrimSuffix(filename, ".epub")
-		}
-		highlight := Highlight{
-			Text:          text,
-			Title:         source.Title,
-			Author:        source.Attribution,
-			SourceType:    "OctoberForKobo",
-			Category:      "books",
-			Note:          entry.Annotation,
-			HighlightedAt: createdAt,
-		}
-		k.Logger.Debugw("Succesfully built highlight", "highlight", highlight)
-		highlights = append(highlights, highlight)
-	}
-	k.Logger.Infow(fmt.Sprintf("Successfully parsed %d highlights", len(highlights)))
-	return highlights, nil
+	return readwise.CheckTokenValidity(k.Settings.ReadwiseToken)
 }
 
 func (k *KoboService) GetReadwiseToken() string {
 	return k.Settings.ReadwiseToken
 }
 func (k *KoboService) SetReadwiseToken(token string) error {
-	k.Settings.ReadwiseToken = token
-	if err := k.Settings.save(); err != nil {
-		k.Logger.Errorw("Failed to save Readwise token", "error", err)
-		return err
-	}
-	k.Logger.Infow("Saved Readwise token to storage")
-	return nil
+	return k.Settings.SetReadwiseToken(token)
 }
 
-func (k *KoboService) NormaliseText(s string) string {
-	s = strings.TrimSpace(s)
-	s = strings.ReplaceAll(s, "\n", " ")
-	return s
+func (k *KoboService) GetCoverUploadStatus() bool {
+	return k.Settings.UploadCovers
 }
-
-func (k *KoboService) SendBookmarksToReadwise() (int, error) {
-	bookmarks, err := k.BuildReadwisePayload()
-	if err != nil {
-		return 0, err
-	}
-	payload := ReadwiseResponse{
-		Highlights: bookmarks,
-	}
-	if err != nil {
-		k.Logger.Infow("Failed to save Readwise payload to disc for debugging but we can carry on")
-	}
-	client := resty.New()
-	resp, err := client.R().
-		SetHeader("Authorization", fmt.Sprintf("Token %s", k.Settings.ReadwiseToken)).
-		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
-		SetBody(payload).
-		Post(highlightsEndpoint)
-	if resp.StatusCode() != 200 {
-		k.Logger.Errorw("Received a non-200 response from Readwise", "status", resp.StatusCode(), "response", string(resp.Body()))
-		return 0, errors.New(fmt.Sprintf("Received a non-200 status code from Readwise: code %d", resp.StatusCode()))
-	}
-	k.Logger.Infow(fmt.Sprintf("Successfully sent %d bookmarks to Readwise", len(bookmarks)))
-	return len(bookmarks), nil
-}
-
-func getKoboFallbackSkus() map[string]Kobo {
-	return map[string]Kobo{
-		"00000000-0000-0000-0000-000000000383": {Name: "Kobo Sage", Storage: 32, DisplayPPI: 300},
-		"00000000-0000-0000-0000-000000000387": {Name: "Kobo Elipsa", Storage: 32, DisplayPPI: 227},
-		"00000000-0000-0000-0000-000000000388": {Name: "Kobo Libra 2", Storage: 32, DisplayPPI: 300},
-	}
-}
-
-func deviceIdInSkuList(deviceId string) bool {
-	for k, _ := range getKoboFallbackSkus() {
-		if k == deviceId {
-			return true
-		}
-	}
-	return false
+func (k *KoboService) SetCoverUploadStatus(enabled bool) error {
+	return k.Settings.SetCoverUploadStatus(enabled)
 }
 
 func (k *KoboService) CheckReadwiseConfig() bool {
-	if k.Settings.ReadwiseToken == "" {
-		return false
-	}
-	return true
+	return k.Settings.ReadwiseTokenExists()
 }
 
-func GetKoboFallbackMetadata(deviceId string, devicePath string) (Kobo, error) {
-	fallbackSkus := getKoboFallbackSkus()
-	if !deviceIdInSkuList(deviceId) {
-		return Kobo{}, errors.New("no kobo found with that device id")
+func (k *KoboService) ForwardToReadwise() (int, error) {
+	content, err := k.ListDeviceContent()
+	if err != nil {
+		return 0, err
 	}
-	deviceInfo := fallbackSkus[deviceId]
-	deviceInfo.MntPath = devicePath
-	deviceInfo.DbPath = fmt.Sprintf("%s/.kobo/KoboReader.sqlite", devicePath)
-	return deviceInfo, nil
+	contentIndex := k.BuildContentIndex(content)
+	bookmarks, err := k.ListDeviceBookmarks()
+	if err != nil {
+		return 0, err
+	}
+	payload, err := readwise.BuildPayload(bookmarks, contentIndex)
+	if err != nil {
+		return 0, err
+	}
+	numUploads, err := readwise.SendBookmarks(payload, k.Settings.ReadwiseToken)
+	if err != nil {
+		return 0, err
+	}
+	uploadedBooks, err := readwise.RetrieveUploadedBooks(k.Settings.ReadwiseToken)
+	if err != nil {
+		return numUploads, fmt.Errorf(fmt.Sprintf("Successfully uploaded %d bookmarks but failed to upload covers", numUploads))
+	}
+	if k.Settings.UploadCovers {
+		for _, book := range uploadedBooks.Results {
+			// We don't want to overwrite user uploaded covers or covers already present
+			if !strings.Contains(book.CoverURL, "uploaded_book_covers") {
+				bookDetail, err := k.FindBookOnDevice(book.SourceURL)
+				logger.Log.Info(bookDetail)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to retrieve %s", book.SourceURL))
+					continue
+				}
+				coverID := kobo.ContentIDToImageID(book.SourceURL)
+				coverPath := kobo.CoverTypeLibFull.GeneratePath(false, coverID)
+				absCoverPath := path.Join(k.SelectedKobo.MntPath, "/", coverPath)
+				coverBytes, err := ioutil.ReadFile(absCoverPath)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to load cover for %s. Location %s", book.SourceURL, absCoverPath))
+				}
+				var base64Encoding string
+				mimeType := http.DetectContentType(coverBytes)
+				logger.Log.Info(mimeType)
+				switch mimeType {
+				case "image/jpeg":
+					base64Encoding += "data:image/jpeg;base64,"
+				case "image/png":
+					base64Encoding += "data:image/png;base64,"
+				}
+				base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
+				err = readwise.UploadCover(base64Encoding, book.ID, k.Settings.ReadwiseToken)
+				if err != nil {
+					logger.Log.Error(fmt.Sprintf("Failed to upload cover for %s", book.SourceURL))
+				}
+				logger.Log.Debug(fmt.Sprintf("Successfully uploaded cover for %s", book.SourceURL))
+			}
+		}
+	}
+	return numUploads, nil
 }

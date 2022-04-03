@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"log"
 
 	"github.com/wailsapp/wails/v2"
@@ -16,6 +17,8 @@ var assets embed.FS
 
 //go:embed build/appicon.png
 var icon []byte
+
+var version = "DEV"
 
 func main() {
 	// Create an instance of the app structure
@@ -55,7 +58,7 @@ func main() {
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
 				Title:   "October",
-				Message: "v1.0.0\nA small Wails application for retrieving Kobo highlights",
+				Message: fmt.Sprintf("%s\nA small Wails application for retrieving Kobo highlights", version),
 				Icon:    icon,
 			},
 		},

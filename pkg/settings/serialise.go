@@ -1,24 +1,24 @@
-package main
+package settings
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sync"
+
+	"github.com/pkg/errors"
 )
 
 type Settings struct {
-	sync.Mutex
-
 	path          string `json:"-"`
 	ReadwiseToken string `json:"readwise_token"`
+	UploadCovers  bool   `json:"upload_covers"`
 }
 
-func loadSettings(path string) (*Settings, error) {
+func LoadSettings(path string) (*Settings, error) {
 	s := &Settings{
-		path: path,
+		path:         path,
+		UploadCovers: false,
 	}
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -35,9 +35,7 @@ func loadSettings(path string) (*Settings, error) {
 	return s, nil
 }
 
-func (s *Settings) save() error {
-	s.Lock()
-	defer s.Unlock()
+func (s *Settings) Save() error {
 	b, err := json.MarshalIndent(s, "", "\t")
 	if err != nil {
 		return errors.Wrap(err, "MarshalIndent")

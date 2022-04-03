@@ -6,18 +6,11 @@ const go = {
     "KoboService": {
       /**
        * BuildContentIndex
-       * @param {Array<Content>} arg1 - Go Type: []main.Content
-       * @returns {Promise<Content>}  - Go Type: map[string]main.Content
+       * @param {Array<models.Content>} arg1 - Go Type: []device.Content
+       * @returns {Promise<models.Content>}  - Go Type: map[string]device.Content
        */
       "BuildContentIndex": (arg1) => {
         return window.go.main.KoboService.BuildContentIndex(arg1);
-      },
-      /**
-       * BuildReadwisePayload
-       * @returns {Promise<Array<Highlight>|Error>}  - Go Type: []main.Highlight
-       */
-      "BuildReadwisePayload": () => {
-        return window.go.main.KoboService.BuildReadwisePayload();
       },
       /**
        * CheckReadwiseConfig
@@ -25,6 +18,13 @@ const go = {
        */
       "CheckReadwiseConfig": () => {
         return window.go.main.KoboService.CheckReadwiseConfig();
+      },
+      /**
+       * CheckTokenValidity
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "CheckTokenValidity": () => {
+        return window.go.main.KoboService.CheckTokenValidity();
       },
       /**
        * CountDeviceBookmarks
@@ -35,10 +35,32 @@ const go = {
       },
       /**
        * DetectKobos
-       * @returns {Promise<Array<Kobo>>}  - Go Type: []main.Kobo
+       * @returns {Promise<Array<models.Kobo>>}  - Go Type: []device.Kobo
        */
       "DetectKobos": () => {
         return window.go.main.KoboService.DetectKobos();
+      },
+      /**
+       * FindBookOnDevice
+       * @param {string} arg1 - Go Type: string
+       * @returns {Promise<models.Content|Error>}  - Go Type: device.Content
+       */
+      "FindBookOnDevice": (arg1) => {
+        return window.go.main.KoboService.FindBookOnDevice(arg1);
+      },
+      /**
+       * ForwardToReadwise
+       * @returns {Promise<number|Error>}  - Go Type: int
+       */
+      "ForwardToReadwise": () => {
+        return window.go.main.KoboService.ForwardToReadwise();
+      },
+      /**
+       * GetCoverUploadStatus
+       * @returns {Promise<boolean>}  - Go Type: bool
+       */
+      "GetCoverUploadStatus": () => {
+        return window.go.main.KoboService.GetCoverUploadStatus();
       },
       /**
        * GetReadwiseToken
@@ -49,40 +71,24 @@ const go = {
       },
       /**
        * GetSelectedKobo
-       * @returns {Promise<Kobo>}  - Go Type: main.Kobo
+       * @returns {Promise<models.Kobo>}  - Go Type: device.Kobo
        */
       "GetSelectedKobo": () => {
         return window.go.main.KoboService.GetSelectedKobo();
       },
       /**
        * ListDeviceBookmarks
-       * @returns {Promise<Array<Bookmark>|Error>}  - Go Type: []main.Bookmark
+       * @returns {Promise<Array<models.Bookmark>|Error>}  - Go Type: []device.Bookmark
        */
       "ListDeviceBookmarks": () => {
         return window.go.main.KoboService.ListDeviceBookmarks();
       },
       /**
        * ListDeviceContent
-       * @returns {Promise<Array<Content>|Error>}  - Go Type: []main.Content
+       * @returns {Promise<Array<models.Content>|Error>}  - Go Type: []device.Content
        */
       "ListDeviceContent": () => {
         return window.go.main.KoboService.ListDeviceContent();
-      },
-      /**
-       * NormaliseText
-       * @param {string} arg1 - Go Type: string
-       * @returns {Promise<string>}  - Go Type: string
-       */
-      "NormaliseText": (arg1) => {
-        return window.go.main.KoboService.NormaliseText(arg1);
-      },
-      /**
-       * OpenDBConnection
-       * @param {string} arg1 - Go Type: string
-       * @returns {Promise<Error>}  - Go Type: error
-       */
-      "OpenDBConnection": (arg1) => {
-        return window.go.main.KoboService.OpenDBConnection(arg1);
       },
       /**
        * PromptForLocalDBPath
@@ -94,17 +100,26 @@ const go = {
       /**
        * SelectKobo
        * @param {string} arg1 - Go Type: string
-       * @returns {Promise<boolean>}  - Go Type: bool
+       * @returns {Promise<Error>}  - Go Type: error
        */
       "SelectKobo": (arg1) => {
         return window.go.main.KoboService.SelectKobo(arg1);
       },
       /**
-       * SendBookmarksToReadwise
-       * @returns {Promise<number|Error>}  - Go Type: int
+       * SetContext
+       * @param {models.Context} arg1 - Go Type: context.Context
+       * @returns {Promise<void>} 
        */
-      "SendBookmarksToReadwise": () => {
-        return window.go.main.KoboService.SendBookmarksToReadwise();
+      "SetContext": (arg1) => {
+        return window.go.main.KoboService.SetContext(arg1);
+      },
+      /**
+       * SetCoverUploadStatus
+       * @param {boolean} arg1 - Go Type: bool
+       * @returns {Promise<Error>}  - Go Type: error
+       */
+      "SetCoverUploadStatus": (arg1) => {
+        return window.go.main.KoboService.SetCoverUploadStatus(arg1);
       },
       /**
        * SetReadwiseToken

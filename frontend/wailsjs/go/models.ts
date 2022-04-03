@@ -14,30 +14,6 @@ export class Content {
 
     }
 }
-export class Highlight {
-    text: string;
-    title?: string;
-    author?: string;
-    source_type: string;
-    category: string;
-    note?: string;
-    highlighted_at?: string;
-
-    static createFrom(source: any = {}) {
-        return new Highlight(source);
-    }
-
-    constructor(source: any = {}) {
-        if ('string' === typeof source) source = JSON.parse(source);
-        this.text = source["text"];
-        this.title = source["title"];
-        this.author = source["author"];
-        this.source_type = source["source_type"];
-        this.category = source["category"];
-        this.note = source["note"];
-        this.highlighted_at = source["highlighted_at"];
-    }
-}
 export class Kobo {
     name: string;
     storage: number;
@@ -58,6 +34,7 @@ export class Kobo {
         this.db_path = source["db_path"];
     }
 }
+
 
 export class Bookmark {
 
