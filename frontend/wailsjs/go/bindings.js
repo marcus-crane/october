@@ -6,8 +6,8 @@ const go = {
     "KoboService": {
       /**
        * BuildContentIndex
-       * @param {Array<Content>} arg1 - Go Type: []device.Content
-       * @returns {Promise<Content>}  - Go Type: map[string]device.Content
+       * @param {Array<models.Content>} arg1 - Go Type: []device.Content
+       * @returns {Promise<models.Content>}  - Go Type: map[string]device.Content
        */
       "BuildContentIndex": (arg1) => {
         return window.go.main.KoboService.BuildContentIndex(arg1);
@@ -35,7 +35,7 @@ const go = {
       },
       /**
        * DetectKobos
-       * @returns {Promise<Array<Kobo>>}  - Go Type: []device.Kobo
+       * @returns {Promise<Array<models.Kobo>>}  - Go Type: []device.Kobo
        */
       "DetectKobos": () => {
         return window.go.main.KoboService.DetectKobos();
@@ -43,7 +43,7 @@ const go = {
       /**
        * FindBookOnDevice
        * @param {string} arg1 - Go Type: string
-       * @returns {Promise<Content|Error>}  - Go Type: device.Content
+       * @returns {Promise<models.Content|Error>}  - Go Type: device.Content
        */
       "FindBookOnDevice": (arg1) => {
         return window.go.main.KoboService.FindBookOnDevice(arg1);
@@ -71,21 +71,21 @@ const go = {
       },
       /**
        * GetSelectedKobo
-       * @returns {Promise<Kobo>}  - Go Type: device.Kobo
+       * @returns {Promise<models.Kobo>}  - Go Type: device.Kobo
        */
       "GetSelectedKobo": () => {
         return window.go.main.KoboService.GetSelectedKobo();
       },
       /**
        * ListDeviceBookmarks
-       * @returns {Promise<Array<Bookmark>|Error>}  - Go Type: []device.Bookmark
+       * @returns {Promise<Array<models.Bookmark>|Error>}  - Go Type: []device.Bookmark
        */
       "ListDeviceBookmarks": () => {
         return window.go.main.KoboService.ListDeviceBookmarks();
       },
       /**
        * ListDeviceContent
-       * @returns {Promise<Array<Content>|Error>}  - Go Type: []device.Content
+       * @returns {Promise<Array<models.Content>|Error>}  - Go Type: []device.Content
        */
       "ListDeviceContent": () => {
         return window.go.main.KoboService.ListDeviceContent();
@@ -107,7 +107,7 @@ const go = {
       },
       /**
        * SetContext
-       * @param {Context} arg1 - Go Type: context.Context
+       * @param {models.Context} arg1 - Go Type: context.Context
        * @returns {Promise<void>} 
        */
       "SetContext": (arg1) => {

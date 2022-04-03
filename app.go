@@ -17,7 +17,7 @@ var (
 // App struct
 type App struct {
 	ctx      context.Context
-	settings *settings.Settings
+	Settings settings.Settings
 
 	KoboService *KoboService
 }
@@ -38,7 +38,7 @@ func NewApp() (*App, error) {
 	logger.Init()
 	logger.Log.Debug(fmt.Sprintf("Logs available at %s", configPath))
 	app := &App{
-		settings: loadedSettings,
+		Settings: *loadedSettings,
 	}
 	app.KoboService = NewKoboService(loadedSettings)
 	logger.Log.Debugw("October is fully initialised")

@@ -5,14 +5,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/pkg/errors"
 )
 
 type Settings struct {
-	sync.Mutex
-
 	path          string `json:"-"`
 	ReadwiseToken string `json:"readwise_token"`
 	UploadCovers  bool   `json:"upload_covers"`
@@ -39,8 +36,6 @@ func LoadSettings(path string) (*Settings, error) {
 }
 
 func (s *Settings) Save() error {
-	s.Lock()
-	defer s.Unlock()
 	b, err := json.MarshalIndent(s, "", "\t")
 	if err != nil {
 		return errors.Wrap(err, "MarshalIndent")

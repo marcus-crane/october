@@ -47,13 +47,12 @@ export default function Settings() {
       .catch(err => toast.error(err))
   }
 
-  function saveCoverUploadStatus() {
-    console.log("calling save cover upload status")
-    window.go.main.KoboService.SetCoverUploadStatus(coversUploading)
+  function saveCoverUploadStatus(coversChecked) {
+    window.go.main.KoboService.SetCoverUploadStatus(coversChecked)
       .then(saveIssue => {
         console.log(saveIssue)
         if (saveIssue === null) {
-          setCoversUploading(coversUploading)
+          setCoversUploading(coversChecked)
           toast.success("Cover upload status saved successfully")
         } else {
           throw saveIssue
@@ -139,7 +138,7 @@ export default function Settings() {
                     <div className="flex items-center h-5">
                       <input
                         // TODO: This probably causes the render method to seize up
-                        onChange={e => saveCoverUploadStatus(e.currentTarget.checked)}
+                        onInput={e => saveCoverUploadStatus(!e.currentTarget.checked)}
                         checked={coversUploading}
                         id="comments"
                         name="comments"
