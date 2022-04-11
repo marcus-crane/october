@@ -96,7 +96,7 @@ export default function DeviceSelector() {
               </li>
             ))}
             <li>
-              <a onClick={selectLocalDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">
+              <button onClick={selectLocalDatabase} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>
                   <div>
                     <dt className="sr-only">Title</dt>
@@ -109,7 +109,7 @@ export default function DeviceSelector() {
                     </dd>
                   </div>
                 </dl>
-              </a>
+              </button>
             </li>
           </ul>
         </div>
