@@ -34,6 +34,10 @@ jobs:
       - name: Install makensis
         run: brew install makensis
         if: ${{ startsWith(matrix.platform, 'windows') }}
+      
+      - name: Install Windows build toolchain
+        run: brew install mingw-w64
+        if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
         run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
@@ -61,11 +65,11 @@ jobs:
         run: cd frontend && npm install
 
       - name: Build wails app for macOS
-        run: wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
         if: ${{ startsWith(matrix.platform , 'darwin') }}
 
       - name: Build Windows NSIS installer
-        run: wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=1 CC="x86_64-w64-mingw32-gcc" wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
