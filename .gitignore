@@ -1,2 +1,3 @@
 frontend/dist/**/*.js
 frontend/wailsjs
+node_modules
