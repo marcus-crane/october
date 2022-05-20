@@ -2,6 +2,8 @@ package backend
 
 import (
 	"fmt"
+	"github.com/rs/zerolog"
+	"io"
 	"os"
 	"time"
 
@@ -16,10 +18,10 @@ func ConfigureLogger() {
 	if err != nil {
 		panic(err)
 	}
-	f, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
-	log.Logger = log.Output(f)
+	multiOutput := io.MultiWriter(os.Stdout, f)
+	log.Logger = log.Output(multiOutput).Level(zerolog.DebugLevel)
 }

@@ -3,11 +3,10 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/wailsapp/wails/v2/pkg/logger"
-	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 )
 
 //go:embed frontend/dist
@@ -24,12 +23,12 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:     "october",
-		Width:     1366,
-		Height:    768,
-		Assets:    assets,
-		LogLevel:  logger.DEBUG,
-		OnStartup: app.startup,
+		Title:      "october",
+		Width:      1366,
+		Height:     768,
+		Assets:     assets,
+		OnStartup:  app.startup,
+		OnShutdown: app.shutdown,
 		Bind: []interface{}{
 			app,
 		},

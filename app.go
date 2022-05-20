@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"github.com/rs/zerolog/log"
+
+	"github.com/marcus-crane/october/backend"
 )
 
 // App struct
@@ -19,9 +21,12 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	backend.ConfigureLogger()
+	log.Debug().Msg("Logger should be initialised now")
+	log.Info().Msg("Backend is about to start up")
+	backend.Start(&ctx)
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) shutdown(ctx context.Context) {
+	log.Info().Msg("Shutting down. Goodbye!")
 }
