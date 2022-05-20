@@ -1,7 +1,0 @@
-node_modules
-build/bin
-frontend/build
-.DS_Store
-.idea
-*/runtimedev.js
-site
