@@ -66,24 +66,30 @@ export default function DeviceSelector() {
           <h1 className="text-3xl font-bold">Select your Kobo</h1>
           <button onClick={detectDevices}>Don't see your device? Click here to refresh device list.</button>
           <ul>
-            {devices.map(device => (
-              <li key={device.mnt_path}>
-                <button onClick={() => selectDevice(device.mnt_path)} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
-                  <dl>
-                    <div>
-                      <dt className="sr-only">Title</dt>
-                      <dd className="border-gray leading-6 font-medium text-black">
-                        {device.name}
-                      </dd>
-                      <dt className="sr-only">System Specifications</dt>
-                      <dd className="text-xs text-gray-600 dark:text-gray-400">
-                        {device.storage} GB · {device.display_ppi} PPI
-                      </dd>
-                    </div>
-                  </dl>
-                </button>
-              </li>
-            ))}
+            {devices.map(device => {
+              let description = `${device.storage} GB · ${device.display_ppi} PPI`
+              if (!device.name) {
+                description = "October did not recognise this Kobo but it's safe to continue"
+              }
+              return (
+                <li key={device.mnt_path}>
+                  <button onClick={() => selectDevice(device.mnt_path)} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+                    <dl>
+                      <div>
+                        <dt className="sr-only">Title</dt>
+                        <dd className="border-gray leading-6 font-medium text-black">
+                          {device.name || "Unknown Kobo"}
+                        </dd>
+                        <dt className="sr-only">System Specifications</dt>
+                        <dd className="text-xs text-gray-600 dark:text-gray-400">
+                          {description}
+                        </dd>
+                      </div>
+                    </dl>
+                  </button>
+                </li>
+              )
+            })}
             <li>
               <button onClick={selectLocalDatabase} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>

@@ -2,6 +2,8 @@ package backend
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/rs/zerolog/log"
@@ -31,6 +33,7 @@ func StartBackend(ctx *context.Context) *Backend {
 
 func (b *Backend) DetectKobos() []Kobo {
 	connectedKobos, err := kobo.Find()
+	log.Info().Msg(fmt.Sprintf("Kobos found: %d", len(connectedKobos)))
 	if err != nil {
 		panic(err)
 	}
@@ -71,6 +74,10 @@ func (b *Backend) PromptForLocalDBPath() error {
 	})
 	if err != nil {
 		return err
+	}
+	// The user has cancelled the dialog so we just do nothing
+	if selectedFile == "" {
+		return errors.New("canceled selection")
 	}
 	return b.SelectKobo(selectedFile)
 }
