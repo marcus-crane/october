@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/marcus-crane/october/backend"
@@ -24,7 +25,6 @@ func (a *App) startup(ctx context.Context) {
 	backend.ConfigureLogger()
 	log.Debug().Msg("Logger should be initialised now")
 	log.Info().Msg("Backend is about to start up")
-	backend.Start(&ctx)
 }
 
 func (a *App) shutdown(ctx context.Context) {
