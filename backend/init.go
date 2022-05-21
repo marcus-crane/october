@@ -31,6 +31,10 @@ func StartBackend(ctx *context.Context) *Backend {
 	}
 }
 
+func (b *Backend) GetSettings() *Settings {
+	return b.Settings
+}
+
 func (b *Backend) DetectKobos() []Kobo {
 	connectedKobos, err := kobo.Find()
 	log.Info().Msg(fmt.Sprintf("Kobos found: %d", len(connectedKobos)))
