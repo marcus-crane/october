@@ -37,6 +37,9 @@ func main() {
 		Bind: []interface{}{
 			app,
 			backend,
+			backend.Bookmark,
+			backend.Content,
+			backend.Kobo,
 			backend.Readwise,
 			backend.Settings,
 		},

@@ -16,35 +16,35 @@ type Kobo struct {
 }
 
 type Content struct {
-	ContentID               string `gorm:"column:ContentID"`
-	ContentType             string `gorm:"column:ContentType"`
-	MimeType                string `gorm:"column:MimeType"`
-	BookID                  string
-	BookTitle               string `gorm:"column:BookTitle"`
-	ImageId                 string
-	Title                   string `gorm:"column:Title"`
-	Attribution             string `gorm:"column:Attribution"`
-	Description             string `gorm:"column:Description"`
-	DateCreated             string `gorm:"column:DateCreated"`
+	ContentID               string `gorm:"column:ContentID" json:"content_id"`
+	ContentType             string `gorm:"column:ContentType" json:"content_type"`
+	MimeType                string `gorm:"column:MimeType" json:"mime_type"`
+	BookID                  string `json:"book_id"`
+	BookTitle               string `gorm:"column:BookTitle" json:"book_title"`
+	ImageId                 string `json:"image_id"`
+	Title                   string `gorm:"column:Title" json:"title"`
+	Attribution             string `gorm:"column:Attribution" json:"attribution"`
+	Description             string `gorm:"column:Description" json:"description"`
+	DateCreated             string `gorm:"column:DateCreated" json:"date_created"`
 	ShortCoverKey           string
 	AdobeLocation           string `gorm:"column:adobe_location"`
 	Publisher               string
 	IsEncrypted             bool
-	DateLastRead            string
+	DateLastRead            string `json:"date_last_read"`
 	FirstTimeReading        bool
 	ChapterIDBookmarked     string
 	ParagraphBookmarked     int
 	BookmarkWordOffset      int
 	NumShortcovers          int
 	VolumeIndex             int `gorm:"column:VolumeIndex"`
-	NumPages                int `gorm:"column:___NumPages"`
+	NumPages                int `gorm:"column:___NumPages" json:"num_pages"`
 	ReadStatus              int
 	SyncTime                string `gorm:"column:___SyncTime"`
 	UserID                  string `gorm:"column:___UserID"`
 	PublicationId           string
 	FileOffset              int    `gorm:"column:___FileOffset"`
 	FileSize                int    `gorm:"column:___FileSize"`
-	PercentRead             string `gorm:"column:___PercentRead"`
+	PercentRead             string `gorm:"column:___PercentRead" json:"percent_read"`
 	ExpirationStatus        int    `gorm:"column:___ExpirationStatus"`
 	FavouritesIndex         int
 	Accessibility           int
@@ -112,9 +112,9 @@ type Content struct {
 }
 
 type Bookmark struct {
-	BookmarkID               string
-	VolumeID                 string
-	ContentID                string
+	BookmarkID               string `gorm:"BookmarkID" json:"bookmark_id"`
+	VolumeID                 string `gorm:"column:VolumeID" json:"volume_id"`
+	ContentID                string `json:"content_id"`
 	StartContainerPath       string
 	StartContainerChild      string
 	StartContainerChildIndex string
@@ -122,10 +122,10 @@ type Bookmark struct {
 	EndContainerPath         string
 	EndContainerChildIndex   string
 	EndOffset                string
-	Text                     string
-	Annotation               string
-	ExtraAnnotationData      string
-	DateCreated              string
+	Text                     string `gorm:"Text" json:"text"`
+	Annotation               string `gorm:Annotation" json:"annotation"`
+	ExtraAnnotationData      string `json:"extra_annotation_data"`
+	DateCreated              string `json:"date_created"`
 	ChapterProgress          float64
 	Hidden                   string
 	Version                  string
@@ -174,4 +174,27 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 		}
 	}
 	return kobos
+}
+
+func (k *Kobo) ListBooksOnDevice() ([]Content, error) {
+	var content []Content
+	result := Conn.Where(
+		&Content{ContentType: "6", VolumeIndex: -1, MimeType: "application/x-kobo-epub+zip"},
+	).Order("DateLastRead desc, title asc").Find(&content)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return content, nil
+}
+
+func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
+	var bookmark []Bookmark
+	result := Conn.Where(
+		&Bookmark{VolumeID: contentID},
+	).Find(&bookmark)
+	if result.Error != nil {
+		log.Info().Msg(result.Error.Error())
+		return nil, result.Error
+	}
+	return bookmark, nil
 }

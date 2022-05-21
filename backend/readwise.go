@@ -41,10 +41,6 @@ type BookListEntry struct {
 
 type Readwise struct{}
 
-func NewReadwise() *Readwise {
-	return &Readwise{}
-}
-
 func (r *Readwise) CheckTokenValidity(token string) error {
 	req, err := http.NewRequest("GET", authEndpoint, nil)
 	if err != nil {

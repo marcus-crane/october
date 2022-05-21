@@ -39,7 +39,7 @@ export default function DeviceSelector() {
     SelectKobo(path)
       .then(error => {
         if (error === null) {
-          navigate("/overview")
+          navigate("/library")
         } else {
           toast.error("Something went wrong selecting your Kobo")
         }
@@ -51,7 +51,7 @@ export default function DeviceSelector() {
     PromptForLocalDBPath()
       .then(error => {
         if (error === null) {
-          navigate("/overview")
+          navigate("/library")
         } else {
           console.log("Something went wrong selecting your local sqlite database")
         }

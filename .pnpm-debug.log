@@ -1,0 +1,14 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+    "err": {
+      "name": "pnpm",
+      "message": "No package.json (or package.yaml, or package.json5) was found in \"/Users/marcus/Code/october\".",
+      "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+      "stack": "pnpm: No package.json (or package.yaml, or package.json5) was found in \"/Users/marcus/Code/october\".\n    at readProjectManifest (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:19656:13)\n    at async Object.readProjectManifestOnly (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:19660:28)\n    at async readProjectManifestOnly (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:43809:24)\n    at async Object.handler (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:171892:24)\n    at async /Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:176461:21\n    at async run (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:176435:34)\n    at async runPnpm (/Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:176653:5)\n    at async /Users/marcus/.asdf/installs/nodejs/16.15.0/.npm/lib/node_modules/pnpm/dist/pnpm.cjs:176645:7"
+    }
+  }
+}

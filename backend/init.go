@@ -17,6 +17,9 @@ type Backend struct {
 	RuntimeContext *context.Context
 	Settings       *Settings
 	Readwise       *Readwise
+	Kobo           *Kobo
+	Content        *Content
+	Bookmark       *Bookmark
 }
 
 func StartBackend(ctx *context.Context) *Backend {
@@ -29,12 +32,23 @@ func StartBackend(ctx *context.Context) *Backend {
 		ConnectedKobos: map[string]Kobo{},
 		RuntimeContext: ctx,
 		Settings:       settings,
-		Readwise:       NewReadwise(),
+		Readwise:       &Readwise{},
+		Kobo:           &Kobo{},
+		Content:        &Content{},
+		Bookmark:       &Bookmark{},
 	}
 }
 
 func (b *Backend) GetSettings() *Settings {
 	return b.Settings
+}
+
+func (b *Backend) GetContent() *Content {
+	return b.Content
+}
+
+func (b *Backend) GetBookmark() *Bookmark {
+	return b.Bookmark
 }
 
 func (b *Backend) DetectKobos() []Kobo {

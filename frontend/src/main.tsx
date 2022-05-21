@@ -4,6 +4,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
 import "./style.css";
 import DeviceSelector from "./pages/DeviceSelector"
+import Library from "./pages/Library"
 import Settings from "./pages/Settings"
 
 const routes = (
@@ -11,6 +12,7 @@ const routes = (
     <HashRouter>
       <Routes>
         <Route path="/" element={<DeviceSelector />} />
+        <Route path="/library" element={<Library />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </HashRouter>
