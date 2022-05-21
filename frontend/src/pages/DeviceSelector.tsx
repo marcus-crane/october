@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { toast } from "react-toastify";
 import { backend } from '../../wailsjs/go/models'
+import { toast } from 'react-hot-toast'
 import { DetectKobos, SelectKobo, PromptForLocalDBPath } from '../../wailsjs/go/backend/Backend'
 
 export default function DeviceSelector() {
@@ -15,16 +15,19 @@ export default function DeviceSelector() {
   // As a proxy, we'll use the number of connected devices although this will mean if you unplug a device
   // and plug in a new one, without closing the application, you'd have to manually click update.
   // That really shouldn't be an issue though and works good enough for now.
-  useEffect(() => detectDevices(), [devices.length])
+  useEffect(() => {
+    detectDevices()
+  }, [devices.length])
 
   function detectDevices() {
     DetectKobos()
       .then(devices => {
         console.log(devices)
         if (devices == null) {
-          toast.info("No devices were found")
+          toast("No devices were found")
           return
         }
+        toast.success(`${devices.length} kobos detected`)
         setDevices(devices)
       })
       .catch(err => {
@@ -38,11 +41,10 @@ export default function DeviceSelector() {
         if (error === null) {
           navigate("/overview")
         } else {
-          console.log(error)
           toast.error("Something went wrong selecting your Kobo")
         }
       })
-      .catch(err => toast.error(err))
+      .catch(err => console.log(err))
   }
 
   function selectLocalDatabase() {
@@ -51,15 +53,14 @@ export default function DeviceSelector() {
         if (error === null) {
           navigate("/overview")
         } else {
-          console.log(error)
-          toast.error("Something went wrong selecting your local sqlite database")
+          console.log("Something went wrong selecting your local sqlite database")
         }
       })
-      .catch(err => toast.error(err))
+      .catch(err => console.log(err))
   }
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 min-h-screen">
+    <>
       <Navbar />
       <div className="flex flex-col items-center pt-24 px-24">
         <div className="space-y-4 text-center">
@@ -109,6 +110,6 @@ export default function DeviceSelector() {
           </ul>
         </div>
       </div>
-    </div>
+    </>
   );
 }

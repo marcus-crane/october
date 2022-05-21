@@ -16,6 +16,7 @@ type Backend struct {
 	ConnectedKobos map[string]Kobo
 	RuntimeContext *context.Context
 	Settings       *Settings
+	Readwise       *Readwise
 }
 
 func StartBackend(ctx *context.Context) *Backend {
@@ -28,6 +29,7 @@ func StartBackend(ctx *context.Context) *Backend {
 		ConnectedKobos: map[string]Kobo{},
 		RuntimeContext: ctx,
 		Settings:       settings,
+		Readwise:       NewReadwise(),
 	}
 }
 

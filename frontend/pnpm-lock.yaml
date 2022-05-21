@@ -2,31 +2,35 @@ lockfileVersion: 5.4
 
 specifiers:
   '@heroicons/react': ^1.0.6
+  '@tailwindcss/forms': ^0.5.2
   '@types/react': ^18.0.0
   '@types/react-dom': ^18.0.0
   '@vitejs/plugin-react': ^1.3.0
   autoprefixer: ^10.4.7
+  csstype: ^3.0.10
   postcss: ^8.4.14
   react: ^18.0.0
   react-dom: ^18.0.0
+  react-hot-toast: ^2.2.0
   react-router-dom: ^6.3.0
-  react-toastify: ^9.0.1
   tailwindcss: ^3.0.24
   typescript: ^4.6.3
   vite: ^2.9.5
 
 dependencies:
   '@heroicons/react': 1.0.6_react@18.1.0
+  '@tailwindcss/forms': 0.5.2_tailwindcss@3.0.24
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
+  react-hot-toast: 2.2.0_2bum4g2y5s4cgzgzu5mbjuolai
   react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
-  react-toastify: 9.0.1_ef5jwxihqo6n7gxfmzogljlgcm
 
 devDependencies:
   '@types/react': 18.0.9
   '@types/react-dom': 18.0.4
   '@vitejs/plugin-react': 1.3.2
   autoprefixer: 10.4.7_postcss@8.4.14
+  csstype: 3.1.0
   postcss: 8.4.14
   tailwindcss: 3.0.24
   typescript: 4.6.4
@@ -379,6 +383,15 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /@tailwindcss/forms/0.5.2_tailwindcss@3.0.24:
+    resolution: {integrity: sha512-pSrFeJB6Bg1Mrg9CdQW3+hqZXAKsBrSG9MAfFLKy1pVA4Mb4W7C0k7mEhlmS2Dfo/otxrQOET7NJiJ9RrS563w==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
+    dependencies:
+      mini-svg-data-uri: 1.4.4
+      tailwindcss: 3.0.24
+    dev: false
+
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
     dev: true
@@ -527,11 +540,6 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
-
-  /clsx/1.1.1:
-    resolution: {integrity: sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==}
-    engines: {node: '>=6'}
-    dev: false
 
   /color-convert/1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -887,6 +895,14 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /goober/2.1.9_csstype@3.1.0:
+    resolution: {integrity: sha512-PAtnJbrWtHbfpJUIveG5PJIB6Mc9Kd0gimu9wZwPyA+wQUSeOeA4x4Ug16lyaaUUKZ/G6QEH1xunKOuXP1F4Vw==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dependencies:
+      csstype: 3.1.0
+    dev: false
+
   /has-flag/3.0.0:
     resolution: {integrity: sha1-tdRU3CGZriJWmfNGfloH87lVuv0=}
     engines: {node: '>=4'}
@@ -974,6 +990,11 @@ packages:
       braces: 3.0.2
       picomatch: 2.3.1
     dev: true
+
+  /mini-svg-data-uri/1.4.4:
+    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==}
+    hasBin: true
+    dev: false
 
   /minimist/1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
@@ -1098,6 +1119,20 @@ packages:
       scheduler: 0.22.0
     dev: false
 
+  /react-hot-toast/2.2.0_2bum4g2y5s4cgzgzu5mbjuolai:
+    resolution: {integrity: sha512-248rXw13uhf/6TNDVzagX+y7R8J183rp7MwUMNkcrBRyHj/jWOggfXTGlM8zAOuh701WyVW+eUaWG2LeSufX9g==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      goober: 2.1.9_csstype@3.1.0
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+    transitivePeerDependencies:
+      - csstype
+    dev: false
+
   /react-refresh/0.13.0:
     resolution: {integrity: sha512-XP8A9BT0CpRBD+NYLLeIhld/RqG9+gktUjW1FkE+Vm7OCinbG1SshcK5tb9ls4kzvjZr9mOQc7HYgBngEyPAXg==}
     engines: {node: '>=0.10.0'}
@@ -1122,17 +1157,6 @@ packages:
     dependencies:
       history: 5.3.0
       react: 18.1.0
-    dev: false
-
-  /react-toastify/9.0.1_ef5jwxihqo6n7gxfmzogljlgcm:
-    resolution: {integrity: sha512-c2zeZHkCX+WXuItS/JRqQ/8CH8Qm/je+M0rt09xe9fnu5YPJigtNOdD8zX4fwLA093V2am3abkGfOowwpkrwOQ==}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      clsx: 1.1.1
-      react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react/18.1.0:

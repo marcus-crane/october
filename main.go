@@ -37,6 +37,8 @@ func main() {
 		Bind: []interface{}{
 			app,
 			backend,
+			backend.Readwise,
+			backend.Settings,
 		},
 		Mac: &mac.Options{
 			TitleBar:             mac.TitleBarDefault(),

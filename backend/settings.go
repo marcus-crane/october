@@ -55,3 +55,13 @@ func (s *Settings) Save() error {
 	}
 	return nil
 }
+
+func (s *Settings) SaveToken(token string) error {
+	s.ReadwiseToken = token
+	return s.Save()
+}
+
+func (s *Settings) SaveCoverUploading(uploadCovers bool) error {
+	s.UploadCovers = uploadCovers
+	return s.Save()
+}
