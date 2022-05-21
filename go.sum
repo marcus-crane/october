@@ -42,8 +42,6 @@ github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/mattn/go-sqlite3 v1.14.12 h1:TJ1bhYJPV44phC+IMu1u2K/i5RriLTPe+yc68XDJ1Z0=
 github.com/mattn/go-sqlite3 v1.14.12/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
-github.com/pgaskin/koboutils/v2 v2.1.1 h1:Or5y+z8rXlip0Al8tiSj+Fb9NkuLhkcw1UPpzPPvKWY=
-github.com/pgaskin/koboutils/v2 v2.1.1/go.mod h1:wTzkDIlsxmUyfwfspGcm0Ap+HOxSUYV0S8kMYrf+0gM=
 github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42 h1:wwU2E+7+IN4HBv9v5p+TkoaaFSnF5BtguW5bTxopuvk=
 github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42/go.mod h1:wTzkDIlsxmUyfwfspGcm0Ap+HOxSUYV0S8kMYrf+0gM=
 github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 h1:acNfDZXmm28D2Yg/c3ALnZStzNaZMSagpbr96vY6Zjc=
