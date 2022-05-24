@@ -4,6 +4,22 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.0.2
+
+This release updated Windows binaries to be built with `CGO_ENABLED=1`. Without it, Windows builds failed to be usable end to end. They should work properly now.
+
+## v1.0.1
+
+This was a minor fix for an issue that was blocking October from compiling.
+
+## v1.0.0
+
+BREAKING CHANGE: A one time breaking change was made where additional metadata is submitted to Readwise. This resulted in any books uploaded pre-1.0.0 with October being duplicated. This change was used to properly match books on your device so covers aren't overwritten in future.
+
+This release marked the first official release of October, as far as stability and error handling.
+
+It added the ability to upload cover images to Readwise and a button for checking connectivity with Readwise (ie; is your token valid)
+
 ## v0.9.4-post2
 
 This release disables `upx` as it can cause some unforseen issues. I haven't witnessed them but I'd like to avoid them all the same.
