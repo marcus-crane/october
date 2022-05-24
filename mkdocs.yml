@@ -1,7 +1,7 @@
 site_name: October
 site_author: Marcus Crane
 site_description: >-
-  Life is too short to be fiddling with SQL queries in your terminal. You should invest that time into reading instead!
+  Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise.
 
 repo_url: https://github.com/marcus-crane/october
 repo_name: marcus-crane/october
