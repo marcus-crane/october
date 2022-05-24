@@ -1,7 +1,7 @@
 site_name: October
 site_author: Marcus Crane
 site_description: >-
-  Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise.
+  Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise. 100% open source with support for Windows and macOS. If you're adventurous, it compiles properly on Linux too!
 
 repo_url: https://github.com/marcus-crane/october
 repo_name: marcus-crane/october
