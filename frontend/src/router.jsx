@@ -29,9 +29,9 @@ const tailwindButton = (extraStyles) => (
 const Router = () => (
   <HashRouter>
     <Routes>
-      <Route exact path="/" element={<DeviceSelector />} />
-      <Route exact path="/overview" element={<Overview />} />
-      <Route exact path="/settings" element={<Settings />} />
+      <Route path="/" element={<DeviceSelector />} />
+      <Route path="/overview" element={<Overview />} />
+      <Route path="/settings" element={<Settings />} />
     </Routes>
     <ToastContainer
       position={toast.POSITION.BOTTOM_CENTER}

@@ -1,21 +1,12 @@
 {
   "name": "October",
-  "assetdir": "frontend/build",
-  "frontend:build": "npm run build",
+  "outputfilename": "october",
   "frontend:install": "npm install",
-  "frontend:dev": "",
-  "wailsjsdir": "./frontend",
-  "version": "2",
-  "Path": "",
-  "BuildDir": "",
-  "outputfilename": "October",
-  "OutputType": "",
-  "Platform": "",
-  "Author": {
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "http://localhost:3000",
+  "author": {
     "name": "Marcus Crane",
     "email": "marcus@utf9k.net"
-  },
-  "debounceMS": 100,
-  "devserverurl": "http://localhost:34115",
-  "appargs": ""
+  }
 }
