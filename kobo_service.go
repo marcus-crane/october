@@ -12,21 +12,21 @@ import (
 	"github.com/pgaskin/koboutils/v2/kobo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/marcus-crane/october/backend"
 	"github.com/marcus-crane/october/pkg/db"
 	"github.com/marcus-crane/october/pkg/device"
 	"github.com/marcus-crane/october/pkg/logger"
 	"github.com/marcus-crane/october/pkg/readwise"
-	"github.com/marcus-crane/october/pkg/settings"
 )
 
 type KoboService struct {
 	SelectedKobo   device.Kobo
 	ConnectedKobos map[string]device.Kobo
 	runtimeContext context.Context
-	Settings       *settings.Settings
+	Settings       backend.Settings
 }
 
-func NewKoboService(settings *settings.Settings) *KoboService {
+func NewKoboService(settings backend.Settings) *KoboService {
 	return &KoboService{
 		Settings:       settings,
 		ConnectedKobos: map[string]device.Kobo{},
@@ -162,18 +162,23 @@ func (k *KoboService) GetReadwiseToken() string {
 	return k.Settings.ReadwiseToken
 }
 func (k *KoboService) SetReadwiseToken(token string) error {
-	return k.Settings.SetReadwiseToken(token)
+	k.Settings.ReadwiseToken = token
+	return k.Settings.Save()
 }
 
 func (k *KoboService) GetCoverUploadStatus() bool {
 	return k.Settings.UploadCovers
 }
 func (k *KoboService) SetCoverUploadStatus(enabled bool) error {
-	return k.Settings.SetCoverUploadStatus(enabled)
+	k.Settings.UploadCovers = enabled
+	return k.Settings.Save()
 }
 
 func (k *KoboService) CheckReadwiseConfig() bool {
-	return k.Settings.ReadwiseTokenExists()
+	if k.Settings.ReadwiseToken == "" {
+		return false
+	}
+	return true
 }
 
 func (k *KoboService) ForwardToReadwise() (int, error) {
