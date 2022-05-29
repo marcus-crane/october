@@ -77,14 +77,14 @@ func (r *Readwise) SendBookmarks(payload Response, token string) (int, error) {
 		SetBody(payload).
 		Post(HighlightsEndpoint)
 	if err != nil {
-		return 0, errors.New(fmt.Sprintf("Failed to send request to Readwise: code %d", resp.StatusCode()))
+		return 0, fmt.Errorf("failed to send request to Readwise: code %d", resp.StatusCode())
 	}
 	if resp.StatusCode() != 200 {
 		log.Error().
 			Int("status", resp.StatusCode()).
 			Str("response", string(resp.Body())).
 			Msg("Received a non-200 response from Readwise")
-		return 0, errors.New(fmt.Sprintf("Received a non-200 status code from Readwise: code %d", resp.StatusCode()))
+		return 0, fmt.Errorf("received a non-200 status code from Readwise: code %d", resp.StatusCode())
 	}
 	log.Info().Int("highlight_count", len(payload.Highlights)).Msg("Successfully sent bookmarks to Readwise")
 	return len(payload.Highlights), nil

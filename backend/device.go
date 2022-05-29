@@ -123,7 +123,7 @@ type Bookmark struct {
 	EndContainerChildIndex   string
 	EndOffset                string
 	Text                     string `gorm:"Text" json:"text"`
-	Annotation               string `gorm:Annotation" json:"annotation"`
+	Annotation               string `gorm:"Annotation" json:"annotation"`
 	ExtraAnnotationData      string `json:"extra_annotation_data"`
 	DateCreated              string `json:"date_created"`
 	ChapterProgress          float64
