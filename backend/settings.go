@@ -65,3 +65,7 @@ func (s *Settings) SaveCoverUploading(uploadCovers bool) error {
 	s.UploadCovers = uploadCovers
 	return s.Save()
 }
+
+func (s *Settings) CheckReadwiseConfig() bool {
+	return s.ReadwiseToken != ""
+}

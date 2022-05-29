@@ -1,4 +1,4 @@
-package db
+package backend
 
 import (
 	"github.com/rs/zerolog/log"

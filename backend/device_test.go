@@ -1,4 +1,4 @@
-package device
+package backend
 
 import (
 	"io/ioutil"
@@ -15,11 +15,6 @@ var (
 	libraTwoDeviceId = "NXXXXXXXXXX,4.1.15,4.30.18838,4.1.15,4.1.15,00000000-0000-0000-0000-000000000388"
 	miniDeviceId     = "NXXX,4.9.56,4.30.18838,4.9.56,4.9.56,00000000-0000-0000-0000-000000000340"
 )
-
-func TestMain(m *testing.M) {
-	code := m.Run()
-	os.Exit(code)
-}
 
 // We receive a tempdir from the test runner itself, which will handle cleanup for us.
 func setupTmpKobo(dir string, deviceId string) string {

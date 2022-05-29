@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from "../components/Navbar"
 import logo from '../logo.png'
 import { toast } from "react-toastify";
+import { DetectKobos, SelectKobo, PromptForLocalDBPath } from '../../wailsjs/go/backend/Backend'
 
 export default function DeviceSelector() {
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ export default function DeviceSelector() {
   useEffect(() => detectDevices(), [devices.length])
 
   function detectDevices() {
-    window.go.main.KoboService.DetectKobos()
+    DetectKobos()
       .then(devices => {
         console.log(devices)
         if (devices == null) {
@@ -32,7 +33,7 @@ export default function DeviceSelector() {
   }
 
   function selectDevice(path) {
-    window.go.main.KoboService.SelectKobo(path)
+    SelectKobo(path)
       .then(error => {
         if (error === null) {
           navigate("/overview")
@@ -45,7 +46,7 @@ export default function DeviceSelector() {
   }
 
   function selectLocalDatabase() {
-    window.go.main.KoboService.PromptForLocalDBPath()
+    PromptForLocalDBPath()
       .then(error => {
         if (error === null) {
           navigate("/overview")

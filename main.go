@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/marcus-crane/october/backend"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -21,13 +22,12 @@ var version = "DEV"
 
 func main() {
 	// Create an instance of the app structure
-	app, err := NewApp()
-	if err != nil {
-		panic(err)
-	}
+	app := NewApp()
+
+	backend := backend.StartBackend(&app.ctx)
 
 	// Create application with options
-	err = wails.Run(&options.App{
+	err := wails.Run(&options.App{
 		Title:      "October",
 		Width:      1024,
 		Height:     768,
@@ -37,7 +37,13 @@ func main() {
 		OnDomReady: app.domReady,
 		OnShutdown: app.shutdown,
 		Bind: []interface{}{
-			app.KoboService,
+			app,
+			backend,
+			backend.Bookmark,
+			backend.Content,
+			backend.Kobo,
+			backend.Readwise,
+			backend.Settings,
 		},
 		// Windows platform specific options
 		Windows: &windows.Options{

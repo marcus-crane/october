@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify"
+import { CountDeviceBookmarks } from "../../wailsjs/go/backend/Kobo";
+import { GetSelectedKobo, ForwardToReadwise } from "../../wailsjs/go/backend/Backend";
+import { CheckReadwiseConfig } from "../../wailsjs/go/backend/Settings";
 
 export default function Overview(props) {
   const [readwiseConfigured, setReadwiseConfigured] = useState(false)
@@ -8,19 +11,19 @@ export default function Overview(props) {
   const [highlightCount, setHighlightCount] = useState(0)
 
   useEffect(() => {
-    window.go.main.KoboService.GetSelectedKobo()
+    GetSelectedKobo()
       .then(kobo => setSelectedKobo(kobo))
       .catch(err => toast.error(err))
   }, [selectedKobo.mnt_path])
 
   useEffect(() => {
-    window.go.main.KoboService.CountDeviceBookmarks()
+    CountDeviceBookmarks()
       .then(bookmarkCount => setHighlightCount(bookmarkCount))
       .catch(err => toast.error(err))
   }, [highlightCount])
 
   useEffect(() => {
-    window.go.main.KoboService.CheckReadwiseConfig()
+    CheckReadwiseConfig()
       .then(result => setReadwiseConfigured(result))
       .catch(err => toast.error(err))
   })
@@ -31,7 +34,7 @@ export default function Overview(props) {
 
   function syncWithReadwise() {
     const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
-    window.go.main.KoboService.ForwardToReadwise()
+    ForwardToReadwise()
       .then(res => {
         if (typeof (res) == "number") {
           toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000 })
