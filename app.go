@@ -2,46 +2,35 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/adrg/xdg"
-	"github.com/marcus-crane/october/pkg/logger"
-	"github.com/marcus-crane/october/pkg/settings"
 	"github.com/pkg/errors"
-)
+	"github.com/rs/zerolog/log"
 
-var (
-	configFilename = "october/config.json"
+	"github.com/marcus-crane/october/backend"
 )
 
 // App struct
 type App struct {
 	ctx      context.Context
-	Settings settings.Settings
+	Settings *backend.Settings
 
 	KoboService *KoboService
 }
 
 // NewApp creates a new App application struct
 func NewApp() (*App, error) {
-	configPath, err := xdg.ConfigFile(configFilename)
-	if err != nil {
-		panic(err)
-	}
-	loadedSettings, err := settings.LoadSettings(configPath)
+	loadedSettings, err := backend.LoadSettings()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load settings")
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialise settings")
 	}
-	logger.Init()
-	logger.Log.Debug(fmt.Sprintf("Logs available at %s", configPath))
 	app := &App{
-		Settings: *loadedSettings,
+		Settings: loadedSettings,
 	}
 	app.KoboService = NewKoboService(loadedSettings)
-	logger.Log.Debugw("October is fully initialised")
+	log.Debug().Msg("October is fully initialised")
 	return app, nil
 }
 
@@ -49,17 +38,20 @@ func NewApp() (*App, error) {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
+	backend.ConfigureLogger()
+	log.Debug().Msg("Logger should be initialised now")
+	log.Info().Msg("Backend is about to start up")
+
 	a.KoboService.SetContext(ctx)
-	logger.Log.Infow("Starting up October")
 }
 
 // domReady is called after the front-end dom has been loaded
 func (a App) domReady(ctx context.Context) {
 	// Add your action here
-	logger.Log.Debugw("Frontend DOM is ready")
+	log.Debug().Msg("Frontend DOM is ready")
 }
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
-	logger.Log.Infow("Shutting down October")
+	log.Info().Msg("Shutting down October")
 }

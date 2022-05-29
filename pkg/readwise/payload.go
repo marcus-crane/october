@@ -1,29 +1,25 @@
 package readwise
 
 import (
-	"fmt"
 	"net/url"
 	"path"
 	"strings"
 	"time"
 
-	"github.com/marcus-crane/october/pkg/device"
-	"github.com/marcus-crane/october/pkg/logger"
-)
+	"github.com/rs/zerolog/log"
 
-var (
-	sourceCategory = "books"
-	sourceType     = "OctoberForKobo"
+	"github.com/marcus-crane/october/backend"
+	"github.com/marcus-crane/october/pkg/device"
 )
 
 func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Content) (Response, error) {
 	var payload Response
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
-		logger.Log.Infow("Parsing entry", "source", source)
+		log.Info().Interface("source", source).Msg("Parsing entry")
 		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
 		if err != nil {
-			logger.Log.Errorw(fmt.Sprintf("Failed to parse timestamp %s from bookmark", entry.DateCreated), "bookmark", entry)
+			log.Error().Err(err).Interface("bookmark", entry).Msg("Failed tp parse timestamp from bookmark")
 			return Response{}, err
 		}
 		createdAt := t.Format("2006-01-02T15:04:05-07:00")
@@ -36,8 +32,10 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 		}
 		if entry.Annotation == "" && text == "" {
 			// This state should be impossible but stranger things have happened so worth a sanity check
-			logger.Log.Infow("Found an entry with neither highlighted text nor an annotation so skipping to next item", "source", source, "bookmark", entry)
-			fmt.Printf("Ignoring entry from %s", source.Title)
+			log.Info().
+				Interface("source", source).
+				Interface("bookmark", entry).
+				Msg("Found an entry with neither highlighted text nor an annotation so skipping entry")
 			continue
 		}
 		if source.Title == "" {
@@ -50,11 +48,15 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 				// or even just arbitrary strings. Given we don't set a title here, we will use the Readwise fallback which is to add
 				// these highlights to a book called "Quotes" and let the user figure out their metadata situation. That reminds me though:
 				// TODO: Test exports with non-epub files
-				logger.Log.Errorw("Failed to retrieve epub title. This is not a hard requirement so will send a payload with a dummy title.", "source", source, "bookmark", entry)
+				log.Error().
+					Err(err).
+					Interface("source", source).
+					Interface("bookmark", entry).
+					Msg("Failed to retrieve epub title. This is not a hard requirement so sending with a dummy title.")
 				goto sendhighlight
 			}
 			filename := path.Base(sourceFile.Path)
-			logger.Log.Debugw(fmt.Sprintf("No source title. Constructing title from filename: %s", filename))
+			log.Debug().Str("filename", filename).Msg("No source title. Constructing title from filename")
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
 	sendhighlight:
@@ -63,14 +65,14 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 			Title:         source.Title,
 			Author:        source.Attribution,
 			SourceURL:     entry.VolumeID,
-			SourceType:    sourceType,
-			Category:      sourceCategory,
+			SourceType:    backend.SourceType,
+			Category:      backend.SourceCategory,
 			Note:          entry.Annotation,
 			HighlightedAt: createdAt,
 		}
-		logger.Log.Debugw("Successfully built highlights", "highlight", highlight)
+		log.Debug().Interface("highlight", highlight).Msg("Successfully built highlights")
 		payload.Highlights = append(payload.Highlights, highlight)
 	}
-	logger.Log.Infow(fmt.Sprintf("Successfully parsed %d highlights", len(payload.Highlights)))
+	log.Info().Int("highlight_count", len(payload.Highlights)).Msg("Successfully parsed highlights")
 	return payload, nil
 }

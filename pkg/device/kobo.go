@@ -3,26 +3,26 @@ package device
 import (
 	"fmt"
 
-	"github.com/marcus-crane/october/pkg/logger"
 	"github.com/pgaskin/koboutils/v2/kobo"
+	"github.com/rs/zerolog/log"
 )
 
 func GetKoboMetadata(detectedPaths []string) []Kobo {
 	var kobos []Kobo
-	logger.Log.Debugf("Found the location of %d possible Kobos", len(detectedPaths))
+	log.Debug().Int("path_count", len(detectedPaths)).Msg("Found the location of possible Kobo(s)")
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
-			logger.Log.Errorw("Failed to parse Kobo version", "error", err)
+			log.Error().Err(err).Msg("Failed to parse Kobo version")
 		}
-		logger.Log.Debugf("Found Kobo with Device ID of %s", deviceId)
+		log.Debug().Str("device_id", deviceId).Msg("Found Kobo")
 		device, found := kobo.DeviceByID(deviceId)
 		if !found {
 			// We can handle unsupported Kobos in future but at present, there are none
-			logger.Log.Debugf("Unrecognised Kobo with device ID of %s", deviceId)
+			log.Debug().Str("device_id", deviceId).Msg("Found an unrecognised Kobo")
 			continue
 		}
-		logger.Log.Infof(fmt.Sprintf("Detected a %s", device.Name()))
+		log.Info().Str("device_name", device.Name()).Msg("Identified Kobo")
 		kobos = append(kobos, Kobo{
 			Name:       device.Name(),
 			Storage:    device.StorageGB(),

@@ -8,8 +8,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/marcus-crane/october/pkg/logger"
 )
 
 var (
@@ -19,7 +17,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	logger.Init()
 	code := m.Run()
 	os.Exit(code)
 }

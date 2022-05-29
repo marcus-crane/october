@@ -41,7 +41,7 @@ export function EventsOnMultiple(eventName, callback, maxCallbacks) {
 }
 
 export function EventsOn(eventName, callback) {
-    EventsOnMultiple(eventName, callback, -1);
+    OnMultiple(eventName, callback, -1);
 }
 
 export function EventsOff(eventName) {
@@ -49,7 +49,7 @@ export function EventsOff(eventName) {
 }
 
 export function EventsOnce(eventName, callback) {
-    EventsOnMultiple(eventName, callback, 1);
+    OnMultiple(eventName, callback, 1);
 }
 
 export function EventsEmit(eventName) {

@@ -7,9 +7,9 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
+	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
-	github.com/wailsapp/wails/v2 v2.0.0-beta.37
-	go.uber.org/zap v1.20.0
+	github.com/wailsapp/wails/v2 v2.0.0-beta.36
 	gorm.io/driver/sqlite v1.2.6
 	gorm.io/gorm v1.22.4
 )
@@ -39,9 +39,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/multierr v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
+	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e // indirect
 	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
