@@ -14,7 +14,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/marcus-crane/october/backend"
-	"github.com/marcus-crane/october/pkg/db"
 	"github.com/marcus-crane/october/pkg/device"
 	"github.com/marcus-crane/october/pkg/readwise"
 )
@@ -64,7 +63,7 @@ func (k *KoboService) SelectKobo(devicePath string) error {
 			DbPath:     devicePath,
 		}
 	}
-	if err := db.OpenConnection(k.SelectedKobo.DbPath); err != nil {
+	if err := backend.OpenConnection(k.SelectedKobo.DbPath); err != nil {
 		log.Error().Err(err).Msg("Failed to open DB connection")
 		return err
 	}
