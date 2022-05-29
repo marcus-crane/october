@@ -1,6 +1,7 @@
 package readwise
 
 import (
+	"github.com/marcus-crane/october/backend"
 	"os"
 	"testing"
 
@@ -28,8 +29,8 @@ func TestBuildPayload_BookmarksPresent(t *testing.T) {
 		Title:         "A Book",
 		Author:        "Computer",
 		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
-		SourceType:    sourceType,
-		Category:      sourceCategory,
+		SourceType:    backend.SourceType,
+		Category:      backend.SourceCategory,
 		Note:          "Making a note here",
 		HighlightedAt: "2006-01-02T15:04:05+00:00",
 	}}
@@ -48,8 +49,8 @@ func TestBuildPayload_HandleAnnotationOnly(t *testing.T) {
 		Title:         "A Book",
 		Author:        "Computer",
 		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
-		SourceType:    sourceType,
-		Category:      sourceCategory,
+		SourceType:    backend.SourceType,
+		Category:      backend.SourceCategory,
 		Note:          "Making a note here",
 		HighlightedAt: "2006-01-02T15:04:05+00:00",
 	}}
@@ -68,8 +69,8 @@ func TestBuildPayload_TitleFallback(t *testing.T) {
 		Title:         "Good Book - An Author",
 		Author:        "",
 		SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
-		SourceType:    sourceType,
-		Category:      sourceCategory,
+		SourceType:    backend.SourceType,
+		Category:      backend.SourceCategory,
 		Note:          "Making a note here",
 		HighlightedAt: "2006-01-02T15:04:05+00:00",
 	}}
@@ -86,8 +87,8 @@ func TestBuildPayload_TitleFallbackFailure(t *testing.T) {
 	highlights := []Highlight{{
 		Text:          "Hello World",
 		SourceURL:     "\t",
-		SourceType:    sourceType,
-		Category:      sourceCategory,
+		SourceType:    backend.SourceType,
+		Category:      backend.SourceCategory,
 		Note:          "Making a note here",
 		HighlightedAt: "2006-01-02T15:04:05+00:00",
 	}}

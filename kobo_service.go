@@ -176,10 +176,7 @@ func (k *KoboService) SetCoverUploadStatus(enabled bool) error {
 }
 
 func (k *KoboService) CheckReadwiseConfig() bool {
-	if k.Settings.ReadwiseToken == "" {
-		return false
-	}
-	return true
+	return k.Settings.ReadwiseToken != ""
 }
 
 func (k *KoboService) ForwardToReadwise() (int, error) {
