@@ -96,7 +96,7 @@ func (k *KoboService) PromptForLocalDBPath() error {
 func (k *KoboService) FindBookOnDevice(bookID string) (device.Content, error) {
 	var content device.Content
 	log.Debug().Msg("Retrieving books that have been uploaded to Readwise previously")
-	result := db.Conn.Where(&device.Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Find(&content)
+	result := backend.Conn.Where(&device.Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Find(&content)
 	if result.Error != nil {
 		log.Error().Err(result.Error).Msg("Failed to retrieve content from device")
 		return content, result.Error
@@ -108,7 +108,7 @@ func (k *KoboService) FindBookOnDevice(bookID string) (device.Content, error) {
 func (k *KoboService) ListDeviceContent() ([]device.Content, error) {
 	var content []device.Content
 	log.Debug().Msg("Retrieving content from device")
-	result := db.Conn.Where(
+	result := backend.Conn.Where(
 		&device.Content{ContentType: "6", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
@@ -122,7 +122,7 @@ func (k *KoboService) ListDeviceContent() ([]device.Content, error) {
 func (k *KoboService) ListDeviceBookmarks() ([]device.Bookmark, error) {
 	var bookmarks []device.Bookmark
 	log.Debug().Msg("Retrieving bookmarks from device")
-	result := db.Conn.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
+	result := backend.Conn.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
 		log.Error().Err(result.Error).Msg("Failed to retrieve bookmarks from device")
 		return nil, result.Error
@@ -143,7 +143,7 @@ func (k *KoboService) BuildContentIndex(content []device.Content) map[string]dev
 
 func (k *KoboService) CountDeviceBookmarks() int64 {
 	var count int64
-	result := db.Conn.Model(&device.Bookmark{}).Count(&count)
+	result := backend.Conn.Model(&device.Bookmark{}).Count(&count)
 	if result.Error != nil {
 		log.Error().Err(result.Error).Msg("Failed to count bookmarks on device")
 	}
