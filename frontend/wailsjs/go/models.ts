@@ -1,6 +1,5 @@
 export namespace device {
 	
-	
 	export class Kobo {
 	    name: string;
 	    storage: number;
@@ -21,6 +20,7 @@ export namespace device {
 	        this.db_path = source["db_path"];
 	    }
 	}
+	
 
 }
 

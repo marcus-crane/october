@@ -7,11 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/marcus-crane/october/pkg/device"
-	"github.com/marcus-crane/october/pkg/logger"
 )
 
 func TestMain(m *testing.M) {
-	logger.Init()
 	code := m.Run()
 	os.Exit(code)
 }
