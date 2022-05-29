@@ -69,6 +69,10 @@ func (b *Backend) DetectKobos() []Kobo {
 	return kobos
 }
 
+func (b *Backend) GetSelectedKobo() Kobo {
+	return b.SelectedKobo
+}
+
 func (b *Backend) SelectKobo(devicePath string) error {
 	if val, ok := b.ConnectedKobos[devicePath]; ok {
 		b.SelectedKobo = val

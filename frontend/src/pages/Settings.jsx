@@ -1,69 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import { GetSettings } from "../../wailsjs/go/backend/Backend";
+import {
+  SaveToken,
+  SaveCoverUploading,
+} from "../../wailsjs/go/backend/Settings";
+import {
+  CheckTokenValidity
+} from "../../wailsjs/go/backend/Readwise"
 
 export default function Settings() {
-  const [token, setToken] = useState("")
-  const [coversUploading, setCoversUploading] = useState(false)
-  const [tokenInput, setTokenInput] = useState("")
+  const [loaded, setLoadState] = useState(false);
+  const [token, setToken] = useState("");
+  const [coversUploading, setCoversUploading] = useState(false);
+  const [tokenInput, setTokenInput] = useState("");
 
   useEffect(() => {
-    getReadwiseToken()
-  }, [token])
+    GetSettings().then((settings) => {
+      setLoadState(true);
+      setToken(settings.readwise_token);
+      setTokenInput(settings.readwise_token);
+      setCoversUploading(settings.upload_covers);
+    });
+  }, [loaded]);
 
-  useEffect(() => {
-    getCoverUploadStatus()
-  }, [coversUploading])
-
-  function getReadwiseToken() {
-    window.go.main.KoboService.GetReadwiseToken()
-      .then(token => {
-        setToken(token)
-        setTokenInput(token)
-      })
-      .catch(err => toast.error(err))
+  function saveToken() {
+    setToken(tokenInput)
+    SaveToken(tokenInput)
+    toast.success("Your changes have been saved")
   }
 
-  function getCoverUploadStatus() {
-    window.go.main.KoboService.GetCoverUploadStatus()
-      .then(status => {
-        setCoversUploading(status)
-      })
-      .catch(err => toast.error(err))
-  }
-
-  function saveReadwiseToken() {
-    console.log("calling save token")
-    window.go.main.KoboService.SetReadwiseToken(tokenInput)
-      .then(saveIssue => {
-        console.log(saveIssue)
-        if (saveIssue === null) {
-          setToken(token)
-          toast.success("Readwise token saved successfully")
-        } else {
-          throw saveIssue
-        }
-      })
-      .catch(err => toast.error(err))
-  }
-
-  function saveCoverUploadStatus(coversChecked) {
-    window.go.main.KoboService.SetCoverUploadStatus(coversChecked)
-      .then(saveIssue => {
-        console.log(saveIssue)
-        if (saveIssue === null) {
-          setCoversUploading(coversChecked)
-          toast.success("Cover upload status saved successfully")
-        } else {
-          throw saveIssue
-        }
-      })
-      .catch(err => toast.error(err))
+  function saveCoverUploads() {
+    setCoversUploading(!coversUploading)
+    SaveCoverUploading(!coversUploading)
+    toast.success("Your changes have been saved")
   }
 
   function checkReadwiseTokenValid() {
     const toastId = toast.loading("Contacting the Readwise API...")
-    window.go.main.KoboService.CheckTokenValidity()
+    CheckTokenValidity()
       .then(apiError => {
         if (apiError === null) {
           toast.update(toastId, { render: "Successfully authenticated against the Readwise API", type: "success", isLoading: false, autoClose: 2000 })
@@ -103,7 +79,7 @@ export default function Settings() {
                   />
                 </div>
                 <button
-                  onClick={saveReadwiseToken}
+                  onClick={saveToken}
                   type="submit"
                   className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
@@ -138,7 +114,7 @@ export default function Settings() {
                     <div className="flex items-center h-5">
                       <input
                         // TODO: This probably causes the render method to seize up
-                        onInput={e => saveCoverUploadStatus(!e.currentTarget.checked)}
+                        onInput={e => saveCoverUploads(!e.currentTarget.checked)}
                         checked={coversUploading}
                         id="comments"
                         name="comments"

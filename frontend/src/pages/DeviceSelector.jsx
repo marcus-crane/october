@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from "../components/Navbar"
 import logo from '../logo.png'
 import { toast } from "react-toastify";
-import { backend } from '../../wailsjs/go/models'
 import { DetectKobos, SelectKobo, PromptForLocalDBPath } from '../../wailsjs/go/backend/Backend'
 
 export default function DeviceSelector() {
