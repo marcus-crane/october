@@ -7,8 +7,9 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
+	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
-	github.com/wailsapp/wails/v2 v2.0.0-beta.37
+	github.com/wailsapp/wails/v2 v2.0.0-beta.36
 	go.uber.org/zap v1.20.0
 	gorm.io/driver/sqlite v1.2.6
 	gorm.io/gorm v1.22.4
@@ -35,7 +36,6 @@ require (
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/rs/zerolog v1.26.1 // indirect
 	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect

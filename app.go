@@ -7,17 +7,12 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/marcus-crane/october/backend"
-	"github.com/marcus-crane/october/pkg/logger"
-)
-
-var (
-	configFilename = "october/config.json"
 )
 
 // App struct
 type App struct {
 	ctx      context.Context
-	Settings backend.Settings
+	Settings *backend.Settings
 
 	KoboService *KoboService
 }
@@ -35,7 +30,7 @@ func NewApp() (*App, error) {
 		Settings: loadedSettings,
 	}
 	app.KoboService = NewKoboService(loadedSettings)
-	logger.Log.Debugw("October is fully initialised")
+	log.Debug().Msg("October is fully initialised")
 	return app, nil
 }
 
