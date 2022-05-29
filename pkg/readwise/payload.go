@@ -8,12 +8,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/marcus-crane/october/backend"
 	"github.com/marcus-crane/october/pkg/device"
-)
-
-var (
-	sourceCategory = "books"
-	sourceType     = "OctoberForKobo"
 )
 
 func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Content) (Response, error) {
@@ -69,8 +65,8 @@ func BuildPayload(bookmarks []device.Bookmark, contentIndex map[string]device.Co
 			Title:         source.Title,
 			Author:        source.Attribution,
 			SourceURL:     entry.VolumeID,
-			SourceType:    sourceType,
-			Category:      sourceCategory,
+			SourceType:    backend.SourceType,
+			Category:      backend.SourceCategory,
 			Note:          entry.Annotation,
 			HighlightedAt: createdAt,
 		}

@@ -12,22 +12,17 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-)
 
-var (
-	authEndpoint       = "https://readwise.io/api/v2/auth/"
-	booksEndpoint      = "https://readwise.io/api/v2/books?page_size=1000&category=books&source=OctoberForKobo"
-	coverEndpoint      = "https://readwise.io/api/v2/books/%d"
-	highlightsEndpoint = "https://readwise.io/api/v2/highlights/"
+	"github.com/marcus-crane/october/backend"
 )
 
 func SendBookmarks(payload Response, token string) (int, error) {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
-		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
+		SetHeader("User-Agent", backend.UserAgent).
 		SetBody(payload).
-		Post(highlightsEndpoint)
+		Post(backend.HighlightsEndpoint)
 	if err != nil {
 		return 0, errors.New(fmt.Sprintf("Failed to send request to Readwise: code %d", resp.StatusCode()))
 	}
@@ -46,8 +41,8 @@ func CheckTokenValidity(token string) error {
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
-		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
-		Get(authEndpoint)
+		SetHeader("User-Agent", backend.UserAgent).
+		Get(backend.AuthEndpoint)
 	if err != nil {
 		return err
 	}
@@ -66,10 +61,10 @@ func RetrieveUploadedBooks(token string) (BookListResponse, error) {
 	bookList := BookListResponse{}
 	headers := map[string][]string{
 		"Authorization": {fmt.Sprintf("Token %s", token)},
-		"User-Agent":    {"october/1.0.0 <https://github.com/marcus-crane/october>"},
+		"User-Agent":    {backend.UserAgent},
 	}
 	client := http.Client{}
-	remoteURL, err := url.Parse(booksEndpoint)
+	remoteURL, err := url.Parse(backend.BooksEndpoint)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse books URL")
 	}
@@ -125,9 +120,9 @@ func UploadCover(encodedCover string, bookId int, token string) error {
 	resp, err := client.R().
 		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
 		SetHeader("Content-Type", "application/json").
-		SetHeader("User-Agent", "october/1.0.0 <https://github.com/marcus-crane/october>").
+		SetHeader("User-Agent", backend.UserAgent).
 		SetBody(body).
-		Patch(fmt.Sprintf(coverEndpoint, bookId))
+		Patch(fmt.Sprintf(backend.CoverEndpoint, bookId))
 	if err != nil {
 		return err
 	}
