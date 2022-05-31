@@ -70,6 +70,16 @@ jobs:
       - name: Build Windows NSIS installer
         run: CGO_ENABLED=1 CC="x86_64-w64-mingw32-gcc" wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
         if: ${{ startsWith(matrix.platform , 'windows') }}
+        
+      - name: Codesign Windows NSIS Installer
+        run: |
+          echo "Creating certificate file"
+          New-Item -ItemType directory -Path certificate
+          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
+          certutil -decode certificate\certificate.txt certificate\certificate.pfx
+          echo "Signing October installer"
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-amd64-installer.exe
+        if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
         run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
