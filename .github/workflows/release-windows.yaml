@@ -18,6 +18,7 @@ jobs:
 
       - name: Normalise platform tag
         id: normalise_platform
+        shell: bash
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
@@ -28,14 +29,13 @@ jobs:
           go-version: 1.17.2
       
       - name: Install makensis
-        run: brew install makensis
-        if: ${{ startsWith(matrix.platform, 'windows') }}
-      
-      - name: Install Windows build toolchain
-        run: brew install mingw-w64
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install makensis
         if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
+        shell: bash
         run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
         if: ${{ startsWith(matrix.platform, 'darwin') }}
 
@@ -58,6 +58,7 @@ jobs:
         run: npm install -g npm
 
       - name: Build frontend assets
+        shell: bash
         run: cd frontend && npm install
 
       - name: Build wails app for macOS
@@ -65,7 +66,7 @@ jobs:
         if: ${{ startsWith(matrix.platform , 'darwin') }}
 
       - name: Build Windows NSIS installer
-        run: CGO_ENABLED=1 CC="x86_64-w64-mingw32-gcc" wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
         if: ${{ startsWith(matrix.platform , 'windows') }}
         
       - name: Codesign Windows NSIS Installer
@@ -79,6 +80,7 @@ jobs:
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Compress binary
+        shell: bash
         run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
         if: ${{ startsWith(matrix.platform , 'windows') }}
 
@@ -101,6 +103,7 @@ jobs:
 
       - name: Get release URL
         id: get_upload_url
+        shell: bash
         run: |
           url=$(echo "$response" | jq -r '.[0].upload_url')
           echo "::set-output name=url::$url"
