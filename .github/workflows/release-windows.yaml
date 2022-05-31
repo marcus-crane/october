@@ -77,13 +77,21 @@ jobs:
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
           echo "Signing October installer"
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' build/bin/October-amd64-installer.exe
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-amd64-installer.exe
         if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
+      
+      - name: Remove old October binary
+        shell: bash
+        run: rm October.exe
+        if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
 
       - name: Compress binary
         shell: bash
-        run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
+        run: Compress-Archive October-amd64-installer.exe october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip
         if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
 
       - name: Notarise macOS app + create dmg
         run: gon -log-level=info gon.config.json
