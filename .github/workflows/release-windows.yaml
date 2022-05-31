@@ -31,7 +31,7 @@ jobs:
       - name: Install makensis
         uses: crazy-max/ghaction-chocolatey@v2
         with:
-          args: install makensis
+          args: install nsis
         if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
