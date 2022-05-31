@@ -88,7 +88,6 @@ jobs:
         working-directory: ./build/bin
 
       - name: Compress binary
-        shell: bash
         run: Compress-Archive October-amd64-installer.exe october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip
         if: ${{ startsWith(matrix.platform , 'windows') }}
         working-directory: ./build/bin
