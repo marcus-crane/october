@@ -7,13 +7,10 @@ on:
 jobs:
   release:
     name: Release October
-    runs-on: macos-latest # We can cross compile but need to be on macOS to notarise
+    runs-on: windows-latest
     strategy:
       matrix:
         platform:
-          - darwin/amd64
-          - darwin/arm64
-          - darwin/universal
           - windows/amd64
     steps:
       - name: Checkout source code
