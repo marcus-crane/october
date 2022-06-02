@@ -4,6 +4,50 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.1.0
+
+This release brings quite a few changes although a lot of them are under the hood so you won't notice them but they'll make it easier to add new features to October going forward.
+
+**Codesigning on Windows**
+
+First of all, October for Windows is now codesigned meaning there should no longer be any scary warnings going forward. As this version is the first to be codesigned, and my developer certificate is now, Windows SmartScreen is expected to appear for a brief period of time while trust is established against October but once that's done, new releases should no longer trigger a warning. You can read more about this addition in [this announcement](https://github.com/marcus-crane/october/discussions/54)
+
+**Internal refactoring**
+
+As mentioned, a lot of changes have happened under the hood. October is powered by [Wails](https://wails.io/) and while understanding how to use the latest version, I rearranged the internals of the project and the latest iteration ended up with everything being a bit too far apart resulting in duplicate code and other things. Without boring you with the details, everything is now "closer together" making it easier to do changes going forward.
+
+The frontend now also uses [Vite](https://vitejs.dev/) and with that comes live reloading which means any developer changes will recompile the application. This means it becomes much faster to test out changes (and ultimately to release them as well!)
+
+**Support for unreleased Kobo devices**
+
+Under the hood, October uses [pgaskin/koboutils](https://github.com/pgaskin/koboutils) which currently has support for all released Kobo devices. At one point however, it did not and it may lag behind when new devices are refreshly released. October effectively just uses `koboutils` to get metadata about devices so I've updated the device selector to allow you to select unrecognised Kobos instead of just ignoring them.
+
+![unknownkobo](https://user-images.githubusercontent.com/14816406/171544836-41ad52b2-6222-410f-95d8-1a85c43c663d.png)
+
+**Condensed settings**
+
+The Settings page has been condensed a little bit and the Readwise token link will now actually open that window in your browser whereas before it was just a piece of text.
+
+![settings](https://user-images.githubusercontent.com/14816406/171545072-a29ca661-3321-4a39-b549-0c620b359d30.png)
+
+In future, I'd like to add the ability to both export and view system logs from within October itself for any advanced users who might like to try and diagnose their own issues.
+
+**Updated toasts**
+
+The library I was using for toasts wasn't the nicest so I've swapped out `react-toastify` for `react-hot-toast` which has cut down on a bunch of code. As a result, toasts now appear at the top of the screen and take up much less space visually.
+
+![toast](https://user-images.githubusercontent.com/14816406/171544879-704be58d-3d74-4f48-aecd-26eeeb0ce2f4.png)
+
+**What's next**
+
+As you'll notice, there wasn't much new in this release as a lot of it was spent on things behind the scenes. I think October is in a good spot to start extending out the UI so users have much more control over highlight uploading instead of just a big sync button.
+
+As a bit of a teaser, here's a screenshot of something I threw together in a short period of time. I was starting straight on a v2 but I decided it's better (and safer) to do things piece by piece rather than doing a big bang release that may ultimately introduce more bugs. Admittedly, doing the best thing isn't as fun though.
+
+![v2](https://user-images.githubusercontent.com/14816406/171545791-76510be9-f640-46fe-a3d9-f88cfa740fed.png)
+
+This isn't necessarily what an updated October might look like but while this is using an email template, it is rendering real data from my Kobo that was connected to my computer. Ideally if one highlight fails, it shouldn't cause your entire upload process to be blocked so that's something I'd like to move towards next.
+
 ## v1.0.2
 
 This release updated Windows binaries to be built with `CGO_ENABLED=1`. Without it, Windows builds failed to be usable end to end. They should work properly now.
