@@ -38,15 +38,6 @@ func TestGetKoboMetadata_HandleNoDevices(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-// If you were to disconnect a device at the precise time between getting the connected paths
-// and checking the version at those paths, it would look the same as trying to access a file
-// that doesn't exist
-func TestGetKoboMetadata_HandleDisconnectedDevice(t *testing.T) {
-	var expected []Kobo
-	actual := GetKoboMetadata([]string{os.TempDir()})
-	assert.Equal(t, expected, actual)
-}
-
 func TestGetKoboMetadata_HandleConnectedDevices(t *testing.T) {
 	libraTempDir := t.TempDir()
 	fakeLibraVolume := setupTmpKobo(libraTempDir, libraTwoDeviceId)

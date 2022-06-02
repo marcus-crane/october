@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
-import { toast } from "react-toastify"
+import { toast } from "react-hot-toast"
 import { CountDeviceBookmarks } from "../../wailsjs/go/backend/Kobo";
 import { GetSelectedKobo, ForwardToReadwise } from "../../wailsjs/go/backend/Backend";
 import { CheckReadwiseConfig } from "../../wailsjs/go/backend/Settings";
@@ -29,36 +29,26 @@ export default function Overview(props) {
   })
 
   function promptReadwise() {
-    toast.warning("In order to upload to Readwise, you need to configure your token on the Settings page!")
+    toast("In order to upload to Readwise, you need to configure your token on the Settings page!")
   }
 
   function syncWithReadwise() {
-    const toastId = toast.loading("Bundling up your highlights to send to Readwise...")
+    const toastId = toast.loading("Preparing your highlights...")
     ForwardToReadwise()
       .then(res => {
         if (typeof (res) == "number") {
-          toast.update(toastId, { render: `Successfully forwarded ${res} highlights to Readwise`, type: "success", isLoading: false, autoClose: 2000 })
+          toast.success(`Successfully forwarded ${res} highlights to Readwise`, { id: toastId })
         } else {
-          toast.update(toastId, { render: `There was a problem sending your highlights: ${res.message}`, type: "error", isLoading: false, autoClose: 3000 })
+          toast.error(`There was a problem sending your highlights: ${res.message}`, { id: toastId })
         }
       })
       .catch(err => {
         if (err.includes("401")) {
-          toast.update(toastId, {
-            render: `Received 401 Unauthorised from Readwise. Is your access token correct?`,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000
-          })
+          toast.error("Received 401 Unauthorised from Readwise. Is your access token correct?", { id: toastId })
         } else if (err.includes("failed to upload covers")) {
-          toast.update(toastId, {render: err, type: "warning", isLoading: false, autoClose: 3000})
+          toast.error(err, { id: toastId })
         } else {
-          toast.update(toastId, {
-            render: `There was a problem sending your highlights: ${err}`,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000
-          })
+          toast.error(`There was a problem sending your highlights: ${err}`, { id: toastId })
         }
       })
   }
@@ -102,22 +92,6 @@ export default function Overview(props) {
                 </dl>
               </button>
             </li>
-            {/*<li>*/}
-            {/*  <a onClick={exportDatabase} className="bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 cursor-pointer">*/}
-            {/*    <dl>*/}
-            {/*      <div>*/}
-            {/*        <dt className="sr-only">Title</dt>*/}
-            {/*        <dd className="border-gray leading-6 font-medium text-black">*/}
-            {/*          Export KoboReader.sqlite*/}
-            {/*        </dd>*/}
-            {/*        <dt className="sr-only">Description</dt>*/}
-            {/*        <dd className="text-xs text-gray-600 dark:text-gray-400">*/}
-            {/*          Create a local copy of your Kobo database*/}
-            {/*        </dd>*/}
-            {/*      </div>*/}
-            {/*    </dl>*/}
-            {/*  </a>*/}
-            {/*</li>*/}
           </ul>
         </div>
       </div>

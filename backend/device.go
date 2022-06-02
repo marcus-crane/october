@@ -149,27 +149,29 @@ func (Bookmark) TableName() string {
 
 func GetKoboMetadata(detectedPaths []string) []Kobo {
 	var kobos []Kobo
-	log.Debug().Int("path_count", len(detectedPaths)).Msg("Found the location of possible Kobo(s)")
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
-			log.Error().Err(err).Msg("Failed to parse Kobo version")
+			log.Error().Msg(fmt.Sprintf("Failed to parse version for Kobo at %s", path))
 		}
-		log.Debug().Str("device_id", deviceId).Msg("Found Kobo")
+		log.Debug().Msg(fmt.Sprintf("Found device with ID %s", deviceId))
 		device, found := kobo.DeviceByID(deviceId)
 		if !found {
+			log.Warn().Msg("Found a device that isn't officially supported but may still work anyway")
 			// We can handle unsupported Kobos in future but at present, there are none
-			log.Debug().Str("device_id", deviceId).Msg("Found an unrecognised Kobo")
-			continue
+			kobos = append(kobos, Kobo{
+				MntPath: path,
+				DbPath:  fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
+			})
+		} else {
+			kobos = append(kobos, Kobo{
+				Name:       device.Name(),
+				Storage:    device.StorageGB(),
+				DisplayPPI: device.DisplayPPI(),
+				MntPath:    path,
+				DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
+			})
 		}
-		log.Info().Str("device_name", device.Name()).Msg("Identified Kobo")
-		kobos = append(kobos, Kobo{
-			Name:       device.Name(),
-			Storage:    device.StorageGB(),
-			DisplayPPI: device.DisplayPPI(),
-			MntPath:    path,
-			DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
-		})
 	}
 	return kobos
 }
