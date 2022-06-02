@@ -181,6 +181,7 @@ export namespace backend {
 	    volume_id: string;
 	    content_id: string;
 	    text: string;
+	    annotation: string;
 	    extra_annotation_data: string;
 	    date_created: string;
 	
@@ -194,6 +195,7 @@ export namespace backend {
 	        this.volume_id = source["volume_id"];
 	        this.content_id = source["content_id"];
 	        this.text = source["text"];
+	        this.annotation = source["annotation"];
 	        this.extra_annotation_data = source["extra_annotation_data"];
 	        this.date_created = source["date_created"];
 	    }
