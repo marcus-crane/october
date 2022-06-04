@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-resty/resty/v2"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"path"
 	"strings"
 	"time"
+
+	"github.com/go-resty/resty/v2"
 
 	"github.com/rs/zerolog/log"
 )
@@ -174,12 +175,28 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
 		log.Info().Interface("source", source).Msg("Parsing entry")
-		t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
-		if err != nil {
-			log.Error().Err(err).Interface("bookmark", entry).Msg("Failed tp parse timestamp from bookmark")
-			return Response{}, err
+		var createdAt string
+		if entry.DateCreated == "" {
+			log.Info().Msg("No date created for bookmark. Defaulting to date last modified.")
+			if entry.DateModified == "" {
+				log.Info().Msg("No date modified for bookmark. Default to current date.")
+				createdAt = time.Now().Format("2006-01-02T15:04:05-07:00")
+			} else {
+				t, err := time.Parse("2006-01-02T15:04:05Z", entry.DateModified)
+				if err != nil {
+					log.Error().Err(err).Interface("bookmark", entry).Msg("Failed to parse a valid timestamp from bookmark")
+					return Response{}, err
+				}
+				createdAt = t.Format("2006-01-02T15:04:05-07:00")
+			}
+		} else {
+			t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
+			if err != nil {
+				log.Error().Err(err).Interface("bookmark", entry).Msg("Failed to parse a valid timestamp from bookmark")
+				return Response{}, err
+			}
+			createdAt = t.Format("2006-01-02T15:04:05-07:00")
 		}
-		createdAt := t.Format("2006-01-02T15:04:05-07:00")
 		text := NormaliseText(entry.Text)
 		if entry.Annotation != "" && text == "" {
 			// I feel like this state probably shouldn't be possible but we'll handle it anyway
