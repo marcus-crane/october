@@ -30,7 +30,7 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:      "October",
-		Width:      1024,
+		Width:      1366,
 		Height:     768,
 		Assets:     assets,
 		LogLevel:   logger.DEBUG,

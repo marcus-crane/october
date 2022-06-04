@@ -24,7 +24,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Layout() {
+export default function Layout(props) {
   return (
     <>
       <div className="h-full flex flex-col">
@@ -80,7 +80,7 @@ export default function Layout() {
                         </div>
                       </div>
                       {/* Links section */}
-                      <div className="block w-80">
+                      <div className="block lg:w-80">
                         <div className="flex items-center justify-end">
                           <div className="flex">
                             {/* <a
@@ -127,24 +127,8 @@ export default function Layout() {
           </nav>
 
           {/* Main area */}
-          <main className="min-w-0 flex-1 border-t border-gray-200 lg:flex">
-            {/* Primary column */}
-            <section
-              aria-labelledby="primary-heading"
-              className="min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last"
-            >
-              <h1 id="primary-heading" className="sr-only">
-                Home
-              </h1>
-              {/* Your content */}
-            </section>
-
-            {/* Secondary column (hidden on smaller screens) */}
-            <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-              <div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-gray-100 overflow-y-auto">
-                {/* Your content */}
-              </div>
-            </aside>
+          <main className="min-w-0 flex-1 lg:flex">
+            {props.children}
           </main>
         </div>
       </div>
