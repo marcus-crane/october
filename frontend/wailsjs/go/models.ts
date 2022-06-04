@@ -1,5 +1,49 @@
 export namespace backend {
 	
+	export class Kobo {
+	    name: string;
+	    storage: number;
+	    display_ppi: number;
+	    mnt_path: string;
+	    db_path: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Kobo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.storage = source["storage"];
+	        this.display_ppi = source["display_ppi"];
+	        this.mnt_path = source["mnt_path"];
+	        this.db_path = source["db_path"];
+	    }
+	}
+	export class Bookmark {
+	    bookmark_id: string;
+	    volume_id: string;
+	    content_id: string;
+	    text: string;
+	    annotation: string;
+	    extra_annotation_data: string;
+	    date_created: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Bookmark(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.bookmark_id = source["bookmark_id"];
+	        this.volume_id = source["volume_id"];
+	        this.content_id = source["content_id"];
+	        this.text = source["text"];
+	        this.annotation = source["annotation"];
+	        this.extra_annotation_data = source["extra_annotation_data"];
+	        this.date_created = source["date_created"];
+	    }
+	}
 	export class Content {
 	    content_id: string;
 	    content_type: string;
@@ -155,50 +199,6 @@ export namespace backend {
 		    }
 		    return a;
 		}
-	}
-	export class Kobo {
-	    name: string;
-	    storage: number;
-	    display_ppi: number;
-	    mnt_path: string;
-	    db_path: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Kobo(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.name = source["name"];
-	        this.storage = source["storage"];
-	        this.display_ppi = source["display_ppi"];
-	        this.mnt_path = source["mnt_path"];
-	        this.db_path = source["db_path"];
-	    }
-	}
-	export class Bookmark {
-	    bookmark_id: string;
-	    volume_id: string;
-	    content_id: string;
-	    text: string;
-	    annotation: string;
-	    extra_annotation_data: string;
-	    date_created: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Bookmark(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.bookmark_id = source["bookmark_id"];
-	        this.volume_id = source["volume_id"];
-	        this.content_id = source["content_id"];
-	        this.text = source["text"];
-	        this.annotation = source["annotation"];
-	        this.extra_annotation_data = source["extra_annotation_data"];
-	        this.date_created = source["date_created"];
-	    }
 	}
 
 }

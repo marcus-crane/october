@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 import DeviceSelector from './pages/DeviceSelector';
 import Overview from './pages/Overview';
 import Settings from './pages/Settings';
+import Layout from './components/Layout'
 
 import './style.css';
 
@@ -13,7 +14,7 @@ const routes = (
   <React.StrictMode>
     <HashRouter>
       <Routes>
-        <Route path="/" element={<DeviceSelector />} />
+        <Route path="/" element={<Layout><DeviceSelector /></Layout>} />
         <Route path="/overview" element={<Overview />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
