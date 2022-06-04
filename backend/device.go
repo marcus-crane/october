@@ -51,7 +51,7 @@ type Content struct {
 	ContentURL              string
 	Language                string
 	BookshelfTags           string
-	IsDownloaded            bool
+	IsDownloaded            string `gorm:"column:IsDownloaded" json:"is_downloaded"` // Technically a BIT but we can replicate it by using a string
 	FeedbackType            int
 	AverageRating           float64
 	Depth                   int
@@ -140,7 +140,7 @@ type Bookmark struct {
 }
 
 func (Content) TableName() string {
-	return "Content"
+	return "content"
 }
 
 func (Bookmark) TableName() string {
@@ -215,8 +215,8 @@ func (k *Kobo) ListDeviceContent() ([]Content, error) {
 	var content []Content
 	log.Debug().Msg("Retrieving content from device")
 	result := Conn.Where(
-		&Content{ContentType: "6", VolumeIndex: -1},
-	).Order("___PercentRead desc, title asc").Find(&content)
+		&Content{ContentType: "6", VolumeIndex: -1, IsDownloaded: "true"},
+	).Where("MimeType LIKE ?", "%epub%").Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		log.Error().Err(result.Error).Msg("Failed to retrieve content from device")
 		return nil, result.Error
@@ -252,6 +252,17 @@ func (k *Kobo) CountDeviceBookmarks() int64 {
 	result := Conn.Model(&Bookmark{}).Count(&count)
 	if result.Error != nil {
 		log.Error().Err(result.Error).Msg("Failed to count bookmarks on device")
+	}
+	return count
+}
+
+func (k *Kobo) CountDeviceBooks() int64 {
+	var count int64
+	result := Conn.Table("content").Where(
+		Content{ContentType: "6", VolumeIndex: -1, IsDownloaded: "true"},
+	).Where("MimeType LIKE ?", "%epub%").Count(&count)
+	if result.Error != nil {
+		log.Error().Err(result.Error).Msg("Failed to count books on device")
 	}
 	return count
 }

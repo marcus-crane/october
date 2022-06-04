@@ -27,7 +27,6 @@ export default function DeviceSelection() {
         if (devices == null) {
           return;
         }
-        toast.success(`${devices.length} kobos detected`);
         setDevices(devices);
       })
       .catch((err) => {
@@ -78,6 +77,7 @@ export default function DeviceSelection() {
           return (
           <li key={deviceIdx}>
             <button
+              onClick={() => selectDevice(device.mnt_path)}
               type="button"
               className="group p-2 w-full flex items-center justify-between rounded-full border border-gray-300 shadow-sm space-x-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
@@ -103,6 +103,7 @@ export default function DeviceSelection() {
         )})}
         <li key="localdb">
           <button
+            onClick={selectLocalDatabase}
             type="button"
             className="group p-2 w-full flex items-center justify-between rounded-full border border-dashed border-gray-400 shadow-sm space-x-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >

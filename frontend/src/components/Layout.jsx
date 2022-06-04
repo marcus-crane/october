@@ -14,10 +14,9 @@ import {
 import logo from '../logo.png'
 
 const sidebarNavigation = [
-  { name: "Home", href: "/", icon: MapIcon, koboSelectionRequired: false },
-  { name: "Sync", href: "#", icon: RefreshIcon, koboSelectionRequired: true },
+  { name: "Load", href: "/", icon: MapIcon, koboSelectionRequired: false },
+  { name: "Sync", href: "/overview", icon: RefreshIcon, koboSelectionRequired: true },
   { name: "Books", href: "#", icon: BookOpenIcon, koboSelectionRequired: true },
-  { name: "Highlights", href: "#", icon: BookmarkIcon, koboSelectionRequired: true },
   { name: "Queue", href: "#", icon: StatusOnlineIcon, koboSelectionRequired: true },
   { name: "Settings", href: "/settings", icon: CogIcon, koboSelectionRequired: false }
 ];
@@ -79,7 +78,7 @@ export default function Layout(props) {
                       </div>
 
                       {/* Search section */}
-                      <div className="flex-1 flex justify-center lg:justify-end">
+                      {/* <div className="flex-1 flex justify-center lg:justify-end">
                         <div className="w-full px-2 lg:px-6">
                           <label htmlFor="search" className="sr-only">
                             Search books
@@ -100,7 +99,7 @@ export default function Layout(props) {
                             />
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       {/* Links section */}
                       <div className="block lg:w-80">
                         <div className="flex items-center justify-end">
@@ -133,7 +132,7 @@ export default function Layout(props) {
               {sidebarNavigation.map((item) => (
                 <NavLink
                   key={item.name}
-                  to={item.href}
+                  to={item.koboSelectionRequired && !selectedKobo.mnt_path ? '#' : item.href}
                   disabled={item.koboSelectionRequired && !selectedKobo.mnt_path}
                   className={classNames(
                     determineExtraClasses(location.pathname, item, selectedKobo),
