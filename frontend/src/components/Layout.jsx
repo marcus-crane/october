@@ -147,10 +147,7 @@ export default function Layout(props) {
             </div>
           </nav>
 
-          {/* Main area */}
-          <main className="min-w-0 flex-1 lg:flex">
-            {props.children}
-          </main>
+          {props.children}
         </div>
       </div>
     </>

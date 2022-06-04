@@ -3,8 +3,6 @@
 import {backend} from '../models';
 import {map[string]backend} from '../models';
 
-export function ListDeviceBookmarks():Promise<Array<backend.Bookmark>|Error>;
-
 export function ListDeviceContent():Promise<Array<backend.Content>|Error>;
 
 export function BuildContentIndex(arg1:Array<backend.Content>):Promise<map[string]backend.Content>;
@@ -16,3 +14,5 @@ export function FindBookOnDevice(arg1:string):Promise<backend.Content|Error>;
 export function ListBookmarksByID(arg1:string):Promise<Array<backend.Bookmark>|Error>;
 
 export function ListBooksOnDevice():Promise<Array<backend.Content>|Error>;
+
+export function ListDeviceBookmarks():Promise<Array<backend.Bookmark>|Error>;
