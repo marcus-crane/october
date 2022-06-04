@@ -4,6 +4,12 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.1.1
+
+This version adds a fallback for highlights that are missing the `DateCreated` field, which causes October to fail to continue processing.
+
+In the event that `DateCreated` is missing, October will use the `DateModified` field. If both are somehow missing, it'll do a further fallback and use the current date.
+
 ## v1.1.0
 
 This release brings quite a few changes although a lot of them are under the hood so you won't notice them but they'll make it easier to add new features to October going forward.
