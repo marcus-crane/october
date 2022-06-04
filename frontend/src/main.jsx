@@ -15,8 +15,8 @@ const routes = (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Layout><DeviceSelector /></Layout>} />
-        <Route path="/overview" element={<Overview />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/overview" element={<Layout><Overview /></Layout>} />
+        <Route path="/settings" element={<Layout><Settings /></Layout>} />
       </Routes>
     </HashRouter>
     <Toaster />

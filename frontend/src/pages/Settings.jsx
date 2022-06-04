@@ -55,13 +55,7 @@ export default function Settings() {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 ">
-      <Navbar />
-      <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
-        <div className="space-y-2">
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            Settings
-          </h2>
-        </div>
+      <div className="min-h-screen flex items-center justify-center pb-24 px-24 gap-14">
         <div className="space-y-4">
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">

@@ -1,4 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom"
+import { GetSelectedKobo } from "../../wailsjs/go/backend/Backend";
 import { Disclosure, Dialog, Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, SearchIcon } from "@heroicons/react/solid";
 import {
@@ -12,19 +14,39 @@ import {
 import logo from '../logo.png'
 
 const sidebarNavigation = [
-  { name: "Home", href: "#", icon: MapIcon, current: true },
-  { name: "Sync", href: "#", icon: RefreshIcon, current: false },
-  { name: "Books", href: "#", icon: BookOpenIcon, current: false },
-  { name: "Highlights", href: "#", icon: BookmarkIcon, current: false },
-  { name: "Queue", href: "#", icon: StatusOnlineIcon, current: false },
-  { name: "Settings", href: "#", icon: CogIcon, current: false }
+  { name: "Home", href: "/", icon: MapIcon, koboSelectionRequired: false },
+  { name: "Sync", href: "#", icon: RefreshIcon, koboSelectionRequired: true },
+  { name: "Books", href: "#", icon: BookOpenIcon, koboSelectionRequired: true },
+  { name: "Highlights", href: "#", icon: BookmarkIcon, koboSelectionRequired: true },
+  { name: "Queue", href: "#", icon: StatusOnlineIcon, koboSelectionRequired: true },
+  { name: "Settings", href: "/settings", icon: CogIcon, koboSelectionRequired: false }
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+function determineExtraClasses(pathname, item, selectedKobo) {
+  let classes = []
+  if (pathname === item.href) {
+    classes.push("bg-gray-900 text-white")
+  } else {
+    classes.push("text-gray-400 hover:bg-gray-700")
+  }
+  if (item.koboSelectionRequired && !selectedKobo.mnt_path) {
+    classes.push("cursor-not-allowed")
+  }
+  return classes.join(" ")
+}
+
 export default function Layout(props) {
+  const [selectedKobo, setSelectedKobo] = useState({})
+  useEffect(() => {
+    GetSelectedKobo()
+      .then(kobo => setSelectedKobo(kobo))
+      .catch(err => console.log('No Kobo found'))
+  }, [selectedKobo.mnt_path])
+  const location = useLocation()
   return (
     <>
       <div className="h-full flex flex-col">
@@ -109,19 +131,18 @@ export default function Layout(props) {
           >
             <div className="relative w-20 flex flex-col p-3 space-y-3">
               {sidebarNavigation.map((item) => (
-                <a
+                <NavLink
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
+                  disabled={item.koboSelectionRequired && !selectedKobo.mnt_path}
                   className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-400 hover:bg-gray-700",
+                    determineExtraClasses(location.pathname, item, selectedKobo),
                     "flex-shrink-0 inline-flex flex-col items-center justify-center h-14 w-14 rounded-lg text-xs font-medium"
                   )}
                 >
                   <item.icon className="pb-1 h-6 w-6" aria-hidden="true" />
                   <span>{item.name}</span>
-                </a>
+                </NavLink>
               ))}
             </div>
           </nav>
