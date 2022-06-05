@@ -6,7 +6,7 @@ import {
   SelectKobo,
   PromptForLocalDBPath,
 } from "../../wailsjs/go/backend/Backend";
-import { PlusIcon, DatabaseIcon } from "@heroicons/react/solid";
+import { PlusIcon } from "@heroicons/react/solid";
 
 export default function DeviceSelection() {
   const navigate = useNavigate();
@@ -63,7 +63,6 @@ export default function DeviceSelection() {
   return (
     <div className="mt-10 w-1/2 m-auto">
       <h1 class="text-3xl">Select your Kobo to continue</h1>
-      <p class="text-lg"></p>
       <button class="text-xs" onClick={detectDevices}>Just plugged in your device? Click here to refresh the list below.</button>
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide pt-10">
         {devices.length} Kobo eReader{devices.length !== 1 ? 's have' : ' has'} been detected so far

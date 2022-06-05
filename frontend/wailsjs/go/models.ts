@@ -1,43 +1,5 @@
 export namespace backend {
 	
-	export class Content {
-	    content_id: string;
-	    content_type: string;
-	    mime_type: string;
-	    book_id: string;
-	    book_title: string;
-	    image_id: string;
-	    title: string;
-	    attribution: string;
-	    description: string;
-	    date_created: string;
-	    date_last_read: string;
-	    num_pages: number;
-	    percent_read: string;
-	    is_downloaded: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Content(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.content_id = source["content_id"];
-	        this.content_type = source["content_type"];
-	        this.mime_type = source["mime_type"];
-	        this.book_id = source["book_id"];
-	        this.book_title = source["book_title"];
-	        this.image_id = source["image_id"];
-	        this.title = source["title"];
-	        this.attribution = source["attribution"];
-	        this.description = source["description"];
-	        this.date_created = source["date_created"];
-	        this.date_last_read = source["date_last_read"];
-	        this.num_pages = source["num_pages"];
-	        this.percent_read = source["percent_read"];
-	        this.is_downloaded = source["is_downloaded"];
-	    }
-	}
 	export class Settings {
 	    readwise_token: string;
 	    upload_covers: boolean;
@@ -200,6 +162,44 @@ export namespace backend {
 	        this.annotation = source["annotation"];
 	        this.extra_annotation_data = source["extra_annotation_data"];
 	        this.date_created = source["date_created"];
+	    }
+	}
+	export class Content {
+	    content_id: string;
+	    content_type: string;
+	    mime_type: string;
+	    book_id: string;
+	    book_title: string;
+	    image_id: string;
+	    title: string;
+	    attribution: string;
+	    description: string;
+	    date_created: string;
+	    date_last_read: string;
+	    num_pages: number;
+	    percent_read: string;
+	    is_downloaded: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Content(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.content_id = source["content_id"];
+	        this.content_type = source["content_type"];
+	        this.mime_type = source["mime_type"];
+	        this.book_id = source["book_id"];
+	        this.book_title = source["book_title"];
+	        this.image_id = source["image_id"];
+	        this.title = source["title"];
+	        this.attribution = source["attribution"];
+	        this.description = source["description"];
+	        this.date_created = source["date_created"];
+	        this.date_last_read = source["date_last_read"];
+	        this.num_pages = source["num_pages"];
+	        this.percent_read = source["percent_read"];
+	        this.is_downloaded = source["is_downloaded"];
 	    }
 	}
 

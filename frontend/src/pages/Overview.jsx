@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
 import { CountDeviceBookmarks, CountDeviceBooks } from "../../wailsjs/go/backend/Kobo";
 import {

@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 
 import DeviceSelector from './pages/DeviceSelector';
 import Overview from './pages/Overview';
+import Library from './pages/Library';
 import Settings from './pages/Settings';
 import Layout from './components/Layout'
 
@@ -16,6 +17,7 @@ const routes = (
       <Routes>
         <Route path="/" element={<Layout><DeviceSelector /></Layout>} />
         <Route path="/overview" element={<Layout><Overview /></Layout>} />
+        <Route path="/library" element={<Layout><Library /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
       </Routes>
     </HashRouter>

@@ -1,11 +1,9 @@
-import { Fragment, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom"
 import { GetSelectedKobo } from "../../wailsjs/go/backend/Backend";
-import { Disclosure, Dialog, Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon, SearchIcon } from "@heroicons/react/solid";
+import { Disclosure } from "@headlessui/react";
 import {
   BookOpenIcon,
-  BookmarkIcon,
   RefreshIcon,
   CogIcon,
   MapIcon,
@@ -16,7 +14,7 @@ import logo from '../logo.png'
 const sidebarNavigation = [
   { name: "Load", href: "/", icon: MapIcon, koboSelectionRequired: false },
   { name: "Sync", href: "/overview", icon: RefreshIcon, koboSelectionRequired: true },
-  { name: "Books", href: "#", icon: BookOpenIcon, koboSelectionRequired: true },
+  { name: "Library", href: "/library", icon: BookOpenIcon, koboSelectionRequired: true },
   { name: "Queue", href: "#", icon: StatusOnlineIcon, koboSelectionRequired: true },
   { name: "Settings", href: "/settings", icon: CogIcon, koboSelectionRequired: false }
 ];
@@ -32,7 +30,7 @@ function determineExtraClasses(pathname, item, selectedKobo) {
   } else {
     classes.push("text-gray-400 hover:bg-gray-700")
   }
-  if (item.koboSelectionRequired && !selectedKobo.mnt_path) {
+  if (item.koboSelectionRequired && !selectedKobo.name) {
     classes.push("cursor-not-allowed")
   }
   return classes.join(" ")
@@ -44,7 +42,7 @@ export default function Layout(props) {
     GetSelectedKobo()
       .then(kobo => setSelectedKobo(kobo))
       .catch(err => console.log('No Kobo found'))
-  }, [selectedKobo.mnt_path])
+  }, [selectedKobo.name])
   const location = useLocation()
   return (
     <>
@@ -132,8 +130,8 @@ export default function Layout(props) {
               {sidebarNavigation.map((item) => (
                 <NavLink
                   key={item.name}
-                  to={item.koboSelectionRequired && !selectedKobo.mnt_path ? '#' : item.href}
-                  disabled={item.koboSelectionRequired && !selectedKobo.mnt_path}
+                  to={item.koboSelectionRequired && !selectedKobo.name ? '#' : item.href}
+                  disabled={item.koboSelectionRequired && !selectedKobo.name}
                   className={classNames(
                     determineExtraClasses(location.pathname, item, selectedKobo),
                     "flex-shrink-0 inline-flex flex-col items-center justify-center h-14 w-14 rounded-lg text-xs font-medium"
