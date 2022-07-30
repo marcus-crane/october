@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom"
 import { CountDeviceBookmarks, CountDeviceBooks } from "../../wailsjs/go/backend/Kobo";
 import {
   GetSelectedKobo,
@@ -18,6 +19,7 @@ export default function Overview(props) {
   const [selectedKobo, setSelectedKobo] = useState({});
   const [highlightCount, setHighlightCount] = useState(0);
   const [bookCount, setBookCount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     GetSelectedKobo()
@@ -156,6 +158,7 @@ export default function Overview(props) {
             </div>
             <div className="mt-6 flex space-x-3 md:mt-0 md:ml-4">
               <button
+                onClick={() => navigate("/library")}
                 type="button"
                 className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
               >

@@ -53,7 +53,7 @@ export default function Settings() {
       <div className="bg-gray-100 dark:bg-gray-800 ">
         <div className="min-h-screen flex pt-12 justify-center pb-24 px-24 gap-14">
           <div className="space-y-4">
-            <h1 class="text-3xl">Settings</h1>
+            <h1 className="text-3xl">Settings</h1>
             <div className="bg-white shadow sm:rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">

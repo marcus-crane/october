@@ -15,6 +15,13 @@ type Kobo struct {
 	DbPath     string `json:"db_path"`
 }
 
+type Book struct {
+	Title       string `json:"title"`
+	Attribution string `json:"attribution"`
+	Description string `json:"description"`
+	CoverBytes  string `json:"cover_bytes"`
+}
+
 type Content struct {
 	ContentID               string `gorm:"column:ContentID" json:"content_id"`
 	ContentType             string `gorm:"column:ContentType" json:"content_type"`

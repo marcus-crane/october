@@ -163,3 +163,41 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 	}
 	return numUploads, nil
 }
+
+func (b *Backend) LoadCoverAsBytes(book Content) string {
+	coverID := kobo.ContentIDToImageID(book.ContentID)
+	coverPath := kobo.CoverTypeLibFull.GeneratePath(false, coverID)
+	absCoverPath := path.Join(b.SelectedKobo.MntPath, "/", coverPath)
+	coverBytes, err := ioutil.ReadFile(absCoverPath)
+	if err != nil {
+		log.Error().Str("cover", book.ContentID).Str("location", absCoverPath).Msg("Failed to load cover")
+	}
+	var base64Encoding string
+	mimeType := http.DetectContentType(coverBytes)
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	}
+	base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
+	return base64Encoding
+}
+
+func (b *Backend) ListDeviceContentWithCovers() ([]Book, error) {
+	content, err := b.Kobo.ListDeviceContent()
+	if err != nil {
+		return nil, err
+	}
+	var book []Book
+	for _, entry := range content {
+		updatedBook := Book{
+			Title:       entry.Title,
+			Attribution: entry.Attribution,
+			Description: entry.Description,
+			CoverBytes:  b.LoadCoverAsBytes(entry),
+		}
+		book = append(book, updatedBook)
+	}
+	return book, nil
+}

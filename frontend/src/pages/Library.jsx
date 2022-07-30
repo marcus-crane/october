@@ -1,43 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import { HeartIcon } from "@heroicons/react/outline";
 import {
   PencilIcon,
-  PlusSmIcon as PlusSmIconSolid,
   ViewGridIcon as ViewGridIconSolid,
   ViewListIcon,
 } from "@heroicons/react/solid";
 
-const files = [
-  {
-    name: "IMG_4985.HEIC",
-    size: "3.9 MB",
-    source:
-      "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
-    current: true,
-  },
-  // More files...
-];
-
-const currentFile = {
-  name: "IMG_4985.HEIC",
-  size: "3.9 MB",
-  source:
-    "https://images.unsplash.com/photo-1582053433976-25c00369fc93?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80",
-  information: {
-    "Uploaded by": "Marie Culver",
-    Created: "June 8, 2020",
-    "Last modified": "June 8, 2020",
-    Dimensions: "4032 x 3024",
-    Resolution: "72 x 72",
-  }
-};
+import { ListDeviceContentWithCovers } from '../../wailsjs/go/backend/Backend'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Library() {
+  const [books, setBooks] = useState([])
+  const [selectedBook, setSelectedBook] = useState({})
+
+  useEffect(() => {
+    ListDeviceContentWithCovers()
+      .then((content) => setBooks(content))
+      .catch((err) => toast.error(err));
+  }, [books.length]);
+
+  console.log(books)
+
   return (
     <div className="flex-1 flex items-stretch overflow-hidden">
       <main className="flex-1 overflow-y-auto">
@@ -69,40 +56,41 @@ export default function Library() {
             </h2>
             <ul
               role="list"
-              className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 xl:gap-x-8"
+              className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
             >
-              {files.map((file) => (
-                <li key={file.name} className="relative">
+              {books.map((book) => (
+                <li key={book.title} className="relative">
                   <div
                     className={classNames(
-                      file.current
+                      selectedBook.title === book.title
                         ? "ring-2 ring-offset-2 ring-indigo-500"
                         : "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500",
                       "group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden"
                     )}
                   >
                     <img
-                      src={file.source}
+                      src={book.cover_bytes || "https://via.placeholder.com/186x283.png"}
                       alt=""
                       className={classNames(
-                        file.current ? "" : "group-hover:opacity-75",
+                        selectedBook.title === book.title ? "" : "group-hover:opacity-75",
                         "object-cover pointer-events-none"
                       )}
                     />
                     <button
                       type="button"
+                      onClick={() => setSelectedBook(book)}
                       className="absolute inset-0 focus:outline-none"
                     >
                       <span className="sr-only">
-                        View details for {file.name}
+                        View details for {book.title}
                       </span>
                     </button>
                   </div>
                   <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">
-                    {file.name}
+                    {book.title}
                   </p>
                   <p className="block text-sm font-medium text-gray-500 pointer-events-none">
-                    {file.size}
+                    {book.attribution}
                   </p>
                 </li>
               ))}
@@ -113,17 +101,17 @@ export default function Library() {
       <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
         <div className="pb-16 space-y-6">
           <div>
-            <div className="block w-full aspect-w-10 aspect-h-7 rounded-lg overflow-hidden">
-              <img src={currentFile.source} alt="" className="object-cover" />
+            <div className="block w-full aspect-w-5 aspect-h-7 rounded-lg overflow-hidden">
+              <img src={selectedBook.cover_bytes || "https://via.placeholder.com/319x412.png"} alt="" className="object-cover" />
             </div>
             <div className="mt-4 flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-md font-medium text-gray-900">
                   <span className="sr-only">Details for </span>
-                  {currentFile.name}
+                  {selectedBook.title}
                 </h2>
                 <p className="text-sm font-medium text-gray-500">
-                  {currentFile.size}
+                  {selectedBook.attribution}
                 </p>
               </div>
               <button
@@ -135,35 +123,26 @@ export default function Library() {
               </button>
             </div>
           </div>
-          <div>
+          {/* <div>
             <h3 className="font-medium text-gray-900">Information</h3>
             <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-              {Object.keys(currentFile.information).map((key) => (
+              {Object.keys(selectedBook.name).map((key) => (
                 <div
                   key={key}
                   className="py-3 flex justify-between text-sm font-medium"
                 >
                   <dt className="text-gray-500">{key}</dt>
                   <dd className="text-gray-900">
-                    {currentFile.information[key]}
+                    {selectedBook.name}
                   </dd>
                 </div>
               ))}
             </dl>
-          </div>
+          </div> */}
           <div>
             <h3 className="font-medium text-gray-900">Description</h3>
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-sm text-gray-500 italic">
-                Add a description to this image.
-              </p>
-              <button
-                type="button"
-                className="bg-white rounded-full h-8 w-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <PencilIcon className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Add description</span>
-              </button>
+              <p className="text-sm text-gray-500 italic" dangerouslySetInnerHTML={{__html: selectedBook.description}} />
             </div>
           </div>
           <div className="flex">

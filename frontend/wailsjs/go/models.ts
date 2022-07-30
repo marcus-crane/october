@@ -1,17 +1,21 @@
 export namespace backend {
 	
-	export class Settings {
-	    readwise_token: string;
-	    upload_covers: boolean;
+	export class Book {
+	    title: string;
+	    attribution: string;
+	    description: string;
+	    cover_bytes: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new Settings(source);
+	        return new Book(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.readwise_token = source["readwise_token"];
-	        this.upload_covers = source["upload_covers"];
+	        this.title = source["title"];
+	        this.attribution = source["attribution"];
+	        this.description = source["description"];
+	        this.cover_bytes = source["cover_bytes"];
 	    }
 	}
 	export class BookListEntry {
@@ -200,6 +204,20 @@ export namespace backend {
 	        this.num_pages = source["num_pages"];
 	        this.percent_read = source["percent_read"];
 	        this.is_downloaded = source["is_downloaded"];
+	    }
+	}
+	export class Settings {
+	    readwise_token: string;
+	    upload_covers: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Settings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.readwise_token = source["readwise_token"];
+	        this.upload_covers = source["upload_covers"];
 	    }
 	}
 
