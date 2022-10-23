@@ -26,7 +26,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17.2
+          go-version: 1.19
       
       - name: Install makensis
         uses: crazy-max/ghaction-chocolatey@v2
