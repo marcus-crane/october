@@ -19,6 +19,20 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
+	// Create app menus
+	// appMenu := menu.NewMenu()
+
+	// // TODO: Set only on Darwin
+	// appMenu.Append(menu.EditMenu()) // on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+
+	// helpMenu := appMenu.AddSubmenu("Help")
+	// helpMenu.AddText("Report Issue", nil, func(_ *menu.CallbackData) {
+	// 	runtime.BrowserOpenURL(app.ctx, "https://github.com/marcus-crane/october/issues/new")
+	// })
+	// helpMenu.AddText("Documentation", nil, func(_ *menu.CallbackData) {
+	// 	runtime.BrowserOpenURL(app.ctx, "https://october.utf9k.net/prerequisites/")
+	// })
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:            "October",
