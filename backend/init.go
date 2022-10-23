@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 
@@ -140,7 +140,7 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 				coverID := kobo.ContentIDToImageID(book.SourceURL)
 				coverPath := kobo.CoverTypeLibFull.GeneratePath(false, coverID)
 				absCoverPath := path.Join(b.SelectedKobo.MntPath, "/", coverPath)
-				coverBytes, err := ioutil.ReadFile(absCoverPath)
+				coverBytes, err := os.ReadFile(absCoverPath)
 				if err != nil {
 					log.Error().Str("cover", book.SourceURL).Str("location", absCoverPath).Msg("Failed to load cover")
 				}

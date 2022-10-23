@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,7 +24,7 @@ func setupTmpKobo(dir string, deviceId string) string {
 		return ""
 	}
 	tmpfn := filepath.Join(dir, ".kobo", "version")
-	if err := ioutil.WriteFile(tmpfn, content, 0666); err != nil {
+	if err := os.WriteFile(tmpfn, content, 0666); err != nil {
 		log.Fatal(err)
 		return ""
 	}

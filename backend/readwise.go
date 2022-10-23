@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -128,7 +127,7 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 			Msg("Received a non-200 response from Readwise")
 		return bookList, err
 	}
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse response")
 		panic(err)

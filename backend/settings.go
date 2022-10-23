@@ -2,7 +2,6 @@ package backend
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -25,7 +24,7 @@ func LoadSettings() (*Settings, error) {
 		path:         settingsPath,
 		UploadCovers: false,
 	}
-	b, err := ioutil.ReadFile(settingsPath)
+	b, err := os.ReadFile(settingsPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			// We should always have settings but if they have been deleted, just use the defaults
@@ -49,7 +48,7 @@ func (s *Settings) Save() error {
 	if err != nil {
 		return errors.Wrap(err, "Failed to create settings directory. Do you have proper permissions?")
 	}
-	err = ioutil.WriteFile(s.path, b, 0777)
+	err = os.WriteFile(s.path, b, 0777)
 	if err != nil {
 		return errors.Wrap(err, "Failed to create settings file. Do you have proper permissions?")
 	}
