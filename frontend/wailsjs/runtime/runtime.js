@@ -41,15 +41,15 @@ export function EventsOnMultiple(eventName, callback, maxCallbacks) {
 }
 
 export function EventsOn(eventName, callback) {
-    OnMultiple(eventName, callback, -1);
+    EventsOnMultiple(eventName, callback, -1);
 }
 
-export function EventsOff(eventName) {
-    return window.runtime.EventsOff(eventName);
+export function EventsOff(eventName, ...additionalEventNames) {
+    return window.runtime.EventsOff(eventName, ...additionalEventNames);
 }
 
 export function EventsOnce(eventName, callback) {
-    OnMultiple(eventName, callback, 1);
+    EventsOnMultiple(eventName, callback, 1);
 }
 
 export function EventsEmit(eventName) {
@@ -91,6 +91,10 @@ export function WindowFullscreen() {
 
 export function WindowUnfullscreen() {
     window.runtime.WindowUnfullscreen();
+}
+
+export function WindowIsFullscreen() {
+    return window.runtime.WindowIsFullscreen();
 }
 
 export function WindowGetSize() {
@@ -137,6 +141,10 @@ export function WindowUnmaximise() {
     window.runtime.WindowUnmaximise();
 }
 
+export function WindowIsMaximised() {
+    return window.runtime.WindowIsMaximised();
+}
+
 export function WindowMinimise() {
     window.runtime.WindowMinimise();
 }
@@ -145,8 +153,20 @@ export function WindowUnminimise() {
     window.runtime.WindowUnminimise();
 }
 
-export function WindowSetRGBA(RGBA) {
-    window.runtime.WindowSetRGBA(RGBA);
+export function WindowSetBackgroundColour(R, G, B, A) {
+    window.runtime.WindowSetBackgroundColour(R, G, B, A);
+}
+
+export function ScreenGetAll() {
+    return window.runtime.ScreenGetAll();
+}
+
+export function WindowIsMinimised() {
+    return window.runtime.WindowIsMinimised();
+}
+
+export function WindowIsNormal() {
+    return window.runtime.WindowIsNormal();
 }
 
 export function BrowserOpenURL(url) {
@@ -159,4 +179,12 @@ export function Environment() {
 
 export function Quit() {
     window.runtime.Quit();
+}
+
+export function Hide() {
+    window.runtime.Hide();
+}
+
+export function Show() {
+    window.runtime.Show();
 }
