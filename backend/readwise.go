@@ -234,18 +234,21 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
 	sendhighlight:
-		highlight := Highlight{
-			Text:          text,
-			Title:         source.Title,
-			Author:        source.Attribution,
-			SourceURL:     entry.VolumeID,
-			SourceType:    SourceType,
-			Category:      SourceCategory,
-			Note:          entry.Annotation,
-			HighlightedAt: createdAt,
+		highlightChunks := splitHighlight(text, MaxHighlightLen)
+		for _, chunk := range highlightChunks {
+			highlight := Highlight{
+				Text:          chunk,
+				Title:         source.Title,
+				Author:        source.Attribution,
+				SourceURL:     entry.VolumeID,
+				SourceType:    SourceType,
+				Category:      SourceCategory,
+				Note:          entry.Annotation,
+				HighlightedAt: createdAt,
+			}
+			payload.Highlights = append(payload.Highlights, highlight)
 		}
-		log.Debug().Interface("highlight", highlight).Msg("Successfully built highlights")
-		payload.Highlights = append(payload.Highlights, highlight)
+		log.Debug().Interface("highlight", text).Msg("Successfully built highlights")
 	}
 	log.Info().Int("highlight_count", len(payload.Highlights)).Msg("Successfully parsed highlights")
 	return payload, nil

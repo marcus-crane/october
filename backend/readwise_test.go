@@ -1,6 +1,8 @@
 package backend
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -127,6 +129,52 @@ func TestBuildPayload_SkipMalformedBookmarks(t *testing.T) {
 	contentIndex := map[string]Content{"mnt://kobo/blah/Good Book - An Author.epub": {ContentID: "mnt://kobo/blah/Good Book - An Author.epub"}}
 	bookmarks := []Bookmark{
 		{VolumeID: "mnt://kobo/blah/Good Book - An Author.epub", DateCreated: "2006-01-02T15:04:05.000"},
+	}
+	var actual, _ = BuildPayload(bookmarks, contentIndex)
+	assert.Equal(t, expected, actual)
+}
+
+func TestBuildPayload_LongHighlightChunks(t *testing.T) {
+	var b strings.Builder
+	for i := 0; i < 20000; i++ {
+		fmt.Fprintf(&b, "%s", "a")
+	}
+	text := b.String()
+	highlights := []Highlight{
+		{
+			Text:          text[0:MaxHighlightLen],
+			Title:         "A Book",
+			Author:        "Computer",
+			SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
+			SourceType:    SourceType,
+			Category:      SourceCategory,
+			Note:          "Making a note here",
+			HighlightedAt: "2006-01-02T15:04:05+00:00",
+		},
+		{
+			Text:          text[MaxHighlightLen : MaxHighlightLen*2],
+			Title:         "A Book",
+			Author:        "Computer",
+			SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
+			SourceType:    SourceType,
+			Category:      SourceCategory,
+			Note:          "Making a note here",
+			HighlightedAt: "2006-01-02T15:04:05+00:00",
+		},
+		{
+			Text:          text[MaxHighlightLen*2 : 20000],
+			Title:         "A Book",
+			Author:        "Computer",
+			SourceURL:     "mnt://kobo/blah/Good Book - An Author.epub",
+			SourceType:    SourceType,
+			Category:      SourceCategory,
+			Note:          "Making a note here",
+			HighlightedAt: "2006-01-02T15:04:05+00:00",
+		}}
+	expected := Response{Highlights: highlights}
+	contentIndex := map[string]Content{"mnt://kobo/blah/Good Book - An Author.epub": {ContentID: "mnt://kobo/blah/Good Book - An Author.epub", Title: "A Book", Attribution: "Computer"}}
+	bookmarks := []Bookmark{
+		{VolumeID: "mnt://kobo/blah/Good Book - An Author.epub", Text: text, DateCreated: "2006-01-02T15:04:05.000", Annotation: "Making a note here"},
 	}
 	var actual, _ = BuildPayload(bookmarks, contentIndex)
 	assert.Equal(t, expected, actual)
