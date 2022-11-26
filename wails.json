@@ -9,5 +9,11 @@
   "author": {
     "name": "Marcus Crane",
     "email": "marcus@utf9k.net"
+  },
+  "info": {
+    "companyName": "utf9k Limited",
+    "productName": "October",
+    "productVersion": "1.1.3-alpha2",
+    "copyright": "Copyright © 2022 utf9k Limited"
   }
 }

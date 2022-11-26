@@ -1,24 +1,54 @@
 export namespace backend {
 	
-	export class Kobo {
-	    name: string;
-	    storage: number;
-	    display_ppi: number;
-	    mnt_path: string;
-	    db_path: string;
+	export class BookListEntry {
+	    id: number;
+	    title: string;
+	    cover_image_url: string;
+	    source_url: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new Kobo(source);
+	        return new BookListEntry(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.name = source["name"];
-	        this.storage = source["storage"];
-	        this.display_ppi = source["display_ppi"];
-	        this.mnt_path = source["mnt_path"];
-	        this.db_path = source["db_path"];
+	        this.id = source["id"];
+	        this.title = source["title"];
+	        this.cover_image_url = source["cover_image_url"];
+	        this.source_url = source["source_url"];
 	    }
+	}
+	export class BookListResponse {
+	    count: number;
+	    results: BookListEntry[];
+	
+	    static createFrom(source: any = {}) {
+	        return new BookListResponse(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.count = source["count"];
+	        this.results = this.convertValues(source["results"], BookListEntry);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Bookmark {
 	    bookmark_id: string;
@@ -80,70 +110,6 @@ export namespace backend {
 	        this.percent_read = source["percent_read"];
 	    }
 	}
-	export class Settings {
-	    readwise_token: string;
-	    upload_covers: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new Settings(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.readwise_token = source["readwise_token"];
-	        this.upload_covers = source["upload_covers"];
-	    }
-	}
-	export class BookListEntry {
-	    id: number;
-	    title: string;
-	    cover_image_url: string;
-	    source_url: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new BookListEntry(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.title = source["title"];
-	        this.cover_image_url = source["cover_image_url"];
-	        this.source_url = source["source_url"];
-	    }
-	}
-	export class BookListResponse {
-	    count: number;
-	    results: BookListEntry[];
-	
-	    static createFrom(source: any = {}) {
-	        return new BookListResponse(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.count = source["count"];
-	        this.results = this.convertValues(source["results"], BookListEntry);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class Highlight {
 	    text: string;
 	    title?: string;
@@ -168,6 +134,26 @@ export namespace backend {
 	        this.category = source["category"];
 	        this.note = source["note"];
 	        this.highlighted_at = source["highlighted_at"];
+	    }
+	}
+	export class Kobo {
+	    name: string;
+	    storage: number;
+	    display_ppi: number;
+	    mnt_path: string;
+	    db_path: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Kobo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.storage = source["storage"];
+	        this.display_ppi = source["display_ppi"];
+	        this.mnt_path = source["mnt_path"];
+	        this.db_path = source["db_path"];
 	    }
 	}
 	export class Response {
@@ -199,6 +185,20 @@ export namespace backend {
 		    }
 		    return a;
 		}
+	}
+	export class Settings {
+	    readwise_token: string;
+	    upload_covers: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Settings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.readwise_token = source["readwise_token"];
+	        this.upload_covers = source["upload_covers"];
+	    }
 	}
 
 }
