@@ -57,6 +57,9 @@ jobs:
       - name: Update npm
         run: npm install -g npm
 
+      - name: Bump manifest version
+        run: node version.js ${{ github.event.release.tag_name }}
+
       - name: Build frontend assets
         shell: bash
         run: cd frontend && npm install
