@@ -6,13 +6,12 @@ on:
 
 jobs:
   release:
-    name: Release October
+    name: Release October (Windows x86)
     runs-on: windows-latest
     strategy:
       matrix:
         platform:
           - windows/amd64
-          - windows/arm64
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2

@@ -6,20 +6,19 @@ on:
 
 jobs:
   release:
-    name: Release October (macOS)
-    runs-on: macos-latest # We can cross compile but need to be on macOS to notarise
+    name: Release October (Windows ARM)
+    runs-on: [windows-latest, ARM64]
     strategy:
       matrix:
         platform:
-          - darwin/amd64
-          - darwin/arm64
-          - darwin/universal
+          - windows/arm64
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
 
       - name: Normalise platform tag
         id: normalise_platform
+        shell: bash
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
@@ -30,14 +29,13 @@ jobs:
           go-version: 1.19
       
       - name: Install makensis
-        run: brew install makensis
-        if: ${{ startsWith(matrix.platform, 'windows') }}
-      
-      - name: Install Windows build toolchain
-        run: brew install mingw-w64
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install nsis
         if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
+        shell: bash
         run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
         if: ${{ startsWith(matrix.platform, 'darwin') }}
 
@@ -63,6 +61,7 @@ jobs:
         run: node version.js ${{ github.event.release.tag_name }}
 
       - name: Build frontend assets
+        shell: bash
         run: cd frontend && npm install
 
       - name: Build wails app for macOS
@@ -70,7 +69,8 @@ jobs:
         if: ${{ startsWith(matrix.platform , 'darwin') }}
 
       - name: Build Windows NSIS installer
-        run: CGO_ENABLED=1 CC="x86_64-w64-mingw32-gcc" wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        shell: bash
+        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
         if: ${{ startsWith(matrix.platform , 'windows') }}
         
       - name: Codesign Windows NSIS Installer
@@ -82,10 +82,18 @@ jobs:
           echo "Signing October installer"
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-amd64-installer.exe
         if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
+      
+      - name: Remove old October binary
+        shell: bash
+        run: rm October.exe
+        if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
 
       - name: Compress binary
-        run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
+        run: Compress-Archive October-amd64-installer.exe october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip
         if: ${{ startsWith(matrix.platform , 'windows') }}
+        working-directory: ./build/bin
 
       - name: Notarise macOS app + create dmg
         run: gon -log-level=info gon.config.json
@@ -106,6 +114,7 @@ jobs:
 
       - name: Get release URL
         id: get_upload_url
+        shell: bash
         run: |
           url=$(echo "$response" | jq -r '.[0].upload_url')
           echo "::set-output name=url::$url"
