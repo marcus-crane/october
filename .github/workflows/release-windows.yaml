@@ -12,6 +12,7 @@ jobs:
       matrix:
         platform:
           - windows/amd64
+          - windows/arm64
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
