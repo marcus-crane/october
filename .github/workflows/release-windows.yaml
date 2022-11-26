@@ -12,6 +12,7 @@ jobs:
       matrix:
         platform:
           - windows/amd64
+          - windows/arm64
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -56,6 +57,9 @@ jobs:
 
       - name: Update npm
         run: npm install -g npm
+
+      - name: Bump manifest version
+        run: node version.js ${{ github.event.release.tag_name }}
 
       - name: Build frontend assets
         shell: bash

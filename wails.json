@@ -1,4 +1,5 @@
 {
+  "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "October",
   "outputfilename": "october",
   "frontend:install": "npm install",
@@ -8,5 +9,11 @@
   "author": {
     "name": "Marcus Crane",
     "email": "marcus@utf9k.net"
+  },
+  "info": {
+    "companyName": "utf9k Limited",
+    "productName": "October",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2022 utf9k Limited"
   }
 }
