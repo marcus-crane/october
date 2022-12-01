@@ -4,6 +4,80 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.2.0
+
+This release does not contain any new features but tidies up a lot of underlying metadata associated with each executable, thanks in part to a bunch of upgrades that were introduced with Wails 2.0, the Go framework that powers Wails.
+
+**NOTE:** For Windows users, I recommend uninstalling October before installing this latest version just to avoid any confusion. Nothing will break if you decide not to but as some metadata has changed, using the latest installer will change the install location resulting in two October entries. You can install the older version at any point but it may be confusing if you aren't aware of this change. I figure best to do it now than wait until it might impact more users in future.
+
+At a high level, this update corrects the version information that is available in various places as well as adding some publisher information and other things that you would generally not need to be aware of but can be handy.
+
+I don't expect this to be that interesting to most users but if you'd like to read the nitty gritty details, feel free to keep reading:
+
+### Windows
+
+#### Install path
+
+Publisher information has been set to `utf9k` which is just the sort of "catch all" that I use for my software side projects and happens to be the domain of my website as well.
+
+This in itself isn't particularly interesting but it does inform the installation path for October so for Windows users, October is now installed at `C:\Program Files\utf9k\October\october.exe`. Before this change, it was installed at `C:\Program Files\October\October\october.exe`.
+
+While I don't distribute any other Windows software, this just helps with grouping it all together in a standard place in line with how Windows expects applications to be laid out.
+
+![installer-name](https://user-images.githubusercontent.com/14816406/204116218-b0e23130-651f-4ed3-9390-f3dab5f49e48.png)
+
+In order to remove the previous version, you can either run the uninstaller located at `C:\Program Files\October\October\uninstall.exe` or you can use the `Add or remove programs` section in Control Panel. You'll be able to spot the proper version as all versions before this one will show with the version set as `1.0.0`
+
+![uninstall](https://user-images.githubusercontent.com/14816406/204116312-ff627bba-3479-4fa9-97f8-90c2dd3c8a33.png)
+
+This only needs to be done one time as future installations of October will always be installed at `C:\Program Files\utf9k\October` going forward.
+
+#### Version information
+
+Something I hadn't realised until it was mentioned in #65 is that there isn't actually a clear way at all to identify version information. This still has some work to be done, such as surfacing it within October itself but now there are a few places that can be checked to see what version you are using.
+
+**NOTE:** Due to limitations in how versions are laid out, they are always represented as `x.x.x` where x is a number regardless of any extra versioning. For example, both `1.2.2-alpha1` and `1.2.2-beta2` would be represented as `1.2.2` due to what Windows (and installer files) expect. That said, I don't expect any users to actually run any pre-release versions as they're most for my own testing to simulate what the final release may look like.
+
+The first place that is updated is `Add or remove programs` which now reflects the installed version, in this case `1.2.0`. It also reflects an updated publisher name as well.
+
+![installed-compare](https://user-images.githubusercontent.com/14816406/204116360-d0728a5a-76d0-4705-af81-30e87040d06f.png)
+
+Right clicking on the October executable and selecting `Properties -> Details` will also show relevant versioning information as well.
+
+![windows](https://user-images.githubusercontent.com/14816406/204116626-31e51889-9d6c-42f0-b3c0-4f0b17d9e39e.png)
+
+If there are any other Windows metadata areas that I'm not aware of and have missed, please let me know.
+
+### macOS
+
+Historically the macOS app has had a little "About October" popup that is accessible from the application menu, as is standard with all macOS applications.
+
+<img width="372" alt="CleanShot 2022-11-27 at 15 30 32@2x" src="https://user-images.githubusercontent.com/14816406/204116557-900f59ce-72e8-4502-a885-62c62d05e41c.png">
+
+We can do better than that though and there is now extra metadata visible when viewing `October.app` within your `Applications` folder:
+
+Right clicking on the application and selecting "Get Info" will now show a bunch of updated information such as the installed version.
+
+![CleanShot 2022-11-27 at 15 06 56@2x](https://user-images.githubusercontent.com/14816406/204116460-7acf1c2a-a44b-42cd-bae0-fc30e45359dc.png)
+
+Similarly, pressing Spacebar with `October.app` highlighted will also show a bunch of information using Finder's preview functionality
+
+![CleanShot 2022-11-27 at 15 06 38@2x](https://user-images.githubusercontent.com/14816406/204116458-4d549606-8084-4a79-99e8-96eb44d2f261.png)
+
+There aren't any other relevant areas of macOS that I'm aware of to check as applications are very self contained (ie; there isn't a messy install process) unlike with Windows and as such, there is no need to worry about install paths changing or anything like that.
+
+## v1.1.2
+
+This is a minor update to fix an edge case that some users have run into in the past.
+
+While Readwise does not impose any limits on how many highlights you can have, there is a system limit that highlights can't be any longer than 8191 characters long.
+
+Generally speaking, if you're making highlights that long, you're missing the point of highlights but I've seen occasional reports of Kobo highlighting accidentally capturing an entire chapter.
+
+Without this being obvious to the end user, they'll be confused when October appears to fail (as any error will cause the upload process to fail currently) so it's better to work around this issue than cause 99% of valid highlights to fail to upload I think.
+
+The real fix for this is to delete those highlights on your device (find the highlight, tap it and hit delete) but for users who might want to make such long highlights for whatever reason, October will now split your highlight text into appropriate chunks.
+
 ## v1.1.1
 
 This version adds a fallback for highlights that are missing the `DateCreated` field, which causes October to fail to continue processing.
