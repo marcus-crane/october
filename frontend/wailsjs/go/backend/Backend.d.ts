@@ -4,15 +4,21 @@ import {backend} from '../models';
 
 export function DetectKobos():Promise<Array<backend.Kobo>>;
 
+export function FormatSystemDetails():Promise<string>;
+
 export function ForwardToReadwise():Promise<number>;
 
 export function GetBookmark():Promise<backend.Bookmark>;
 
 export function GetContent():Promise<backend.Content>;
 
+export function GetPlainSystemDetails():Promise<string>;
+
 export function GetSelectedKobo():Promise<backend.Kobo>;
 
 export function GetSettings():Promise<backend.Settings>;
+
+export function NavigateExplorerToLogLocation():Promise<void>;
 
 export function PromptForLocalDBPath():Promise<Error>;
 

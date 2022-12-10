@@ -6,6 +6,10 @@ export function DetectKobos() {
   return window['go']['backend']['Backend']['DetectKobos']();
 }
 
+export function FormatSystemDetails() {
+  return window['go']['backend']['Backend']['FormatSystemDetails']();
+}
+
 export function ForwardToReadwise() {
   return window['go']['backend']['Backend']['ForwardToReadwise']();
 }
@@ -18,12 +22,20 @@ export function GetContent() {
   return window['go']['backend']['Backend']['GetContent']();
 }
 
+export function GetPlainSystemDetails() {
+  return window['go']['backend']['Backend']['GetPlainSystemDetails']();
+}
+
 export function GetSelectedKobo() {
   return window['go']['backend']['Backend']['GetSelectedKobo']();
 }
 
 export function GetSettings() {
   return window['go']['backend']['Backend']['GetSettings']();
+}
+
+export function NavigateExplorerToLogLocation() {
+  return window['go']['backend']['Backend']['NavigateExplorerToLogLocation']();
 }
 
 export function PromptForLocalDBPath() {

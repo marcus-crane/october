@@ -2,26 +2,33 @@ package backend
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"time"
 
 	"github.com/adrg/xdg"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	log "github.com/sirupsen/logrus"
 )
 
-var logFile = fmt.Sprintf("october/logs/%s.log", time.Now().Format("20060102150405"))
+var logFileHandle *os.File
 
-func ConfigureLogger() {
+var logFile = fmt.Sprintf("october/logs/%s.json", time.Now().Format("20060102150405"))
+
+func StartLogger() {
 	logPath, err := xdg.DataFile(logFile)
 	if err != nil {
-		panic(err)
+		panic("Failed to create location to store logfiles")
 	}
-	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		panic(err)
+	log.SetFormatter(&log.JSONFormatter{})
+	file, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err == nil {
+		logFileHandle = file
+		log.SetOutput(file)
+	} else {
+		log.WithError(err).Error(err)
+		log.Error("Failed to create log file, using stdout")
 	}
-	multiOutput := io.MultiWriter(os.Stdout, f)
-	log.Logger = log.Output(multiOutput).Level(zerolog.DebugLevel)
+}
+
+func CloseLogFile() {
+	logFileHandle.Close()
 }

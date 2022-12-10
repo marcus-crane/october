@@ -14,7 +14,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/rs/zerolog/log"
+	log "github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -65,7 +65,7 @@ func (r *Readwise) CheckTokenValidity(token string) error {
 	if resp.StatusCode != 204 {
 		return errors.New(resp.Status)
 	}
-	log.Info().Msg("Successfully validated token against the Readwise API")
+	log.Info("Successfully validated token against the Readwise API")
 	return nil
 }
 
@@ -80,13 +80,10 @@ func (r *Readwise) SendBookmarks(payload Response, token string) (int, error) {
 		return 0, fmt.Errorf("failed to send request to Readwise: code %d", resp.StatusCode())
 	}
 	if resp.StatusCode() != 200 {
-		log.Error().
-			Int("status", resp.StatusCode()).
-			Str("response", string(resp.Body())).
-			Msg("Received a non-200 response from Readwise")
+		log.WithFields(log.Fields{"status_code": resp.StatusCode(), "response": string(resp.Body())}).Error("Received a non-200 response from Readwise")
 		return 0, fmt.Errorf("received a non-200 status code from Readwise: code %d", resp.StatusCode())
 	}
-	log.Info().Int("highlight_count", len(payload.Highlights)).Msg("Successfully sent bookmarks to Readwise")
+	log.WithField("highlight_count", len(payload.Highlights)).Info("Successfully sent bookmarks to Readwise")
 	return len(payload.Highlights), nil
 }
 
@@ -99,7 +96,7 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	client := http.Client{}
 	remoteURL, err := url.Parse(BooksEndpoint)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to parse books URL")
+		log.WithError(err).Error("Failed to parse URL for Readwise book upload endpoint")
 	}
 	request := http.Request{
 		Method: "GET",
@@ -108,7 +105,7 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	}
 	res, err := client.Do(&request)
 	if err != nil {
-		log.Error().Err(err)
+		log.WithError(err).WithField("status_code", res.StatusCode).Error("An unexpected error occurred while retrieving uploads from Readwise")
 		return bookList, err
 	}
 	defer func(Body io.ReadCloser) {
@@ -118,30 +115,24 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	}(res.Body)
 	b, err := httputil.DumpResponse(res, true)
 	if err != nil {
-		log.Error().Err(err)
+		log.WithError(err).Error("Encountered an error while dumping response from Readwise")
 		return bookList, err
 	}
 	if res.StatusCode != 200 {
-		log.Error().
-			Int("status", res.StatusCode).
-			Msg("Received a non-200 response from Readwise")
+		log.WithFields(log.Fields{"status": res.StatusCode, "body": string(b)}).Error("Received a non-200 response from Readwise")
 		return bookList, err
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to parse response")
-		panic(err)
+		log.WithError(err).Error("Failed to parse response from Readwise")
+		return bookList, err
 	}
 	err = json.Unmarshal(body, &bookList)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Int("status", res.StatusCode).
-			Str("body", string(b)).
-			Msg("Failed to unmarshal response from Readwise")
+		log.WithError(err).WithFields(log.Fields{"status": res.StatusCode, "body": string(b)}).Error("Failed to unmarshal response from Readwise")
 		return bookList, err
 	}
-	log.Info().Int("book_count", bookList.Count).Msg("Successfully retrieved books from Readwise API")
+	log.WithField("book_count", bookList.Count).Info("Successfully retrieved books from Readwise API")
 	return bookList, nil
 }
 
@@ -160,10 +151,7 @@ func (r *Readwise) UploadCover(encodedCover string, bookId int, token string) er
 		return err
 	}
 	if resp.StatusCode() != 200 {
-		log.Error().
-			Int("status", resp.StatusCode()).
-			Str("response", string(resp.Body())).
-			Msg("Received a non-200 response from Readwise")
+		log.WithFields(log.Fields{"status_code": resp.StatusCode(), "response": string(resp.Body())}).Error("Received a non-200 response from Readwise")
 		return fmt.Errorf("failed to upload cover for book with id %d", bookId)
 	}
 	return nil
@@ -173,17 +161,17 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 	var payload Response
 	for _, entry := range bookmarks {
 		source := contentIndex[entry.VolumeID]
-		log.Info().Interface("source", source).Msg("Parsing entry")
+		log.WithField("title", source.Title).Debug("Parsing highlight")
 		var createdAt string
 		if entry.DateCreated == "" {
-			log.Info().Msg("No date created for bookmark. Defaulting to date last modified.")
+			log.WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("No date created for bookmark. Defaulting to date last modified.")
 			if entry.DateModified == "" {
-				log.Info().Msg("No date modified for bookmark. Default to current date.")
+				log.WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("No date modified for bookmark. Default to current date.")
 				createdAt = time.Now().Format("2006-01-02T15:04:05-07:00")
 			} else {
 				t, err := time.Parse("2006-01-02T15:04:05Z", entry.DateModified)
 				if err != nil {
-					log.Error().Err(err).Interface("bookmark", entry).Msg("Failed to parse a valid timestamp from bookmark")
+					log.WithError(err).WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date modified field")
 					return Response{}, err
 				}
 				createdAt = t.Format("2006-01-02T15:04:05-07:00")
@@ -191,7 +179,7 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 		} else {
 			t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
 			if err != nil {
-				log.Error().Err(err).Interface("bookmark", entry).Msg("Failed to parse a valid timestamp from bookmark")
+				log.WithError(err).WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date created field")
 				return Response{}, err
 			}
 			createdAt = t.Format("2006-01-02T15:04:05-07:00")
@@ -205,10 +193,7 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 		}
 		if entry.Annotation == "" && text == "" {
 			// This state should be impossible but stranger things have happened so worth a sanity check
-			log.Info().
-				Interface("source", source).
-				Interface("bookmark", entry).
-				Msg("Found an entry with neither highlighted text nor an annotation so skipping entry")
+			log.WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("Found an entry with neither highlighted text nor an annotation so skipping entry")
 			continue
 		}
 		if source.Title == "" {
@@ -221,15 +206,11 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 				// or even just arbitrary strings. Given we don't set a title here, we will use the Readwise fallback which is to add
 				// these highlights to a book called "Quotes" and let the user figure out their metadata situation. That reminds me though:
 				// TODO: Test exports with non-epub files
-				log.Error().
-					Err(err).
-					Interface("source", source).
-					Interface("bookmark", entry).
-					Msg("Failed to retrieve epub title. This is not a hard requirement so sending with a dummy title.")
+				log.WithError(err).WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("Failed to retrieve epub title. This is not a hard requirement so sending with a dummy title.")
 				goto sendhighlight
 			}
 			filename := path.Base(sourceFile.Path)
-			log.Debug().Str("filename", filename).Msg("No source title. Constructing title from filename")
+			log.WithField("filename", filename).Debug("No source title. Constructing title from filename")
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
 	sendhighlight:
@@ -247,9 +228,9 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 			}
 			payload.Highlights = append(payload.Highlights, highlight)
 		}
-		log.Debug().Interface("highlight", text).Msg("Successfully built highlights")
+		log.WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "chunks": len(highlightChunks)}).Debug("Successfully compiled highlights for book")
 	}
-	log.Info().Int("highlight_count", len(payload.Highlights)).Msg("Successfully parsed highlights")
+	log.WithField("highlight_count", len(payload.Highlights)).Info("Successfully parsed highlights")
 	return payload, nil
 }
 

@@ -3,8 +3,7 @@ package main
 import (
 	"context"
 	"github.com/marcus-crane/october/backend"
-
-	"github.com/rs/zerolog/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // App struct
@@ -20,15 +19,17 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
+	a.ctx = ctx
 }
 
 func (a *App) domReady(ctx context.Context) {
 	a.ctx = ctx
-	backend.ConfigureLogger()
-	log.Debug().Msg("Logger should be initialised now")
-	log.Info().Msg("Backend is about to start up")
+	backend.StartLogger()
+	log.WithContext(ctx).Info("Logger should be initialised now")
+	log.WithContext(ctx).Info("Backend is about to start up")
 }
 
 func (a *App) shutdown(ctx context.Context) {
-	log.Info().Msg("Shutting down. Goodbye!")
+	log.WithContext(ctx).Info("Shutting down. Goodbye!")
+	backend.CloseLogFile()
 }

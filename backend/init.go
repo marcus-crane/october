@@ -5,15 +5,18 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/adrg/xdg"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
-	"github.com/rs/zerolog/log"
+	log "github.com/sirupsen/logrus"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type Backend struct {
@@ -25,12 +28,13 @@ type Backend struct {
 	Kobo           *Kobo
 	Content        *Content
 	Bookmark       *Bookmark
+	version        string
 }
 
-func StartBackend(ctx *context.Context) *Backend {
+func StartBackend(ctx *context.Context, version string) *Backend {
 	settings, err := LoadSettings()
 	if err != nil {
-		log.Error().Msg("Failed to load settings")
+		log.WithContext(*ctx).WithError(err).Error("Failed to load settings")
 	}
 	return &Backend{
 		SelectedKobo:   Kobo{},
@@ -41,6 +45,7 @@ func StartBackend(ctx *context.Context) *Backend {
 		Kobo:           &Kobo{},
 		Content:        &Content{},
 		Bookmark:       &Bookmark{},
+		version:        version,
 	}
 }
 
@@ -56,9 +61,38 @@ func (b *Backend) GetBookmark() *Bookmark {
 	return b.Bookmark
 }
 
+func (b *Backend) GetPlainSystemDetails() string {
+	return fmt.Sprintf("%s (%s %s)", b.version, runtime.GOOS, runtime.GOARCH)
+}
+
+func (b *Backend) FormatSystemDetails() string {
+	return fmt.Sprintf("<details><summary>System Details</summary><ul><li>Version: %s</li><li>Platform: %s</li><li>Architecture: %s</li></details>", b.version, runtime.GOOS, runtime.GOARCH)
+}
+
+func (b *Backend) NavigateExplorerToLogLocation() {
+	var explorerCommand string
+	if runtime.GOOS == "windows" {
+		explorerCommand = "explorer"
+	}
+	if runtime.GOOS == "darwin" {
+		explorerCommand = "open"
+	}
+	if runtime.GOOS == "linux" {
+		explorerCommand = "xdg-open"
+	}
+	logLocation, err := xdg.DataFile("october/logs")
+	if err != nil {
+		log.WithError(err).Error("Failed to determine XDG data location for opening log location in explorer")
+	}
+	output, err := exec.Command(explorerCommand, logLocation).Output()
+	if err != nil {
+		log.WithError(err).WithFields(log.Fields{"output": output, "command": explorerCommand, "log_path": logLocation}).Error("Failed to open file explorer and navigate to logs location")
+	}
+}
+
 func (b *Backend) DetectKobos() []Kobo {
 	connectedKobos, err := kobo.Find()
-	log.Info().Msg(fmt.Sprintf("Kobos found: %d", len(connectedKobos)))
+	log.WithField("kobos_found", len(connectedKobos)).Info("Detected one or more Kobos")
 	if err != nil {
 		panic(err)
 	}
@@ -92,9 +126,9 @@ func (b *Backend) SelectKobo(devicePath string) error {
 }
 
 func (b *Backend) PromptForLocalDBPath() error {
-	selectedFile, err := runtime.OpenFileDialog(*b.RuntimeContext, runtime.OpenDialogOptions{
+	selectedFile, err := wailsRuntime.OpenFileDialog(*b.RuntimeContext, wailsRuntime.OpenDialogOptions{
 		Title: "Select local Kobo database",
-		Filters: []runtime.FileFilter{
+		Filters: []wailsRuntime.FileFilter{
 			{
 				DisplayName: "sqlite (*.sqlite;*.sqlite3)",
 				Pattern:     "*.sqlite;*.sqlite3",
@@ -142,7 +176,7 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 				absCoverPath := path.Join(b.SelectedKobo.MntPath, "/", coverPath)
 				coverBytes, err := os.ReadFile(absCoverPath)
 				if err != nil {
-					log.Error().Str("cover", book.SourceURL).Str("location", absCoverPath).Msg("Failed to load cover")
+					log.WithError(err).WithFields(log.Fields{"cover": book.SourceURL, "location": absCoverPath}).Warn("Failed to load cover. Carrying on")
 				}
 				var base64Encoding string
 				mimeType := http.DetectContentType(coverBytes)
@@ -155,9 +189,9 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 				base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
 				err = b.Readwise.UploadCover(base64Encoding, book.ID, b.Settings.ReadwiseToken)
 				if err != nil {
-					log.Error().Str("cover", book.SourceURL).Msg("Failed to load cover")
+					log.WithError(err).WithField("cover", book.SourceURL).Error("Failed to upload cover to Readwise")
 				}
-				log.Info().Str("cover", book.SourceURL).Msg("Successfully uploaded cover")
+				log.WithField("cover", book.SourceURL).Debug("Successfully uploaded cover to Readwise")
 			}
 		}
 	}

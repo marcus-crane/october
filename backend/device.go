@@ -2,9 +2,9 @@ package backend
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
-	"github.com/rs/zerolog/log"
 )
 
 type Kobo struct {
@@ -152,12 +152,12 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
-			log.Error().Msg(fmt.Sprintf("Failed to parse version for Kobo at %s", path))
+			log.WithField("kobo_path", path).WithError(err).Error("Failed to parse Kobo version")
 		}
-		log.Debug().Msg(fmt.Sprintf("Found device with ID %s", deviceId))
+		log.WithField("device_id", deviceId).Info("Found an attached device")
 		device, found := kobo.DeviceByID(deviceId)
 		if !found {
-			log.Warn().Msg("Found a device that isn't officially supported but may still work anyway")
+			log.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
 			// We can handle unsupported Kobos in future but at present, there are none
 			kobos = append(kobos, Kobo{
 				MntPath: path,
@@ -193,7 +193,7 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 		&Bookmark{VolumeID: contentID},
 	).Find(&bookmark)
 	if result.Error != nil {
-		log.Info().Msg(result.Error.Error())
+		log.WithError(result.Error).WithField("content_id", contentID).Error("Encountered an error while trying to list bookmarks by ID")
 		return nil, result.Error
 	}
 	return bookmark, nil
@@ -201,49 +201,49 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 
 func (k *Kobo) FindBookOnDevice(bookID string) (Content, error) {
 	var content Content
-	log.Debug().Msg("Retrieving books that have been uploaded to Readwise previously")
+	log.WithField("book_id", bookID).Debug("Retrieving a book that has been uploaded to Readwise previously")
 	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Find(&content)
 	if result.Error != nil {
-		log.Error().Err(result.Error).Msg("Failed to retrieve content from device")
+		log.WithError(result.Error).WithField("book_id", bookID).Error("Failed to retrieve content from device")
 		return content, result.Error
 	}
-	log.Debug().Str("title", content.Title).Msg("Successfully retrieve content from device DB")
+	log.WithField("title", content.Title).Debug("Successfully retrieved content from device DB")
 	return content, nil
 }
 
 func (k *Kobo) ListDeviceContent() ([]Content, error) {
 	var content []Content
-	log.Debug().Msg("Retrieving content from device")
+	log.Debug("Retrieving content list from device")
 	result := Conn.Where(
 		&Content{ContentType: "6", VolumeIndex: -1},
 	).Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
-		log.Error().Err(result.Error).Msg("Failed to retrieve content from device")
+		log.WithError(result.Error).Error("Failed to retrieve content from device")
 		return nil, result.Error
 	}
-	log.Debug().Int("content_count", len(content)).Msg("Successfully retrieved device content")
+	log.WithField("content_count", len(content)).Debug("Successfully retrieved device content")
 	return content, nil
 }
 
 func (k *Kobo) ListDeviceBookmarks() ([]Bookmark, error) {
 	var bookmarks []Bookmark
-	log.Debug().Msg("Retrieving bookmarks from device")
+	log.Debug("Retrieving bookmarks from device")
 	result := Conn.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
-		log.Error().Err(result.Error).Msg("Failed to retrieve bookmarks from device")
+		log.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
 		return nil, result.Error
 	}
-	log.Debug().Int("bookmark_count", len(bookmarks)).Msg("Successfully retrieved device bookmarks")
+	log.WithField("bookmark_count", len(bookmarks)).Debug("Successfully retrieved device bookmarks")
 	return bookmarks, nil
 }
 
 func (k *Kobo) BuildContentIndex(content []Content) map[string]Content {
-	log.Debug().Msg("Building an index out of device content")
+	log.Debug("Building an index out of device content")
 	contentIndex := make(map[string]Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
-	log.Debug().Int("index_count", len(contentIndex)).Msg("Built content index")
+	log.WithField("index_count", len(contentIndex)).Debug("Built content index")
 	return contentIndex
 }
 
@@ -251,7 +251,7 @@ func (k *Kobo) CountDeviceBookmarks() int64 {
 	var count int64
 	result := Conn.Model(&Bookmark{}).Count(&count)
 	if result.Error != nil {
-		log.Error().Err(result.Error).Msg("Failed to count bookmarks on device")
+		log.WithError(result.Error).Error("Failed to count bookmarks on device")
 	}
 	return count
 }

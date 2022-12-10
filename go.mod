@@ -7,7 +7,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
-	github.com/rs/zerolog v1.26.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.7.1
 	github.com/wailsapp/wails/v2 v2.2.0
 	gorm.io/driver/sqlite v1.2.6
