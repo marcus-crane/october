@@ -5,13 +5,14 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/adrg/xdg"
 	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
+
+	"github.com/adrg/xdg"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
 	log "github.com/sirupsen/logrus"
@@ -72,7 +73,7 @@ func (b *Backend) FormatSystemDetails() string {
 func (b *Backend) NavigateExplorerToLogLocation() {
 	var explorerCommand string
 	if runtime.GOOS == "windows" {
-		explorerCommand = "explorer"
+		explorerCommand = "explorer.exe"
 	}
 	if runtime.GOOS == "darwin" {
 		explorerCommand = "open"
@@ -84,10 +85,9 @@ func (b *Backend) NavigateExplorerToLogLocation() {
 	if err != nil {
 		log.WithError(err).Error("Failed to determine XDG data location for opening log location in explorer")
 	}
-	output, err := exec.Command(explorerCommand, logLocation).Output()
-	if err != nil {
-		log.WithError(err).WithFields(log.Fields{"output": output, "command": explorerCommand, "log_path": logLocation}).Error("Failed to open file explorer and navigate to logs location")
-	}
+	// We will always get an error because the file explorer doesn't exit so it is unable to
+	// return a 0 successful exit code until y'know, the user exits the window
+	_ = exec.Command(explorerCommand, logLocation).Run()
 }
 
 func (b *Backend) DetectKobos() []Kobo {
