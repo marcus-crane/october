@@ -4,6 +4,28 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.3.0
+
+This release refactors all of the internal logging, dropping [zerolog](https://github.com/rs/zerolog) in favour of trusty [logrus](https://github.com/Sirupsen/logrus) which is not user facing at all.
+
+As a result, logging now works properly again on Windows closing #25
+
+While going through all the various log entries, I've also switched the logging format to JSON which makes it easier to parse through each file. Some log entry sizes have also been greatly reduced where before they would log out an entire struct even if the whole thing wasn't useful. This should greatly reduce the size of the average log file.
+
+In order to making it easier for users to submit logs for investigations, there is now a button in the Settings view that will open your computer's file explorer to the location that October stores logs in (#12)
+
+**Windows**
+![windows-logs](https://user-images.githubusercontent.com/14816406/206837799-237f9dbd-74eb-4530-9e79-4e45b87059e8.png)
+
+**macOS**
+![macos-log](https://user-images.githubusercontent.com/14816406/206837886-755d068d-a505-4ae6-a5dc-8d948e15f953.png)
+
+You might also notice a couple of other small additions in the screenshots above.
+
+There is now a little build identifier in the Settings view where you can see build information about the version of October you're running (#65) as well as a button for reporting bugs which will open a new Github issue pre-populated with said build information to make it easier to provide support to end users.
+
+I've still got some other refactoring tasks to do which should hopefully then make it easier to add in some of the larger features that have been outstanding such as better handling of upload failures as well as cutting down the time to upload
+
 ## v1.2.0
 
 This release does not contain any new features but tidies up a lot of underlying metadata associated with each executable, thanks in part to a bunch of upgrades that were introduced with Wails 2.0, the Go framework that powers Wails.
