@@ -14,7 +14,12 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
+)
+
+const (
+	HIGHLIGHT_REQUEST_BATCH_MAX = 2000
 )
 
 type Response struct {
@@ -69,22 +74,27 @@ func (r *Readwise) CheckTokenValidity(token string) error {
 	return nil
 }
 
-func (r *Readwise) SendBookmarks(payload Response, token string) (int, error) {
-	client := resty.New()
-	resp, err := client.R().
-		SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
-		SetHeader("User-Agent", UserAgent).
-		SetBody(payload).
-		Post(HighlightsEndpoint)
-	if err != nil {
-		return 0, fmt.Errorf("failed to send request to Readwise: code %d", resp.StatusCode())
+func (r *Readwise) SendBookmarks(payloads []Response, token string) (int, error) {
+	// TODO: This is dumb, we count stuff that this function doesn't need to know about + we already know the size from earlier
+	submittedHighlights := 0
+	for _, payload := range payloads {
+		client := resty.New()
+		resp, err := client.R().
+			SetHeader("Authorization", fmt.Sprintf("Token %s", token)).
+			SetHeader("User-Agent", UserAgent).
+			SetBody(payload).
+			Post(HighlightsEndpoint)
+		if err != nil {
+			return 0, fmt.Errorf("failed to send request to Readwise: code %d", resp.StatusCode())
+		}
+		if resp.StatusCode() != 200 {
+			log.WithFields(log.Fields{"status_code": resp.StatusCode(), "response": string(resp.Body())}).Error("Received a non-200 response from Readwise")
+			return 0, fmt.Errorf("received a non-200 status code from Readwise: code %d", resp.StatusCode())
+		}
+		submittedHighlights += len(payload.Highlights)
 	}
-	if resp.StatusCode() != 200 {
-		log.WithFields(log.Fields{"status_code": resp.StatusCode(), "response": string(resp.Body())}).Error("Received a non-200 response from Readwise")
-		return 0, fmt.Errorf("received a non-200 status code from Readwise: code %d", resp.StatusCode())
-	}
-	log.WithField("highlight_count", len(payload.Highlights)).Info("Successfully sent bookmarks to Readwise")
-	return len(payload.Highlights), nil
+	log.WithField("batch_count", len(payloads)).Info("Successfully sent bookmarks to Readwise")
+	return submittedHighlights, nil
 }
 
 func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error) {
@@ -157,9 +167,16 @@ func (r *Readwise) UploadCover(encodedCover string, bookId int, token string) er
 	return nil
 }
 
-func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Response, error) {
-	var payload Response
-	for _, entry := range bookmarks {
+func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Response, error) {
+	var payloads []Response
+	var currentBatch Response
+	for count, entry := range bookmarks {
+		// If max payload size is reached, start building another batch which will be sent separately
+		if count > 0 && (count%HIGHLIGHT_REQUEST_BATCH_MAX == 0) {
+			fmt.Println(count / HIGHLIGHT_REQUEST_BATCH_MAX)
+			payloads = append(payloads, currentBatch)
+			currentBatch = Response{}
+		}
 		source := contentIndex[entry.VolumeID]
 		log.WithField("title", source.Title).Debug("Parsing highlight")
 		var createdAt string
@@ -172,7 +189,7 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 				t, err := time.Parse("2006-01-02T15:04:05Z", entry.DateModified)
 				if err != nil {
 					log.WithError(err).WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date modified field")
-					return Response{}, err
+					return []Response{}, err
 				}
 				createdAt = t.Format("2006-01-02T15:04:05-07:00")
 			}
@@ -180,7 +197,7 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 			t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
 			if err != nil {
 				log.WithError(err).WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date created field")
-				return Response{}, err
+				return []Response{}, err
 			}
 			createdAt = t.Format("2006-01-02T15:04:05-07:00")
 		}
@@ -226,12 +243,13 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) (Respon
 				Note:          entry.Annotation,
 				HighlightedAt: createdAt,
 			}
-			payload.Highlights = append(payload.Highlights, highlight)
+			currentBatch.Highlights = append(currentBatch.Highlights, highlight)
 		}
 		log.WithFields(log.Fields{"title": source.Title, "volume_id": entry.VolumeID, "chunks": len(highlightChunks)}).Debug("Successfully compiled highlights for book")
 	}
-	log.WithField("highlight_count", len(payload.Highlights)).Info("Successfully parsed highlights")
-	return payload, nil
+	payloads = append(payloads, currentBatch)
+	log.WithFields(logrus.Fields{"highlight_count": len(currentBatch.Highlights), "batch_count": len(payloads)}).Info("Successfully parsed highlights")
+	return payloads, nil
 }
 
 func NormaliseText(s string) string {

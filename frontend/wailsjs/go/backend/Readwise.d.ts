@@ -6,6 +6,6 @@ export function CheckTokenValidity(arg1:string):Promise<Error>;
 
 export function RetrieveUploadedBooks(arg1:string):Promise<backend.BookListResponse>;
 
-export function SendBookmarks(arg1:backend.Response,arg2:string):Promise<number>;
+export function SendBookmarks(arg1:Array<backend.Response>,arg2:string):Promise<number>;
 
 export function UploadCover(arg1:string,arg2:number,arg3:string):Promise<Error>;
