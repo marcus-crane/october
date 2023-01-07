@@ -28,22 +28,12 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.19
-      
-      - name: Install makensis
-        run: brew install makensis
-        if: ${{ startsWith(matrix.platform, 'windows') }}
-      
-      - name: Install Windows build toolchain
-        run: brew install mingw-w64
-        if: ${{ startsWith(matrix.platform, 'windows') }}
 
       - name: Install gon for macOS notarisation
         run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
-        if: ${{ startsWith(matrix.platform, 'darwin') }}
 
       - name: Import code signing certificate from Github Secrets
         uses: Apple-Actions/import-codesign-certs@v1
-        if: ${{ startsWith(matrix.platform, 'darwin') }}
         with:
           p12-file-base64: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_P12_BASE64 }}
           p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
@@ -67,32 +57,15 @@ jobs:
 
       - name: Build wails app for macOS
         run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
-        if: ${{ startsWith(matrix.platform , 'darwin') }}
-
-      - name: Build Windows NSIS installer
-        run: CGO_ENABLED=1 CC="x86_64-w64-mingw32-gcc" wails build -platform ${{ matrix.platform }} -nsis -ldflags "-X main.version=${{ github.event.release.tag_name }}"
-        if: ${{ startsWith(matrix.platform , 'windows') }}
-        
-      - name: Codesign Windows NSIS Installer
-        run: |
-          echo "Creating certificate file"
-          New-Item -ItemType directory -Path certificate
-          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
-          certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          echo "Signing October installer"
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-amd64-installer.exe
-        if: ${{ startsWith(matrix.platform , 'windows') }}
-
-      - name: Compress binary
-        run: cd build/bin && rm October.exe && zip -r october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}.zip October-*.exe
-        if: ${{ startsWith(matrix.platform , 'windows') }}
 
       - name: Notarise macOS app + create dmg
         run: gon -log-level=info gon.config.json
-        if: ${{ startsWith(matrix.platform, 'darwin') }}
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      
+      - name: Compress macOS dmg
+        run: cd build/bin && zip -r october-${{ steps.normalise_platform.outputs.tag }}.zip October.dmg
 
       - name: Get latest release from API
         uses: octokit/request-action@v2.x
@@ -114,7 +87,6 @@ jobs:
 
       - name: Upload zip file
         uses: actions/upload-release-asset@v1.0.2
-        if: ${{ startsWith(matrix.platform, 'windows') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
@@ -123,15 +95,3 @@ jobs:
           asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip
           asset_name: ${{ env.ARTIFACT_NAME }}.zip
           asset_content_type: application/zip
-
-      - name: Upload macOS dmg
-        uses: actions/upload-release-asset@v1.0.2
-        if: ${{ startsWith(matrix.platform, 'darwin') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
-        with:
-          upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/bin/October.dmg
-          asset_name: ${{ env.ARTIFACT_NAME }}.dmg
-          asset_content_type: application/x-apple-diskimage
