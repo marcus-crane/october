@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}-${{ github.event.release.tag_name }}
+          ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
           asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip
