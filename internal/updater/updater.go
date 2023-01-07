@@ -54,7 +54,6 @@ func PerformUpdateDarwin(currentVersion string) (bool, error) {
 		return false, err
 	}
 	var installPath string
-	installPath = "/Applications/"
 	cmdPath, err := os.Executable()
 	installPath = strings.TrimSuffix(cmdPath, "October.app/Contents/MacOS/October")
 	if err != nil {
