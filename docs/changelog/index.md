@@ -4,6 +4,12 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.3.1
+
+This release batches highlights to Readwise into multiple requests if you are trying to send more than 2000 requests at a time.
+
+If you're trying to upload a large batch of highlights in one go, this should now be possible without the risk of the Readwise API rejecting the request due to it being too large.
+
 ## v1.3.0
 
 This release refactors all of the internal logging, dropping [zerolog](https://github.com/rs/zerolog) in favour of trusty [logrus](https://github.com/Sirupsen/logrus) which is not user facing at all.
