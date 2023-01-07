@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+
 	"github.com/marcus-crane/october/backend"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -19,7 +20,7 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
-var version = "DEV"
+var version = "0.0.0-DEV"
 
 func main() {
 	// Create an instance of the app structure

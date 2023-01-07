@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import { toast } from "react-hot-toast";
 import { BrowserOpenURL } from '../../wailsjs/runtime'
-import { GetSettings, NavigateExplorerToLogLocation, FormatSystemDetails, GetPlainSystemDetails } from "../../wailsjs/go/backend/Backend";
+import {
+  CheckForUpdate,
+  PerformUpdate,
+  GetSettings,
+  NavigateExplorerToLogLocation,
+  FormatSystemDetails,
+  GetPlainSystemDetails
+} from "../../wailsjs/go/backend/Backend";
 import {
   SaveToken,
   SaveCoverUploading,
@@ -14,6 +21,8 @@ import {
 export default function Settings() {
   const [loaded, setLoadState] = useState(false);
   const [token, setToken] = useState("");
+  const [updatePending, setUpdatePending] = useState(false)
+  const [remoteVersion, setRemoteVersion] = useState("");
   const [coversUploading, setCoversUploading] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
   const [systemDetails, setSystemDetails] = useState("Fetching system details...")
@@ -26,6 +35,13 @@ export default function Settings() {
       setCoversUploading(settings.upload_covers);
     });
     GetPlainSystemDetails().then(details => setSystemDetails(details))
+    CheckForUpdate().then((remoteVersion, updatePending) => {
+      console.log(remoteVersion, updatePending)
+      if (updatePending) {
+        setUpdatePending(true)
+        setRemoteVersion(remoteVersion)
+      }
+    })
   }, [loaded]);
 
   function saveToken() {
@@ -165,6 +181,13 @@ export default function Settings() {
                         className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:text-sm"
                       >
                         Open Logs Folder
+                      </button>
+                      <button
+                        onClick={PerformUpdate}
+                        type="submit"
+                        className="mt-3 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:text-sm"
+                      >
+                        { updatePending ? `Update to ${remoteVersion}` : `No updates` }
                       </button>
                     </div>
                   </div>

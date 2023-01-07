@@ -17,6 +17,8 @@ import (
 	"github.com/pgaskin/koboutils/v2/kobo"
 	log "github.com/sirupsen/logrus"
 
+	updater "github.com/marcus-crane/october/internal/updater"
+
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -105,6 +107,18 @@ func (b *Backend) DetectKobos() []Kobo {
 
 func (b *Backend) GetSelectedKobo() Kobo {
 	return b.SelectedKobo
+}
+
+func (b *Backend) CheckForUpdate() (bool, string) {
+	return updater.CheckForNewerVersion(b.version)
+}
+
+func (b *Backend) PerformUpdate() (bool, error) {
+	if runtime.GOOS == "darwin" {
+		return updater.PerformUpdateDarwin(b.version)
+	} else {
+		return updater.PerformUpdate(b.version)
+	}
 }
 
 func (b *Backend) SelectKobo(devicePath string) error {
