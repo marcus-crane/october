@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
@@ -54,11 +55,11 @@ func PerformUpdateDarwin(currentVersion string) (bool, error) {
 	}
 	var installPath string
 	installPath = "/Applications/"
-	// cmdPath, err := os.Executable()
-	// installPath = strings.TrimSuffix(cmdPath, "October.app/Contents/MacOS/October")
-	// if err != nil {
-	// 	installPath = "/Applications/"
-	// }
+	cmdPath, err := os.Executable()
+	installPath = strings.TrimSuffix(cmdPath, "October.app/Contents/MacOS/October")
+	if err != nil {
+		installPath = "/Applications/"
+	}
 	if err := exec.Command("ditto", "-xk", downloadPath, installPath).Run(); err != nil {
 		// LOG: Ditto error
 		return false, err
