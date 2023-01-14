@@ -41,13 +41,24 @@ func main() {
 		log.Fatalf("Failed to check volumes")
 	}
 	log.Printf("Detected %d unique books containing highlights and notes", len(volumes))
+	// VERY important to keep this buffered (ie; set length) or the goroutine will block
+	bookmarks := make(chan kobo.Bookmark, len(volumes))
 	var wg sync.WaitGroup
 	for _, volume := range volumes {
 		wg.Add(1)
 		go func(connection kobo.Kobo, volume string) {
 			defer wg.Done()
 			fmt.Printf("Saw %s and tried to ping DB with result %+v\n", volume, connection.Ping())
+			bookmarks <- kobo.Bookmark{
+				Text: fmt.Sprintf("Toot from %s", volume),
+			}
 		}(connection, volume)
 	}
 	wg.Wait()
+	close(bookmarks)
+	fmt.Println("Finished waiting")
+
+	for bookmark := range bookmarks {
+		fmt.Printf("Received bookmark with text: %s\n", bookmark.Text)
+	}
 }
