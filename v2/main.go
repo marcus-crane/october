@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/marcus-crane/october/v2/pkg/epub"
 	"github.com/marcus-crane/october/v2/pkg/kobo"
@@ -40,4 +41,13 @@ func main() {
 		log.Fatalf("Failed to check volumes")
 	}
 	log.Printf("Detected %d unique books containing highlights and notes", len(volumes))
+	var wg sync.WaitGroup
+	for _, volume := range volumes {
+		wg.Add(1)
+		go func(connection kobo.Kobo, volume string) {
+			defer wg.Done()
+			fmt.Printf("Saw %s and tried to ping DB with result %+v\n", volume, connection.Ping())
+		}(connection, volume)
+	}
+	wg.Wait()
 }
