@@ -41,6 +41,7 @@ func (k *KoboConnection) Connect() error {
 	if k.DbPath == "" {
 		return fmt.Errorf("db path must be specified to create a connection")
 	}
+	// TODO: Find cgo-less driver
 	db, err := sqlx.Connect("sqlite3", k.DbPath)
 	if err != nil {
 		return err
