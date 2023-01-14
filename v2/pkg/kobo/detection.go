@@ -25,23 +25,23 @@ func FindMountedDevices() ([]string, error) {
 // An uninitialised KoboConnection will be returned populated with identifiers like device name, storage etc
 // If a device is unknown (ie; released before we support it), a minimally populated KoboConnection will be
 // returned which should still contain enough information for October to still connect regardless.
-func GetDeviceMetadata(path string) (KoboConnection, error) {
+func GetDeviceMetadata(path string) (Kobo, error) {
 	serial, version, deviceId, err := kobo.ParseKoboVersion(path)
 	if err != nil {
-		return KoboConnection{}, err
+		return Kobo{}, err
 	}
 	device, known := kobo.DeviceByID(deviceId)
 	if !known {
 		// We can handle unsupported Kobos that release in future, before support is added to koboutils
 		// but we should tell the user that no support is 100% guaranteed if there are DB changes etc
 		// We only read data anyway so there is very little risk of just trying out best
-		return KoboConnection{
+		return Kobo{
 			Name:      "Unknown Device",
 			MountPath: path,
 			DbPath:    formatUsualDbPath(path),
 		}, nil
 	}
-	return KoboConnection{
+	return Kobo{
 		Name:       device.Name(),
 		Storage:    device.StorageGB(),
 		DisplayPPI: device.DisplayPPI(),
