@@ -28,7 +28,7 @@ type Bookmark struct {
 	Type                     string  `db:"Type"`
 }
 
-func BookmarksCount(kobo *Kobo) (int, error) {
+func CountBookmarks(kobo *Kobo) (int, error) {
 	var count int
 	if err := kobo.dbClient.Get(&count, "SELECT count(*) FROM Bookmark"); err != nil {
 		return count, err

@@ -20,16 +20,16 @@ func main() {
 		fmt.Printf("%d - %s\n", idx, entry.HREF)
 	}
 
-	connection := kobo.NewDirectConnection("/Users/marcus/Desktop/Kobo", "/Users/marcus/Desktop/Kobo/.kobo/KoboReader.sqlite")
+	connection := kobo.NewKobo("/Users/marcus/Desktop/Kobo", "/Users/marcus/Desktop/Kobo/.kobo/KoboReader.sqlite")
 	if err := connection.Connect(); err != nil {
 		log.Fatalf("Failed to connect to database: %+v", err)
 	}
-	numBookmarks, err := kobo.BookmarksCount(&connection)
+	numBookmarks, err := kobo.CountBookmarks(&connection)
 	if err != nil {
 		log.Fatalf("Failed to count bookmarks")
 	}
 	log.Printf("Your device has %d bookmarks", numBookmarks)
-	numContent, err := kobo.ContentCount(&connection)
+	numContent, err := kobo.CountContent(&connection)
 	if err != nil {
 		log.Fatalf("Failed to count content")
 	}

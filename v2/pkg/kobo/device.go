@@ -55,8 +55,8 @@ func (k *Kobo) Ping() error {
 	return k.dbClient.Ping()
 }
 
-// Close can be called to shut down the underlying database connection. This is
+// Disconnect can be called to shut down the underlying database connection. This is
 // generally done when switching from one database to another.
-func (k *Kobo) Close() error {
+func (k *Kobo) Disconnect() error {
 	return k.dbClient.Close()
 }

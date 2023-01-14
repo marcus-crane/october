@@ -103,7 +103,7 @@ type Content struct {
 	IsAbridged                   bool    `db:"IsAbridged"`
 }
 
-func ContentCount(kobo *Kobo) (int, error) {
+func CountContent(kobo *Kobo) (int, error) {
 	var count int
 	if err := kobo.dbClient.Get(&count, "SELECT count(*) FROM content"); err != nil {
 		return count, err
