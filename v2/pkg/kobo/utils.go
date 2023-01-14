@@ -14,14 +14,22 @@ func getRelativeKoboPath(path string) string {
 	return path
 }
 
-// trimContentFileName removes trailing parts from content paths, returning just
-// the name of the content
-//
-// For example: "Vend/Technology at Vend - Vend.epub#(2)OEBPS/_projects_work.xhtml" becomes "(2)OEBPS/_projects_work.xhtml"
-//
-// Generally speaking, the following delimiters seem to be used for the following extensions:
-//
-// .kepub.epub => !! | .epub => #
+/*
+trimContentFileName removes trailing parts from content paths, returning just the name of the content
+
+For example:
+
+	Vend/Technology at Vend - Vend.epub#(2)OEBPS/_projects_work.xhtml
+
+becomes
+
+	(2)OEBPS/_projects_work.xhtml
+
+Generally speaking, the following delimiters seem to be used for the following extensions:
+
+	.kepub.epub => !!
+	.epub => #
+*/
 func trimContentFileName(path string) string {
 	// TODO: .fxl.kepub.epub is a format as well, supposedly for supporting comics?
 	// https://github.com/kobolabs/epub-spec#image-based-fxl-reader
