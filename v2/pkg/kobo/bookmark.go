@@ -35,3 +35,17 @@ func CountBookmarks(kobo *Kobo) (int, error) {
 	}
 	return count, nil
 }
+
+// QueryDistinctVolumes retrieves all books that contains highlights and reside (or did at one point)
+// on the device itself. We exclude Kobo store books for simplicity where the path is a GUID which is
+// not useful in the context of retrieving the underlying epub for scanning.
+func QueryDistinctVolumes(kobo *Kobo) ([]string, error) {
+	var contentWithBookmarks []string
+	if err := kobo.dbClient.Select(
+		&contentWithBookmarks,
+		"SELECT DISTINCT VolumeID FROM Bookmark WHERE VolumeID LIKE '%file:///%' ORDER BY VolumeID;",
+	); err != nil {
+		return contentWithBookmarks, err
+	}
+	return contentWithBookmarks, nil
+}

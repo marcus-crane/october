@@ -103,9 +103,12 @@ type Content struct {
 	IsAbridged                   bool    `db:"IsAbridged"`
 }
 
-func CountContent(kobo *Kobo) (int, error) {
-	var count int
-	if err := kobo.dbClient.Get(&count, "SELECT count(*) FROM content"); err != nil {
+func CountContent(kobo *Kobo) (count int, err error) {
+	if err := kobo.dbClient.Get(
+		&count,
+		"SELECT count(*) FROM content WHERE ContentType = ? AND VolumeIndex = ? AND MimeType = ?",
+		6, -1, "application/x-kobo-epub+zip",
+	); err != nil {
 		return count, err
 	}
 	return count, nil

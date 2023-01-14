@@ -24,6 +24,7 @@ func main() {
 	if err := connection.Connect(); err != nil {
 		log.Fatalf("Failed to connect to database: %+v", err)
 	}
+	defer connection.Disconnect()
 	numBookmarks, err := kobo.CountBookmarks(&connection)
 	if err != nil {
 		log.Fatalf("Failed to count bookmarks")
@@ -33,5 +34,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to count content")
 	}
-	log.Printf("Your device has %d pieces of content", numContent)
+	log.Printf("Your device has %d non-unique pieces of content", numContent)
+	volumes, err := kobo.QueryDistinctVolumes(&connection)
+	if err != nil {
+		log.Fatalf("Failed to check volumes")
+	}
+	log.Printf("Detected %d unique books containing highlights and notes", len(volumes))
 }
