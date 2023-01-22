@@ -1,7 +1,4 @@
 name: Publish docs
-env:
-  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 on:
   workflow_dispatch:
   push:
@@ -28,5 +25,18 @@ jobs:
       - run: mkdocs build
       - name: Generate Netlify redirects file
         run: python scripts/generate-redirects.py
-      - name: Deploy site to Netlify
-        run: npx -y netlify-cli deploy --dir=site --prod --message="Prod deploy v${{ github.ref }}"
+      - name: Publish to Cloudflare Pages
+        id: cloudflare-publish
+        if: ${{ !env.ACT }}
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 8e782a355544971b192db9e75d789dca
+          projectName: 9koctober
+          directory: site
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      - uses: mshick/add-pr-comment@v2
+        if: ${{ !env.ACT }}
+        with:
+          message: |
+            🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}
