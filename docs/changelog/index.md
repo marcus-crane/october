@@ -4,6 +4,16 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.3.2
+
+This release updates the various bookmark/book queries so that store-purchased Kobo titles are ignored.
+
+For most users, they'll want to use the officially supported Readwise integration to make use of remote syncing and what not.
+
+October is intended to just cover the sideloading part of the equation but until now, there was never any special handling of store-purchased titles so they happened to be picked up if they existed.
+
+For any users who have synced store-purchased titles previously, and have duplicate highlights, they'll need to manually remove them from their Readwise accounts but this is a one time thing.
+
 ## v1.3.1
 
 This release batches highlights to Readwise into multiple requests if you are trying to send more than 2000 requests at a time.
