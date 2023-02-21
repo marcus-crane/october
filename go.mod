@@ -8,8 +8,8 @@ require (
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.7.1
-	github.com/wailsapp/wails/v2 v2.2.0
+	github.com/stretchr/testify v1.8.0
+	github.com/wailsapp/wails/v2 v2.3.1
 	gorm.io/driver/sqlite v1.2.6
 	gorm.io/gorm v1.22.4
 )

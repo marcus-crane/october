@@ -20,6 +20,6 @@ export function GetSettings():Promise<backend.Settings>;
 
 export function NavigateExplorerToLogLocation():Promise<void>;
 
-export function PromptForLocalDBPath():Promise<Error>;
+export function PromptForLocalDBPath():Promise<void>;
 
-export function SelectKobo(arg1:string):Promise<Error>;
+export function SelectKobo(arg1:string):Promise<void>;

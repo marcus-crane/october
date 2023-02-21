@@ -3,8 +3,8 @@
 
 export function CheckReadwiseConfig():Promise<boolean>;
 
-export function Save():Promise<Error>;
+export function Save():Promise<void>;
 
-export function SaveCoverUploading(arg1:boolean):Promise<Error>;
+export function SaveCoverUploading(arg1:boolean):Promise<void>;
 
-export function SaveToken(arg1:string):Promise<Error>;
+export function SaveToken(arg1:string):Promise<void>;
