@@ -180,7 +180,7 @@ func (k *Kobo) ListBooksOnDevice() ([]Content, error) {
 	var content []Content
 	result := Conn.Where(
 		&Content{ContentType: "6", VolumeIndex: -1, MimeType: "application/x-kobo-epub+zip"},
-	).Order("DateLastRead desc, title asc").Find(&content)
+	).Where("ContentID LIKE '%file:///%'").Order("DateLastRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -191,7 +191,7 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 	var bookmark []Bookmark
 	result := Conn.Where(
 		&Bookmark{VolumeID: contentID},
-	).Find(&bookmark)
+	).Where("VolumeID LIKE '%file:///%'").Find(&bookmark)
 	if result.Error != nil {
 		log.WithError(result.Error).WithField("content_id", contentID).Error("Encountered an error while trying to list bookmarks by ID")
 		return nil, result.Error
@@ -202,7 +202,7 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 func (k *Kobo) FindBookOnDevice(bookID string) (Content, error) {
 	var content Content
 	log.WithField("book_id", bookID).Debug("Retrieving a book that has been uploaded to Readwise previously")
-	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Find(&content)
+	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Where("VolumeID LIKE '%file:///%'").Find(&content)
 	if result.Error != nil {
 		log.WithError(result.Error).WithField("book_id", bookID).Error("Failed to retrieve content from device")
 		return content, result.Error
@@ -216,7 +216,7 @@ func (k *Kobo) ListDeviceContent() ([]Content, error) {
 	log.Debug("Retrieving content list from device")
 	result := Conn.Where(
 		&Content{ContentType: "6", VolumeIndex: -1},
-	).Order("___PercentRead desc, title asc").Find(&content)
+	).Where("ContentID LIKE '%file:///%'").Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		log.WithError(result.Error).Error("Failed to retrieve content from device")
 		return nil, result.Error
@@ -228,7 +228,7 @@ func (k *Kobo) ListDeviceContent() ([]Content, error) {
 func (k *Kobo) ListDeviceBookmarks() ([]Bookmark, error) {
 	var bookmarks []Bookmark
 	log.Debug("Retrieving bookmarks from device")
-	result := Conn.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
+	result := Conn.Where("VolumeID LIKE '%file:///%'").Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
 		log.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
 		return nil, result.Error
