@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/adrg/xdg v0.4.0
-	github.com/go-resty/resty/v2 v2.7.0
 	github.com/pgaskin/koboutils/v2 v2.1.2-0.20220306004009-a07e72ebae42
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0

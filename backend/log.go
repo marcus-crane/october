@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 var logFileHandle *os.File
@@ -18,14 +18,14 @@ func StartLogger() {
 	if err != nil {
 		panic("Failed to create location to store logfiles")
 	}
-	log.SetFormatter(&log.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 	file, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
 		logFileHandle = file
-		log.SetOutput(file)
+		logrus.SetOutput(file)
 	} else {
-		log.WithError(err).Error(err)
-		log.Error("Failed to create log file, using stdout")
+		logrus.WithError(err).Error(err)
+		logrus.Error("Failed to create log file, using stdout")
 	}
 }
 

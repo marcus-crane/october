@@ -2,7 +2,8 @@ package backend
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
 )
@@ -152,12 +153,12 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
-			log.WithField("kobo_path", path).WithError(err).Error("Failed to parse Kobo version")
+			logrus.WithField("kobo_path", path).WithError(err).Error("Failed to parse Kobo version")
 		}
-		log.WithField("device_id", deviceId).Info("Found an attached device")
+		logrus.WithField("device_id", deviceId).Info("Found an attached device")
 		device, found := kobo.DeviceByID(deviceId)
 		if !found {
-			log.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
+			logrus.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
 			// We can handle unsupported Kobos in future but at present, there are none
 			kobos = append(kobos, Kobo{
 				MntPath: path,
@@ -193,7 +194,7 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 		&Bookmark{VolumeID: contentID},
 	).Where("VolumeID LIKE '%file:///%'").Find(&bookmark)
 	if result.Error != nil {
-		log.WithError(result.Error).WithField("content_id", contentID).Error("Encountered an error while trying to list bookmarks by ID")
+		logrus.WithError(result.Error).WithField("content_id", contentID).Error("Encountered an error while trying to list bookmarks by ID")
 		return nil, result.Error
 	}
 	return bookmark, nil
@@ -201,49 +202,49 @@ func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
 
 func (k *Kobo) FindBookOnDevice(bookID string) (Content, error) {
 	var content Content
-	log.WithField("book_id", bookID).Debug("Retrieving a book that has been uploaded to Readwise previously")
+	logrus.WithField("book_id", bookID).Debug("Retrieving a book that has been uploaded to Readwise previously")
 	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Where("VolumeID LIKE '%file:///%'").Find(&content)
 	if result.Error != nil {
-		log.WithError(result.Error).WithField("book_id", bookID).Error("Failed to retrieve content from device")
+		logrus.WithError(result.Error).WithField("book_id", bookID).Error("Failed to retrieve content from device")
 		return content, result.Error
 	}
-	log.WithField("title", content.Title).Debug("Successfully retrieved content from device DB")
+	logrus.WithField("title", content.Title).Debug("Successfully retrieved content from device DB")
 	return content, nil
 }
 
 func (k *Kobo) ListDeviceContent() ([]Content, error) {
 	var content []Content
-	log.Debug("Retrieving content list from device")
+	logrus.Debug("Retrieving content list from device")
 	result := Conn.Where(
 		&Content{ContentType: "6", VolumeIndex: -1},
 	).Where("ContentID LIKE '%file:///%'").Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
-		log.WithError(result.Error).Error("Failed to retrieve content from device")
+		logrus.WithError(result.Error).Error("Failed to retrieve content from device")
 		return nil, result.Error
 	}
-	log.WithField("content_count", len(content)).Debug("Successfully retrieved device content")
+	logrus.WithField("content_count", len(content)).Debug("Successfully retrieved device content")
 	return content, nil
 }
 
 func (k *Kobo) ListDeviceBookmarks() ([]Bookmark, error) {
 	var bookmarks []Bookmark
-	log.Debug("Retrieving bookmarks from device")
+	logrus.Debug("Retrieving bookmarks from device")
 	result := Conn.Where("VolumeID LIKE '%file:///%'").Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
-		log.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
+		logrus.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
 		return nil, result.Error
 	}
-	log.WithField("bookmark_count", len(bookmarks)).Debug("Successfully retrieved device bookmarks")
+	logrus.WithField("bookmark_count", len(bookmarks)).Debug("Successfully retrieved device bookmarks")
 	return bookmarks, nil
 }
 
 func (k *Kobo) BuildContentIndex(content []Content) map[string]Content {
-	log.Debug("Building an index out of device content")
+	logrus.Debug("Building an index out of device content")
 	contentIndex := make(map[string]Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
-	log.WithField("index_count", len(contentIndex)).Debug("Built content index")
+	logrus.WithField("index_count", len(contentIndex)).Debug("Built content index")
 	return contentIndex
 }
 
@@ -251,7 +252,7 @@ func (k *Kobo) CountDeviceBookmarks() int64 {
 	var count int64
 	result := Conn.Model(&Bookmark{}).Count(&count)
 	if result.Error != nil {
-		log.WithError(result.Error).Error("Failed to count bookmarks on device")
+		logrus.WithError(result.Error).Error("Failed to count bookmarks on device")
 	}
 	return count
 }

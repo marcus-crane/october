@@ -1,11 +1,11 @@
 package backend
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,12 +20,12 @@ func setupTmpKobo(dir string, deviceId string) string {
 	content := []byte(deviceId)
 	err := os.Mkdir(filepath.Join(dir, ".kobo"), 0777)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 		return ""
 	}
 	tmpfn := filepath.Join(dir, ".kobo", "version")
 	if err := os.WriteFile(tmpfn, content, 0666); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 		return ""
 	}
 	return dir

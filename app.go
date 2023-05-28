@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+
 	"github.com/marcus-crane/october/backend"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // App struct
@@ -25,11 +26,11 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) domReady(ctx context.Context) {
 	a.ctx = ctx
 	backend.StartLogger()
-	log.WithContext(ctx).Info("Logger should be initialised now")
-	log.WithContext(ctx).Info("Backend is about to start up")
+	logrus.WithContext(ctx).Info("Logger should be initialised now")
+	logrus.WithContext(ctx).Info("Backend is about to start up")
 }
 
 func (a *App) shutdown(ctx context.Context) {
-	log.WithContext(ctx).Info("Shutting down. Goodbye!")
+	logrus.WithContext(ctx).Info("Shutting down. Goodbye!")
 	backend.CloseLogFile()
 }

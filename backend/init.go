@@ -13,9 +13,9 @@ import (
 	"strings"
 
 	"github.com/adrg/xdg"
+	"github.com/sirupsen/logrus"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
-	log "github.com/sirupsen/logrus"
 
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -35,7 +35,7 @@ type Backend struct {
 func StartBackend(ctx *context.Context, version string) *Backend {
 	settings, err := LoadSettings()
 	if err != nil {
-		log.WithContext(*ctx).WithError(err).Error("Failed to load settings")
+		logrus.WithContext(*ctx).WithError(err).Error("Failed to load settings")
 	}
 	return &Backend{
 		SelectedKobo:   Kobo{},
@@ -83,7 +83,7 @@ func (b *Backend) NavigateExplorerToLogLocation() {
 	}
 	logLocation, err := xdg.DataFile("october/logs")
 	if err != nil {
-		log.WithError(err).Error("Failed to determine XDG data location for opening log location in explorer")
+		logrus.WithError(err).Error("Failed to determine XDG data location for opening log location in explorer")
 	}
 	// We will always get an error because the file explorer doesn't exit so it is unable to
 	// return a 0 successful exit code until y'know, the user exits the window
@@ -92,7 +92,7 @@ func (b *Backend) NavigateExplorerToLogLocation() {
 
 func (b *Backend) DetectKobos() []Kobo {
 	connectedKobos, err := kobo.Find()
-	log.WithField("kobos_found", len(connectedKobos)).Info("Detected one or more Kobos")
+	logrus.WithField("kobos_found", len(connectedKobos)).Info("Detected one or more Kobos")
 	if err != nil {
 		panic(err)
 	}
@@ -176,7 +176,7 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 				absCoverPath := path.Join(b.SelectedKobo.MntPath, "/", coverPath)
 				coverBytes, err := os.ReadFile(absCoverPath)
 				if err != nil {
-					log.WithError(err).WithFields(log.Fields{"cover": book.SourceURL, "location": absCoverPath}).Warn("Failed to load cover. Carrying on")
+					logrus.WithError(err).WithFields(logrus.Fields{"cover": book.SourceURL, "location": absCoverPath}).Warn("Failed to load cover. Carrying on")
 				}
 				var base64Encoding string
 				mimeType := http.DetectContentType(coverBytes)
@@ -189,9 +189,9 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 				base64Encoding += base64.StdEncoding.EncodeToString(coverBytes)
 				err = b.Readwise.UploadCover(base64Encoding, book.ID, b.Settings.ReadwiseToken)
 				if err != nil {
-					log.WithError(err).WithField("cover", book.SourceURL).Error("Failed to upload cover to Readwise")
+					logrus.WithError(err).WithField("cover", book.SourceURL).Error("Failed to upload cover to Readwise")
 				}
-				log.WithField("cover", book.SourceURL).Debug("Successfully uploaded cover to Readwise")
+				logrus.WithField("cover", book.SourceURL).Debug("Successfully uploaded cover to Readwise")
 			}
 		}
 	}
