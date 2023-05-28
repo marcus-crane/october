@@ -59,7 +59,7 @@ export default function Overview(props) {
       <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
         <div className="space-y-2">
           <p className="text-center text-xs text-gray-600 dark:text-gray-400">Currently connected</p>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-300">
             {selectedKobo.name}
           </h2>
           {selectedKobo.storage !== 0 && selectedKobo.display_ppi !== 0 && (
@@ -74,10 +74,10 @@ export default function Overview(props) {
           )}
         </div>
         <div className="space-y-4 text-center">
-          <h3 className="text-md font-medium">What would you like to do?</h3>
+          <h3 className="text-md font-medium dark:text-gray-300">What would you like to do?</h3>
           <ul>
             <li>
-              <button onClick={readwiseConfigured ? syncWithReadwise : promptReadwise} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+              <button onClick={readwiseConfigured ? syncWithReadwise : promptReadwise} className="w-full bg-purple-200 hover:bg-purple-300 dark:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>
                   <div>
                     <dt className="sr-only">Title</dt>
@@ -85,7 +85,7 @@ export default function Overview(props) {
                       Sync your highlights with Readwise
                     </dd>
                     <dt className="sr-only">Description</dt>
-                    <dd className="text-xs text-gray-600 dark:text-gray-400">
+                    <dd className="text-xs text-gray-600">
                       Your Kobo is currently home to {highlightCount} highlights
                     </dd>
                   </div>

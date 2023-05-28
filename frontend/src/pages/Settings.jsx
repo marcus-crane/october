@@ -60,18 +60,18 @@ export default function Settings() {
       <Navbar />
       <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
         <div className="space-y-2">
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-300">
             Settings
           </h2>
         </div>
         <div className="space-y-4">
-          <div className="bg-white shadow sm:rounded-lg">
+          <div className="bg-white dark:bg-slate-700 shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Set your Readwise access token</h3>
-              <div className="mt-2 max-w-xl text-sm text-gray-500">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-300">Set your Readwise access token</h3>
+              <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
                 <p>You can find your access token at{" "}
                   <button
-                    className="text-gray-600 underline"
+                    className="text-gray-600 dark:text-gray-400 underline"
                     onClick={() =>
                       BrowserOpenURL("https://readwise.io/access_token")
                     }
@@ -90,7 +90,7 @@ export default function Settings() {
                     type="text"
                     name="token"
                     id="token"
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:bg-gray-200 focus:bg-white rounded-md"
                     placeholder="Your access token goes here"
                     value={tokenInput}
                   />
@@ -115,9 +115,9 @@ export default function Settings() {
             </div>
           </div>
           <div className="shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+            <div className="px-4 py-5 bg-white dark:bg-slate-700 space-y-6 sm:p-6">
               <fieldset>
-                <legend className="text-base font-medium text-gray-900">Kobo metadata upload</legend>
+                <legend className="text-base font-medium text-gray-900 dark:text-gray-300">Kobo metadata upload</legend>
                 <div className="mt-4 space-y-4">
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
@@ -132,10 +132,10 @@ export default function Settings() {
                       />
                     </div>
                     <div className="ml-3 text-sm">
-                      <label htmlFor="comments" className="font-medium text-gray-700">
+                      <label htmlFor="comments" className="font-medium text-gray-700 dark:text-gray-300">
                         Upload covers
                       </label>
-                      <p className="text-gray-500">This will slow down the upload process a bit. It also requires you to have configured Calibre correctly!</p>
+                      <p className="text-gray-500 dark:text-gray-400">This will slow down the upload process a bit. It also requires you to have configured Calibre correctly!</p>
                     </div>
                   </div>
                 </div>
@@ -143,10 +143,10 @@ export default function Settings() {
             </div>
           </div>
           <div className="shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+            <div className="px-4 py-5 bg-white dark:bg-slate-700 space-y-6 sm:p-6">
               <fieldset>
-                <legend className="text-base font-medium text-gray-900">Having trouble?</legend>
-                <div className="mt-2 max-w-xl text-sm text-gray-500">
+                <legend className="text-base font-medium text-gray-900 dark:text-gray-300">Having trouble?</legend>
+                <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
                   <p>October Build: {systemDetails}</p>
                 </div>
                 <div className="space-y-4">

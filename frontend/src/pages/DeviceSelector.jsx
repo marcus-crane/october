@@ -59,7 +59,7 @@ export default function DeviceSelector() {
       .catch(err => toast.error(err))
   }
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 ">
+    <div className="bg-gray-100 dark:bg-gray-800">
       <Navbar />
       <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
         <div className="space-y-2">
@@ -68,7 +68,7 @@ export default function DeviceSelector() {
             src={logo}
             alt="The October logo, which is a cartoon octopus reading a book."
           />
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+          <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:dark:text-gray-300">
             October
           </h2>
           <p className="mt-0 text-center text-sm text-gray-600 dark:text-gray-400">
@@ -76,8 +76,8 @@ export default function DeviceSelector() {
           </p>
         </div>
         <div className="space-y-4 text-center">
-          <h1 className="text-3xl font-bold">Select your Kobo</h1>
-          <button onClick={detectDevices}>Don't see your device? Click here to refresh device list.</button>
+          <h1 className="text-3xl font-bold dark:dark:text-gray-300">Select your Kobo</h1>
+          <button onClick={detectDevices} className="dark:text-gray-400">Don't see your device? Click here to refresh device list.</button>
           <ul>
             {devices.map(device => {
               let description = `${device.storage} GB · ${device.display_ppi} PPI`
@@ -86,7 +86,7 @@ export default function DeviceSelector() {
               }
               return (
                 <li key={device.mnt_path}>
-                  <button onClick={() => selectDevice(device.mnt_path)} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+                  <button onClick={() => selectDevice(device.mnt_path)} className="w-full bg-purple-200 hover:bg-purple-300 dark:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                     <dl>
                       <div>
                         <dt className="sr-only">Title</dt>
@@ -104,7 +104,7 @@ export default function DeviceSelector() {
               )
             })}
             <li>
-              <button onClick={selectLocalDatabase} className="w-full bg-purple-200 hover:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
+              <button onClick={selectLocalDatabase} className="w-full bg-purple-200 hover:bg-purple-300 dark:bg-purple-300 group block rounded-lg p-4 mb-2 cursor-pointer">
                 <dl>
                   <div>
                     <dt className="sr-only">Title</dt>
@@ -112,7 +112,7 @@ export default function DeviceSelector() {
                       Load in a local Kobo database (advanced)
                     </dd>
                     <dt className="sr-only">Description</dt>
-                    <dd className="text-xs text-gray-600 dark:text-gray-400">
+                    <dd className="text-xs text-gray-600">
                       Provide an instance of KoboReader.sqlite3
                     </dd>
                   </div>
