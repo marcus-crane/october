@@ -1,11 +1,11 @@
 name: Publish docs
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-  release:
-    types: [released]
+  # push:
+  #   branches:
+  #     - main
+  # release:
+  #   types: [released]
 jobs:
   deploy:
     runs-on: ubuntu-latest
