@@ -6,7 +6,7 @@ site_description: >-
 repo_url: https://github.com/marcus-crane/october
 repo_name: marcus-crane/october
 
-copyright: Copyright &copy; 2022 Marcus Crane
+copyright: Copyright &copy; 2023 Marcus Crane
 
 theme:
   name: material
