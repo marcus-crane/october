@@ -5,7 +5,7 @@
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
-  "frontend:dev:serverUrl": "http://localhost:3000",
+  "frontend:dev:serverUrl": "auto",
   "author": {
     "name": "Marcus Crane",
     "email": "marcus@utf9k.net"
