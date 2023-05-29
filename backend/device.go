@@ -2,6 +2,7 @@ package backend
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 
@@ -157,14 +158,7 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 		}
 		logrus.WithField("device_id", deviceId).Info("Found an attached device")
 		device, found := kobo.DeviceByID(deviceId)
-		if !found {
-			logrus.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
-			// We can handle unsupported Kobos in future but at present, there are none
-			kobos = append(kobos, Kobo{
-				MntPath: path,
-				DbPath:  fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
-			})
-		} else {
+		if found {
 			kobos = append(kobos, Kobo{
 				Name:       device.Name(),
 				Storage:    device.StorageGB(),
@@ -172,7 +166,27 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 				MntPath:    path,
 				DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
 			})
+			continue
 		}
+		fallbackSkus := getFallbackSkus()
+		deviceIdBits := strings.Split(deviceId, ",")
+		deviceIdGuid := deviceIdBits[len(deviceIdBits)-1]
+		if fallback, ok := fallbackSkus[deviceIdGuid]; ok {
+			kobos = append(kobos, Kobo{
+				Name:       fallback.Name,
+				Storage:    fallback.Storage,
+				DisplayPPI: fallback.DisplayPPI,
+				MntPath:    path,
+				DbPath:     fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
+			})
+			continue
+		}
+		logrus.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
+		// We can handle unsupported Kobos in future but at present, there are none
+		kobos = append(kobos, Kobo{
+			MntPath: path,
+			DbPath:  fmt.Sprintf("%s/.kobo/KoboReader.sqlite", path),
+		})
 	}
 	return kobos
 }
@@ -255,4 +269,19 @@ func (k *Kobo) CountDeviceBookmarks() int64 {
 		logrus.WithError(result.Error).Error("Failed to count bookmarks on device")
 	}
 	return count
+}
+
+func getFallbackSkus() map[string]Kobo {
+	return map[string]Kobo{
+		"00000000-0000-0000-0000-000000000386": {
+			Name:       "Kobo Clara 2E",
+			Storage:    16,
+			DisplayPPI: 300,
+		},
+		"00000000-0000-0000-0000-000000000389": {
+			Name:       "Kobo Elipsa 2E",
+			Storage:    32,
+			DisplayPPI: 227,
+		},
+	}
 }
