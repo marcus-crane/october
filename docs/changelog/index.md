@@ -4,6 +4,41 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.3.4
+
+This release adds detection support for `Kobo Clara 2E` and `Kobo Elipsa 2E`.
+
+As always, unreleased devices should work just fine with October. This change just adds their device strings so that October can display their names instead of "Unknown Kobo".
+
+I don't own these devices so I don't know for sure that this will work but I pulled the device IDs from the latest Kobo firmware so I assume they should work just fine.
+
+If they don't and you own one of these devices, please feel free to file an issue.
+
+## v1.3.3
+
+This release doesn't add any new features but brings a bunch of maintenance chores that were overdue.
+
+- Refreshes the dark mode colour scheme which had been partly implemented. It should now be much less jarring but it can probably do with more tweaks in future
+- Fixes #85 where starting October on Windows 11 with newer versions of the WebView2 runtime would briefly cause an "Unexpected Error" screen to appear
+
+There are some other changes that won't be visible to users but for those interested:
+
+- Removes unneeded dependency on `github.com/go-resty/resty` in favour of plain `net/http`. This has no visible change for users. It may or may not reduce the size of October very slightly but I haven't checked. It probably doesn't.
+- Updated most dependencies to their latest versions which brings October up to date and provides a fresh base to start developing again.
+- Begin signing releases with a new developer certificate as the current version expires on May 30th. This has no impact to end users. It just means that I can continue signing new installers (so they pass Windows Smartscreen) as my current certificate is about to expire. The new signature lasts until 2025 when it will need to be renewed again.
+- Updated year references from `2022` to `2023` that were missed. It doesn't mean anything in a legal sense but it's always nice when software appears fresh, such as referring to the current year.
+
+<details>
+<summary>Toggle to see screenshots of the new dark mode scheme</summary>
+
+<img width="1136" alt="CleanShot 2023-05-28 at 16 21 16@2x" src="https://github.com/marcus-crane/october/assets/14816406/77068de9-f6b7-44b8-8219-ed34840741f7">
+
+<img width="1136" alt="CleanShot 2023-05-28 at 16 21 22@2x" src="https://github.com/marcus-crane/october/assets/14816406/332ffc41-c391-4afe-ae44-3497d5a2bf7c">
+
+<img width="1136" alt="CleanShot 2023-05-28 at 16 21 36@2x" src="https://github.com/marcus-crane/october/assets/14816406/88f77ca5-be2d-4544-b6bd-31697c932a86">
+
+</details>
+
 ## v1.3.2
 
 This release updates the various bookmark/book queries so that store-purchased Kobo titles are ignored.
