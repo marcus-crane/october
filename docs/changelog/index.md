@@ -4,6 +4,24 @@ template: overrides/main.html
 
 # Changelog
 
+## v1.4.0
+
+_Note: This release was originally accidentally published as `v.1.4.0` instead of `v1.4.0`. The contents has not changed but the release was recreated as `v.1.4.0` is not a valid Windows version identifier._
+
+This release adds back the ability to sync store-purchased titles, although it needs to be explicitly enabled in Settings just to ensure users aren't accidentally double syncing if they are also using the official Readwise integration.
+
+![CleanShot 2023-06-03 at 15 08 55@2x](https://github.com/marcus-crane/october/assets/14816406/e0897f79-0347-4ea8-b955-3f94f546f16b)
+
+In order to bring awareness, the first initial sync will also show this popup if highlights are detected that are not from sideloaded titles. This popup will only show one time. Either clicking "Understood" or enabling store-purchased highlight syncing via Settings will cause it to disappear.
+
+<img width="1136" alt="CleanShot 2023-06-03 at 15 33 07@2x" src="https://github.com/marcus-crane/october/assets/14816406/87cbeff0-c4f2-414a-a26d-c03228028c74">
+
+Lastly, the upload button now lists how many side loaded and official highlights are detected
+
+This release also fixes some buginess:
+
+- [v1.3.2](https://github.com/marcus-crane/october/releases/tag/v1.3.2) added logic to only upload sideloaded books but in doing so, some queries for discovering Kobo content were incorrect. These should be fixed now so the correct number of sideloaded titles are uploaded.
+
 ## v1.3.4
 
 This release adds detection support for `Kobo Clara 2E` and `Kobo Elipsa 2E`.
