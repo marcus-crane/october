@@ -189,6 +189,7 @@ export namespace backend {
 	export class Settings {
 	    readwise_token: string;
 	    upload_covers: boolean;
+	    upload_store_highlights: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -198,6 +199,7 @@ export namespace backend {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.readwise_token = source["readwise_token"];
 	        this.upload_covers = source["upload_covers"];
+	        this.upload_store_highlights = source["upload_store_highlights"];
 	    }
 	}
 

@@ -10,9 +10,10 @@ import (
 )
 
 type Settings struct {
-	path          string `json:"-"`
-	ReadwiseToken string `json:"readwise_token"`
-	UploadCovers  bool   `json:"upload_covers"`
+	path                  string `json:"-"`
+	ReadwiseToken         string `json:"readwise_token"`
+	UploadCovers          bool   `json:"upload_covers"`
+	UploadStoreHighlights bool   `json:"upload_store_highlights"`
 }
 
 func LoadSettings() (*Settings, error) {
@@ -62,6 +63,11 @@ func (s *Settings) SaveToken(token string) error {
 
 func (s *Settings) SaveCoverUploading(uploadCovers bool) error {
 	s.UploadCovers = uploadCovers
+	return s.Save()
+}
+
+func (s *Settings) SaveStoreHighlights(uploadStoreHighlights bool) error {
+	s.UploadStoreHighlights = uploadStoreHighlights
 	return s.Save()
 }
 
