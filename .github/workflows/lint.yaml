@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: 1.19
-      - run: mkdir -p frontend/build && touch frontend/build/placeholder.txt # TODO: Try to fix this properly
+      - run: mkdir -p frontend/dist/.gitkeep
       - run: go mod download
       - run: go fmt ./...
       - name: golangci-lint
