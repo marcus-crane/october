@@ -91,12 +91,9 @@ export default function Overview(props) {
               <li>
                 <button onClick={() => {
                     if (readwiseConfigured) {
-                      console.log("Readwise configured")
                       if (uploadStorePromptSeen || uploadStoreHighlights) {
-                        console.log("Syncing prompt seen")
                         syncWithReadwise()
                       } else {
-                        console.log("Syncing prompt not seen")
                         setStoreUploadWarningOpen(true)
                       }
                     } else {
@@ -149,26 +146,26 @@ export default function Overview(props) {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white dark:bg-slate-700 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                      <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-300">
                         Want to sync highlights from store-purchased books?
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                           You appear to have some highlights from officially purchased titles.
                         </p>
-                        <p className="text-sm text-gray-500 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                           If you would like to use October to sync highlights from the Kobo store, you can do this from the Settings page.
                         </p>
-                        <p className="text-sm text-gray-500 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                           This functionality is disabled by default in order to avoid duplicate highlights for users of the official Readwise Kobo integration.
                         </p>
-                        <p className="text-sm text-gray-500 mb-2 italic">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 italic">
                           This message won't be shown again once accepted.
                         </p>
                       </div>
@@ -181,7 +178,7 @@ export default function Overview(props) {
                       onClick={() => {
                         setStoreUploadWarningOpen(false)
                         MarkUploadStorePromptShown()
-                        syncWithReadwise()
+                        setUploadStorePromptSeen(true)
                       }}
                     >
                       Understood
