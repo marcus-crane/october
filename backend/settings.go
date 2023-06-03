@@ -76,7 +76,3 @@ func (s *Settings) MarkUploadStorePromptShown() error {
 	s.UploadStorePromptShown = true
 	return s.Save()
 }
-
-func (s *Settings) CheckReadwiseConfig() bool {
-	return s.ReadwiseToken != ""
-}

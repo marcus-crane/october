@@ -11,7 +11,8 @@ import {
 import {
   SaveToken,
   SaveCoverUploading,
-  SaveStoreHighlights
+  SaveStoreHighlights,
+  MarkUploadStorePromptShown
 } from "../../wailsjs/go/backend/Settings";
 import { CheckTokenValidity } from "../../wailsjs/go/backend/Readwise";
 
@@ -140,9 +141,10 @@ export default function Settings() {
                     <div className="flex items-center h-5">
                       <input
                         // TODO: This probably causes the render method to seize up
-                        onInput={(e) =>
+                        onInput={(e) => {
                           saveStoreHighlights(!e.currentTarget.checked)
-                        }
+                          MarkUploadStorePromptShown()
+                        }}
                         checked={storeHighlights}
                         id="storeBought"
                         name="storeBought"
