@@ -146,12 +146,13 @@ func (b *Backend) PromptForLocalDBPath() error {
 }
 
 func (b *Backend) ForwardToReadwise() (int, error) {
-	content, err := b.Kobo.ListDeviceContent()
+	includeStoreBought := b.Settings.UploadStoreHighlights
+	content, err := b.Kobo.ListDeviceContent(includeStoreBought)
 	if err != nil {
 		return 0, err
 	}
 	contentIndex := b.Kobo.BuildContentIndex(content)
-	bookmarks, err := b.Kobo.ListDeviceBookmarks()
+	bookmarks, err := b.Kobo.ListDeviceBookmarks(includeStoreBought)
 	if err != nil {
 		return 0, err
 	}

@@ -8,7 +8,7 @@ import { CheckReadwiseConfig } from "../../wailsjs/go/backend/Settings";
 export default function Overview(props) {
   const [readwiseConfigured, setReadwiseConfigured] = useState(false)
   const [selectedKobo, setSelectedKobo] = useState({})
-  const [highlightCount, setHighlightCount] = useState(0)
+  const [highlightCounts, setHighlightCounts] = useState({})
 
   useEffect(() => {
     GetSelectedKobo()
@@ -18,9 +18,9 @@ export default function Overview(props) {
 
   useEffect(() => {
     CountDeviceBookmarks()
-      .then(bookmarkCount => setHighlightCount(bookmarkCount))
+      .then(bookmarkCounts => setHighlightCounts(bookmarkCounts))
       .catch(err => toast.error(err))
-  }, [highlightCount])
+  }, [highlightCounts.total])
 
   useEffect(() => {
     CheckReadwiseConfig()
@@ -86,7 +86,10 @@ export default function Overview(props) {
                     </dd>
                     <dt className="sr-only">Description</dt>
                     <dd className="text-xs text-gray-600">
-                      Your Kobo is currently home to {highlightCount} highlights
+                      Your Kobo is currently home to {highlightCounts.total} highlights
+                    </dd>
+                    <dd className="text-xs text-gray-600">
+                      {highlightCounts.sideloaded} sideloaded  · {highlightCounts.official} official
                     </dd>
                   </div>
                 </dl>

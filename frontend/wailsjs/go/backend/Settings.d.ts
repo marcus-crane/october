@@ -3,6 +3,8 @@
 
 export function CheckReadwiseConfig():Promise<boolean>;
 
+export function MarkUploadStorePromptShown():Promise<void>;
+
 export function Save():Promise<void>;
 
 export function SaveCoverUploading(arg1:boolean):Promise<void>;

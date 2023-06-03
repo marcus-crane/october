@@ -17,6 +17,12 @@ type Kobo struct {
 	DbPath     string `json:"db_path"`
 }
 
+type HighlightCounts struct {
+	Total      int64 `json:"total"`
+	Sideloaded int64 `json:"sideloaded"`
+	Official   int64 `json:"official"`
+}
+
 type Content struct {
 	ContentID               string `gorm:"column:ContentID" json:"content_id"`
 	ContentType             string `gorm:"column:ContentType" json:"content_type"`
@@ -191,47 +197,14 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 	return kobos
 }
 
-func (k *Kobo) ListBooksOnDevice() ([]Content, error) {
-	var content []Content
-	result := Conn.Where(
-		&Content{ContentType: "6", VolumeIndex: -1, MimeType: "application/x-kobo-epub+zip"},
-	).Where("ContentID LIKE '%file:///%'").Order("DateLastRead desc, title asc").Find(&content)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return content, nil
-}
-
-func (k *Kobo) ListBookmarksByID(contentID string) ([]Bookmark, error) {
-	var bookmark []Bookmark
-	result := Conn.Where(
-		&Bookmark{VolumeID: contentID},
-	).Where("VolumeID LIKE '%file:///%'").Find(&bookmark)
-	if result.Error != nil {
-		logrus.WithError(result.Error).WithField("content_id", contentID).Error("Encountered an error while trying to list bookmarks by ID")
-		return nil, result.Error
-	}
-	return bookmark, nil
-}
-
-func (k *Kobo) FindBookOnDevice(bookID string) (Content, error) {
-	var content Content
-	logrus.WithField("book_id", bookID).Debug("Retrieving a book that has been uploaded to Readwise previously")
-	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1, ContentID: bookID}).Where("VolumeID LIKE '%file:///%'").Find(&content)
-	if result.Error != nil {
-		logrus.WithError(result.Error).WithField("book_id", bookID).Error("Failed to retrieve content from device")
-		return content, result.Error
-	}
-	logrus.WithField("title", content.Title).Debug("Successfully retrieved content from device DB")
-	return content, nil
-}
-
-func (k *Kobo) ListDeviceContent() ([]Content, error) {
+func (k *Kobo) ListDeviceContent(includeStoreBought bool) ([]Content, error) {
 	var content []Content
 	logrus.Debug("Retrieving content list from device")
-	result := Conn.Where(
-		&Content{ContentType: "6", VolumeIndex: -1},
-	).Where("ContentID LIKE '%file:///%'").Order("___PercentRead desc, title asc").Find(&content)
+	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1})
+	if !includeStoreBought {
+		result = result.Where("ContentID LIKE '%file:///%'")
+	}
+	result = result.Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
 		logrus.WithError(result.Error).Error("Failed to retrieve content from device")
 		return nil, result.Error
@@ -240,10 +213,14 @@ func (k *Kobo) ListDeviceContent() ([]Content, error) {
 	return content, nil
 }
 
-func (k *Kobo) ListDeviceBookmarks() ([]Bookmark, error) {
+func (k *Kobo) ListDeviceBookmarks(includeStoreBought bool) ([]Bookmark, error) {
 	var bookmarks []Bookmark
 	logrus.Debug("Retrieving bookmarks from device")
-	result := Conn.Where("VolumeID LIKE '%file:///%'").Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
+	result := Conn
+	if !includeStoreBought {
+		result = result.Where("VolumeID LIKE '%file:///%'")
+	}
+	result = result.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
 		logrus.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
 		return nil, result.Error
@@ -262,13 +239,21 @@ func (k *Kobo) BuildContentIndex(content []Content) map[string]Content {
 	return contentIndex
 }
 
-func (k *Kobo) CountDeviceBookmarks() int64 {
-	var count int64
-	result := Conn.Model(&Bookmark{}).Count(&count)
+func (k *Kobo) CountDeviceBookmarks() HighlightCounts {
+	var totalCount int64
+	var officialCount int64
+	var sideloadedCount int64
+	result := Conn.Model(&Bookmark{}).Count(&totalCount)
 	if result.Error != nil {
 		logrus.WithError(result.Error).Error("Failed to count bookmarks on device")
 	}
-	return count
+	Conn.Model(&Bookmark{}).Where("VolumeID LIKE '%file:///%'").Count(&sideloadedCount)
+	Conn.Model(&Bookmark{}).Where("VolumeID NOT LIKE '%file:///%'").Count(&officialCount)
+	return HighlightCounts{
+		Total:      totalCount,
+		Official:   officialCount,
+		Sideloaded: sideloadedCount,
+	}
 }
 
 func getFallbackSkus() map[string]Kobo {

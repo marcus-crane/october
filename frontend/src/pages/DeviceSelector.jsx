@@ -94,7 +94,7 @@ export default function DeviceSelector() {
                           {device.name || "Unknown Kobo"}
                         </dd>
                         <dt className="sr-only">System Specifications</dt>
-                        <dd className="text-xs text-gray-600 dark:text-gray-400">
+                        <dd className="text-xs text-gray-600">
                           {description}
                         </dd>
                       </div>

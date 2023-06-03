@@ -6,6 +6,10 @@ export function CheckReadwiseConfig() {
   return window['go']['backend']['Settings']['CheckReadwiseConfig']();
 }
 
+export function MarkUploadStorePromptShown() {
+  return window['go']['backend']['Settings']['MarkUploadStorePromptShown']();
+}
+
 export function Save() {
   return window['go']['backend']['Settings']['Save']();
 }

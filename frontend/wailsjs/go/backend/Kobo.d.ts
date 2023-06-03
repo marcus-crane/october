@@ -4,14 +4,8 @@ import {backend} from '../models';
 
 export function BuildContentIndex(arg1:Array<backend.Content>):Promise<{[key: string]: backend.Content}>;
 
-export function CountDeviceBookmarks():Promise<number>;
+export function CountDeviceBookmarks():Promise<backend.HighlightCounts>;
 
-export function FindBookOnDevice(arg1:string):Promise<backend.Content>;
+export function ListDeviceBookmarks(arg1:boolean):Promise<Array<backend.Bookmark>>;
 
-export function ListBookmarksByID(arg1:string):Promise<Array<backend.Bookmark>>;
-
-export function ListBooksOnDevice():Promise<Array<backend.Content>>;
-
-export function ListDeviceBookmarks():Promise<Array<backend.Bookmark>>;
-
-export function ListDeviceContent():Promise<Array<backend.Content>>;
+export function ListDeviceContent(arg1:boolean):Promise<Array<backend.Content>>;

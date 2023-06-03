@@ -10,22 +10,10 @@ export function CountDeviceBookmarks() {
   return window['go']['backend']['Kobo']['CountDeviceBookmarks']();
 }
 
-export function FindBookOnDevice(arg1) {
-  return window['go']['backend']['Kobo']['FindBookOnDevice'](arg1);
+export function ListDeviceBookmarks(arg1) {
+  return window['go']['backend']['Kobo']['ListDeviceBookmarks'](arg1);
 }
 
-export function ListBookmarksByID(arg1) {
-  return window['go']['backend']['Kobo']['ListBookmarksByID'](arg1);
-}
-
-export function ListBooksOnDevice() {
-  return window['go']['backend']['Kobo']['ListBooksOnDevice']();
-}
-
-export function ListDeviceBookmarks() {
-  return window['go']['backend']['Kobo']['ListDeviceBookmarks']();
-}
-
-export function ListDeviceContent() {
-  return window['go']['backend']['Kobo']['ListDeviceContent']();
+export function ListDeviceContent(arg1) {
+  return window['go']['backend']['Kobo']['ListDeviceContent'](arg1);
 }
