@@ -91,9 +91,9 @@ jobs:
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.zip
+          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip
+          asset_path: ./build/bin/october-${{ steps.normalise_platform.outputs.tag }}.zip
           asset_name: ${{ env.ARTIFACT_NAME }}.zip
           asset_content_type: application/zip

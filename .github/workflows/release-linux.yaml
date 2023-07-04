@@ -81,9 +81,9 @@ jobs:
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.deb
+          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/linux/${{ env.ARTIFACT_NAME }}
-          asset_name: ${{ env.ARTIFACT_NAME }}
+          asset_path: ./build/linux/october_${{ steps.normalise_version.outputs.version }}_amd64.deb
+          asset_name: ${{ env.ARTIFACT_NAME }}.deb
           asset_content_type: application/octet-stream
