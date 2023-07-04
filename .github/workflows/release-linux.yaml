@@ -18,12 +18,14 @@ jobs:
 
       - name: Normalise platform tag
         id: normalise_platform
+        shell: bash
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
 
       - name: Normalise version tag
         id: normalise_version
+        shell: bash
         run: |
           version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
           echo "::set-output name=version::$version"
@@ -34,9 +36,11 @@ jobs:
           go-version: 1.19
 
       - name: Install wails
+        shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
     
       - name: Install Ubuntu prerequisites
+        shell: bash
         run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
 
       - name: Set up Node
@@ -44,19 +48,19 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Update npm
-        run: npm install -g npm
-
-      - name: Bump manifest version
-        run: node version.js ${{ github.event.release.tag_name }}
-
       - name: Build frontend assets
-        run: cd frontend && npm install
+        shell: bash
+        run: |
+          npm install -g npm
+          node version.js ${{ github.event.release.tag_name }}
+          cd frontend && npm install
 
       - name: Build wails app for Linux
+        shell: bash
         run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
+        shell: bash
         run: |
           mkdir -p build/linux/october_0.0.0_amd64/usr/local/bin
           mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
@@ -66,11 +70,13 @@ jobs:
           dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_amd64"
 
       - name: Get latest release from API
+        shell: bash
         run: |
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
 
       - name: Get release URL
         id: get_upload_url
+        shell: bash
         run: |
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"

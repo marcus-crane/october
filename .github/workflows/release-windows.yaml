@@ -34,6 +34,7 @@ jobs:
           args: install nsis
 
       - name: Install wails
+        shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Set up Node
@@ -41,15 +42,12 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Update npm
-        run: npm install -g npm
-
-      - name: Bump manifest version
-        run: node version.js ${{ github.event.release.tag_name }}
-
       - name: Build frontend assets
         shell: bash
-        run: cd frontend && npm install
+        run: |
+          npm install -g npm
+          node version.js ${{ github.event.release.tag_name }}
+          cd frontend && npm install
 
       - name: Build Windows NSIS installer
         shell: bash
@@ -75,11 +73,13 @@ jobs:
         working-directory: ./build/bin
 
       - name: Get latest release from API
+        shell: bash
         run: |
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
 
       - name: Get release URL
         id: get_upload_url
+        shell: bash
         run: |
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"

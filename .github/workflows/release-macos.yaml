@@ -20,6 +20,7 @@ jobs:
 
       - name: Normalise platform tag
         id: normalise_platform
+        shell: bash
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
@@ -30,6 +31,7 @@ jobs:
           go-version: 1.19
 
       - name: Install gon for macOS notarisation
+        shell: bash
         run: wget https://github.com/mitchellh/gon/releases/download/v0.2.3/gon_macos.zip && unzip gon_macos.zip && mv gon /usr/local/bin
 
       - name: Import code signing certificate from Github Secrets
@@ -39,6 +41,7 @@ jobs:
           p12-password: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_PASSWORD }}
 
       - name: Install wails
+        shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Set up Node
@@ -46,33 +49,36 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Update npm
-        run: npm install -g npm
-
-      - name: Bump manifest version
-        run: node version.js ${{ github.event.release.tag_name }}
-
       - name: Build frontend assets
-        run: cd frontend && npm install
+        shell: bash
+        run: |
+          npm install -g npm
+          node version.js ${{ github.event.release.tag_name }}
+          cd frontend && npm install
 
       - name: Build wails app for macOS
+        shell: bash
         run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
 
       - name: Notarise macOS app + create dmg
+        shell: bash
         run: gon -log-level=info gon.config.json
         env:
           AC_USERNAME: ${{ secrets.AC_USERNAME }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
       
       - name: Compress macOS dmg
+        shell: bash
         run: cd build/bin && zip -r october-${{ steps.normalise_platform.outputs.tag }}.zip October.dmg
 
       - name: Get latest release from API
+        shell: bash
         run: |
           curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
 
       - name: Get release URL
         id: get_upload_url
+        shell: bash
         run: |
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"
