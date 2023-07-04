@@ -6,3 +6,5 @@ build/bin
 site
 frontend/dist/*
 !frontend/dist/.gitkeep
+build/linux/*.deb
+build/linux/october_0.0.0_amd64/usr/local/bin/october
