@@ -52,7 +52,7 @@ jobs:
       
       - name: Package up deb file
         run: |
-          mv build/bin/october build/linux/usr/local/bin/
+          mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
           cd build/linux
           mv october_0.0.0_amd64 "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
           sed -i 's/0.0.0/${{ steps.normalise_platform.outputs.tag }}/g' "october_${{ steps.normalise_platform.outputs.tag }}_amd64/DEBIAN/control"
