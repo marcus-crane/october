@@ -75,25 +75,14 @@ jobs:
         working-directory: ./build/bin
 
       - name: Get latest release from API
-        uses: octokit/request-action@v2.x
-        id: get_latest_release
-        with:
-          route: GET /repos/{owner}/{repo}/releases
-          owner: marcus-crane
-          repo: october
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
 
       - name: Get release URL
         id: get_upload_url
-        shell: bash
         run: |
-          echo "$response" > /tmp/releases.json
-          unset response
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"
-        env:
-          response:  ${{ steps.get_latest_release.outputs.data }}
 
       - name: Upload zip file
         uses: actions/upload-release-asset@v1.0.2
