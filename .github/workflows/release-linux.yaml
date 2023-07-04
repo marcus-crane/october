@@ -66,7 +66,9 @@ jobs:
       - name: Get release URL
         id: get_upload_url
         run: |
-          url=$(echo "$response" | jq -r '.[0].upload_url')
+          echo "$response" > /tmp/releases.json
+          unset response
+          url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"
         env:
           response:  ${{ steps.get_latest_release.outputs.data }}
