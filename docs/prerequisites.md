@@ -1,8 +1,3 @@
----
-template: overrides/main.html
-title: Prerequisites
----
-
 # Prerequisites
 
 Before we get started with the desktop app itself, there are a few things that you'll benefit from knowing before you start uploading books only to have some frustrations later on.

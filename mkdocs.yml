@@ -84,6 +84,17 @@ nav:
   - Home: index.md
   - Getting started:
     - Prerequisites: prerequisites.md
-    - Installation: getting-started.md
-    - License: license.md
+    - Installing:
+      - Linux: installation/linux.md
+      - macOS: installation/macos.md
+      - Windows: installations/windows.md
+    - Contributing:
+      - Bugs: contributing/bugs.md
+      - Feature Requests: contributing/feature-requests.md
+      - Questions: contributing/questions.md
+    - Miscellaneous:
+      - License: license.md
+  - Configuration:
+    - Overview: configuration/overview.md
+    - Settings: configuration/settings.md
   - Changelog: changelog/index.md
