@@ -82,6 +82,6 @@ jobs:
           ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_amd64.deb
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/bin/linux/${{ env.ARTIFACT_NAME }}
+          asset_path: ./build/linux/${{ env.ARTIFACT_NAME }}
           asset_name: ${{ env.ARTIFACT_NAME }}
           asset_content_type: application/octet-stream
