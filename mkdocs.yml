@@ -2,7 +2,7 @@ site_name: October
 site_author: Marcus Crane
 site_description: >-
   Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise. 100% open source with support for Windows, macOS and Linux!
-
+site_url: https://october.utf9k.net
 repo_url: https://github.com/marcus-crane/october
 repo_name: marcus-crane/october
 edit_uri: edit/main/docs/
@@ -104,12 +104,14 @@ nav:
     - Installing:
       - Linux: installation/linux.md
       - macOS: installation/macos.md
-      - Windows: installations/windows.md
+      - Windows: installation/windows.md
     - Contributing:
       - Bugs: contributing/bugs.md
       - Feature Requests: contributing/feature-requests.md
       - Questions: contributing/questions.md
     - Miscellaneous:
+      - Database Analysis: database-analysis.md
+      - Limitations: limitations.md
       - License: license.md
   - Configuration:
     - Overview: configuration/overview.md
