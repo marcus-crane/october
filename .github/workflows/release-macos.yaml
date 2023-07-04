@@ -22,7 +22,7 @@ jobs:
         id: normalise_platform
         shell: bash
         run: |
-          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
+          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//_/g')
           echo "::set-output name=tag::$tag"
 
       - name: Normalise version tag
