@@ -50,8 +50,13 @@ jobs:
       - name: Build wails app for Linux
         run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
-      - name: Compress Linux binary
-        run: cd build/bin && zip -r october-${{ steps.normalise_platform.outputs.tag }}.zip october
+      - name: Package up deb file
+        run: |
+          mv build/bin/october build/linux/usr/local/bin/
+          cd build/linux
+          mv october_0.0.0_amd64 "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
+          sed -i 's/0.0.0/${{ steps.normalise_platform.outputs.tag }}/g' "october_${{ steps.normalise_platform.outputs.tag }}_amd64/DEBIAN/control"
+          dpkg-deb --build "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
 
       - name: Get latest release from API
         run: |
@@ -70,6 +75,6 @@ jobs:
           ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip
-          asset_name: ${{ env.ARTIFACT_NAME }}.zip
-          asset_content_type: application/zip
+          asset_path: ./build/bin/october_${{ steps.normalise_platform.outputs.tag }}_amd64.deb
+          asset_name: october_${{ steps.normalise_platform.outputs.tag }}_amd64.deb
+          asset_content_type: application/octet-stream
