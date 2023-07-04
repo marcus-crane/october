@@ -22,6 +22,12 @@ jobs:
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
 
+      - name: Normalise version tag
+        id: normalise_version
+        run: |
+          version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+          echo "::set-output name=version::$version"
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -55,9 +61,9 @@ jobs:
           mkdir -p build/linux/october_0.0.0_amd64/usr/local/bin
           mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
           cd build/linux
-          mv october_0.0.0_amd64 "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
-          sed -i 's/0.0.0/${{ steps.normalise_platform.outputs.tag }}/g' "october_${{ steps.normalise_platform.outputs.tag }}_amd64/DEBIAN/control"
-          dpkg-deb --build "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
+          mv october_0.0.0_amd64 "october_${{ steps.normalise_version.outputs.version }}_amd64"
+          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_${{ steps.normalise_version.outputs.version }}_amd64/DEBIAN/control"
+          dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_amd64"
 
       - name: Get latest release from API
         run: |
@@ -76,6 +82,6 @@ jobs:
           ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/bin/october_${{ steps.normalise_platform.outputs.tag }}_amd64.deb
-          asset_name: october_${{ steps.normalise_platform.outputs.tag }}_amd64.deb
+          asset_path: ./build/bin/october_${{ steps.normalise_version.outputs.version }}_amd64.deb
+          asset_name: october_${{ steps.normalise_version.outputs.version }}_amd64.deb
           asset_content_type: application/octet-stream
