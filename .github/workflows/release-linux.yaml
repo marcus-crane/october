@@ -52,6 +52,7 @@ jobs:
       
       - name: Package up deb file
         run: |
+          mkdir -p build/linux/october_0.0.0_amd64/usr/local/bin
           mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
           cd build/linux
           mv october_0.0.0_amd64 "october_${{ steps.normalise_platform.outputs.tag }}_amd64"
