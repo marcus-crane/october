@@ -23,6 +23,13 @@ jobs:
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
           echo "::set-output name=tag::$tag"
 
+      - name: Normalise version tag
+        id: normalise_version
+        shell: bash
+        run: |
+          version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+          echo "::set-output name=version::$version"
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -73,22 +80,18 @@ jobs:
         working-directory: ./build/bin
 
       - name: Get latest release from API
-        shell: bash
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
-
-      - name: Get release URL
         id: get_upload_url
         shell: bash
         run: |
+          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"
 
-      - name: Upload zip file
+      - name: Upload artifact
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october-${{ steps.normalise_platform.outputs.tag }}
+          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.zip
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
           asset_path: ./build/bin/${{ env.ARTIFACT_NAME }}.zip

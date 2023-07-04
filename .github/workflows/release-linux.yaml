@@ -20,7 +20,7 @@ jobs:
         id: normalise_platform
         shell: bash
         run: |
-          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//-/g')
+          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//_/g')
           echo "::set-output name=tag::$tag"
 
       - name: Normalise version tag
@@ -70,22 +70,18 @@ jobs:
           dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_amd64"
 
       - name: Get latest release from API
-        shell: bash
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
-
-      - name: Get release URL
         id: get_upload_url
         shell: bash
         run: |
+          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/marcus-crane/october/releases" > /tmp/releases.json
           url=$(jq -r '.[0].upload_url' /tmp/releases.json)
           echo "::set-output name=url::$url"
 
-      - name: Upload zip file
+      - name: Upload artifact
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_amd64.deb
+          ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.deb
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
           asset_path: ./build/linux/${{ env.ARTIFACT_NAME }}
