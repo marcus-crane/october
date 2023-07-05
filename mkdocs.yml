@@ -100,6 +100,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting started:
+    - Welcome: welcome.md
     - Prerequisites: prerequisites.md
     - Installing:
       - Linux: installation/linux.md
