@@ -66,9 +66,9 @@ export default function Overview(props) {
 
   return (
     <>
-      <div className="bg-gray-100 dark:bg-gray-800 ">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-800 flex flex-col">
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
+        <div className="flex-grow items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
           <div className="space-y-2">
             <p className="text-center text-xs text-gray-600 dark:text-gray-400">Currently connected</p>
             <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-300">

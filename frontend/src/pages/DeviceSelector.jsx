@@ -59,9 +59,9 @@ export default function DeviceSelector() {
       .catch(err => toast.error(err))
   }
   return (
-    <div className="bg-gray-100 dark:bg-gray-800">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 flex flex-col">
       <Navbar />
-      <div className="min-h-screen flex items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
+      <div className="flex-grow items-center justify-center pb-24 px-24 grid grid-cols-2 gap-14">
         <div className="space-y-2">
           <img
             className="mx-auto h-36 w-auto logo-animation"

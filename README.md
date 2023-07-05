@@ -37,13 +37,11 @@ You'll also need to allow [Microsoft Edge WebView 2](https://docs.microsoft.com/
 
 ### Linux
 
-For Linux users, [Wails](https://wails.io) is just in the final phases of polishing up initial Linux support.
+For Linux, an `amd64` `.deb` package is available for users of Debian or Ubuntu distributions. It's fairly minimal containing enough bootstrapping to add a desktop entry to your launcher of choice, as well as the binary itself which lives in `/usr/local/bin/october`.
 
-A Linux build should be available not too long from now, although I still need to figure out how to do packaging.
+While this is the only supported packaging format at the moment, if there is a strong desire for any other formats, feel free to submit a feature request.
 
-Until then, here's a sneak peek. I've successfully used the dev build to upload highlights :)
-
-![](./docs/overview-linux.png)
+It's also the least tested of the three formats. Fundamentally, they shouldn't differ very much (if at all) but please file an issue if anything seems out of place.
 
 ## Usage
 
@@ -73,13 +71,13 @@ October saves logs in the following places:
 
 * Windows: `C:\Users\<username>\AppData\Local\october\logs`
 * macOS: `$HOME/Library/Application Support/october/logs`
-* Linux: `$HOME/.local/share/october/logs` (unreleased)
+* Linux: `$HOME/.local/share/october/logs`
 
 Your config file, currently just containing your Readwise token, is stored in the following places:
 
 * Windows: `C:\Users\<username>\AppData\Local\october\config.json`
 * macOS: `$HOME/Library/Application Support/october/config.json`
-* Linux: `$HOME/.config/october/config.json` (unreleased)
+* Linux: `$HOME/.config/october/config.json`
 
 Given that, if you set custom XDG locations, October should honour them out of the box.
 
@@ -123,11 +121,11 @@ Given that, if you set custom XDG locations, October should honour them out of t
 
 ![](./docs/settings-win.png)
 
+</details>
+
 ### Linux
   
-Coming soon
-
-</details>
+TBA
 
 ## Support
 
@@ -135,7 +133,7 @@ Found October useful? Like most organisms, I have a crippling addition.
 
 Actually, that's not true! I think coffee is overrated but I still enjoy the taste which a lot of people find odd.
 
-Anyway, it's up to you. October will always be open source and never monetised but the social validation gets me going :)
+Anyway, it's up to you. October will always be open source and never monetised but the social validation gets me going
 
 There are some links in the sidebar you can use.
 
