@@ -65,7 +65,7 @@
 
       <!-- Hero image -->
       <div class="mdx-hero__image">
-        <img src="assets/macos.png" alt="" width="1659" height="1200" draggable="false">
+        <img src="assets/heroimage.png" alt="" width="1653" height="1011" draggable="false">
       </div>
 
       <!-- Hero content -->
@@ -76,7 +76,7 @@
           class="md-button md-button--primary">
           Get Started
         </a>
-        <a href="https://github.com/marcus-crane/october/releases" title="Material for MkDocs Insiders" class="md-button">
+        <a href="https://github.com/marcus-crane/october/releases" title="October Releases" class="md-button">
           Download
         </a>
       </div>
@@ -85,8 +85,10 @@
 </section>
 {% endblock %}
 
-<!-- Content -->
-{% block content %}{% endblock %}
+<!-- Stub out homepage main block because there is no content to put there -->
+{% block site_nav %}{% endblock %}
 
 <!-- Application footer -->
-{% block footer %}{% endblock %}
+{% block footer %}
+  {% include "overrides/footer.html" %}
+{% endblock %}

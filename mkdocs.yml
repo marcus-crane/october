@@ -9,21 +9,23 @@ edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; 2023 Marcus Crane
 
+extra:
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:october@utf9k.net
+    - icon: fontawesome/brands/github
+      link: https://github.com/marcus-crane/october
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/sentreh
+
 theme:
   name: material
   language: en
   logo: logo.png
   custom_dir: theme
-  extra:
-    social:
-      - icon: fontawesome/solid/paper-plane
-        link: mailto:october@utf9k.net
-      - icon: fontawesome/brands/github
-        link: https://github.com/marcus-crane/october
-      - icon: fontawesome/brands/twitter
-        link: https://twitter.com/sentreh
   features:
     - content.action.edit
+    - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.instant.prefetch
