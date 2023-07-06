@@ -101,22 +101,20 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Getting started:
+  - Getting Started:
     - Welcome: welcome.md
     - Prerequisites: prerequisites.md
-    - Installing:
+    - Installation:
       - Linux: installation/linux.md
       - macOS: installation/macos.md
       - Windows: installation/windows.md
-    - Contributing:
-      - Bugs: contributing/bugs.md
-      - Feature Requests: contributing/feature-requests.md
-      - Questions: contributing/questions.md
-    - Miscellaneous:
-      - Database Analysis: database-analysis.md
-      - Limitations: limitations.md
-      - License: license.md
-  - Configuration:
-    - Overview: configuration/overview.md
-    - Settings: configuration/settings.md
+  - Extras:
+    #   - Database Analysis: miscellaneous/database-analysis.md
+    #   - Limitations: miscellaneous/limitations.md
+    - License: miscellaneous/license.md
+    - Reading Formats: miscellaneous/reading-formats.md
+    # - Contributions:
+    #   - Bugs: contributions/bugs.md
+    #   - Feature Requests: contributions/feature-requests.md
+    #   - Questions: contributions/questions.md
   - Changelog: changelog/index.md

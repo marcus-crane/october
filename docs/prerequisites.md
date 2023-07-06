@@ -2,11 +2,13 @@
 
 Before we get started with the desktop app itself, there are a few things that you'll benefit from knowing before you start uploading books only to have some frustrations later on.
 
-**Cover uploading is disabled by default** as your Kobo will contain highly compressed images by default without some initial setup.
+This guide is focused around Calibre as it's the most popular tool for ebook management.
 
-If you'd like to enable it, carry on reading.
+There are some defaults we'll want to change in order to have the best possible experience with October, such as being able to support cover uploads, which are disabled by default.
 
 ## Background
+
+For those who like to curate their Readwise library, it can be quite nice to have book covers uploaded to fill out your shelf.
 
 <center>
 ![](assets/covers.png)
@@ -24,13 +26,17 @@ The good news is that October does indeed support cover uploading but by default
 
 In order to make sure that we retain images properly, we need to tell the Kobo to not try to handle images on our behalf.
 
-## Setting up Calibre (Enabling cover support)
+## Configuring Calibre to sync high quality covers
 
 For the unfamiliar, [Calibre](https://calibre-ebook.com/) is basically the go-to tool for eReader management.
 
-If you aren't already using it, I highly recommend it. That said, October should still work fine with regular ePubs uploaded to your Kobo via USB drag-and-drop.
+If you aren't already using it, I highly recommend it.
 
-Once you've plugged in your device to your computer via USB, and accepted the connection request on your Kobo, you should open Calibre. It should detect your device but this can often take a bit of time. Anywhere up to 30 seconds is usually reasonable.
+October should still work fine with regular ePubs uploaded to your Kobo via USB drag-and-drop but there are no guarantees when it comes to cover art.
+
+Once you've plugged in your device to your computer via USB, and accepted the connection request on your Kobo, you should open Calibre.
+
+It should detect your device but this can often take a bit of time. Anywhere up to 30 seconds is usually reasonable.
 
 You'll know your device is ready when Calibre visually reloads and the button labelled "Device" appears in the middle of header toolbar.
 
@@ -59,29 +65,34 @@ Once that's done, you'll see a dialogue box pop up saying that you'll want to re
 The very last thing is to enable covers in October itself.
 
 !!! NOTE
-    If you're reading this documentation in order, we haven't actually installed October just yet. If you're skimming, I highly recommend reading the next section as well.
+    If you're reading this documentation in order, we haven't actually installed October just yet.
+    
+    Chicken and egg problems are hard.
 
-You can find the covers setting in October under the "Settings" button in the top left once you've selected your Kobo.
+You can find the cover upload toggle in October under the "Settings" button in the top left once you've selected your Kobo.
 
-![](./assets/october_covers.png)
+![](../assets/settings/settings_coveruploads_light.png#only-light)
+![](../assets/settings/settings_coveruploads_dark.png#only-dark)
 
 If you're reading this documentation in order, this step will be mentioned again so you don't forget to turn it.
 
-## Picking the best ebook format for your Kobo
+## Uploading highlights from store-purchased books
 
-As mentioned before, October should work fine with ePubs but Kobo has its own variation called [Kepub](https://wiki.mobileread.com/wiki/Kepub).
+While October is primarily aimed at syncing highlights from [sideloaded](https://en.wikipedia.org/wiki/Sideloading) titles, it does work with titles purchased from the Kobo store as well.
 
-!!! INFO
-    Regardless of what format you pick, it's recommended to upload books via Calibre (and fetching metadata) to ensure that your Readwise shelf entries have as much detail as possible.
+This behaviour is disabled by default as Readwise has [an official integration](https://help.readwise.io/article/135-how-do-i-import-highlights-from-kobo) to support syncing with your Kobo account, which is recommended over October.
 
-There is a lot of detail involved in comparing the two but in short, I can personally recommend using Kepubs if you want to enable extra features such as:
+It should allow the ability to sync highlights wirelessly which is something that October can't do.
 
-* Page turn requests being quicker
-* Highlighting text is faster
-* Ability to see how many minutes of reading are left for each chapter
+A few users have reported having issues with the official integration from time to time so if you'd like to enable uploading store-purchased highlights via October, you can do so via Settings.
 
-For our purposes, highlighting is core to our use case when it comes to Readwise so it's worth adopting but there is a bit of overhead required to get started.
+!!! warning
 
-## Setting up Calibre to upload KePubs
+    Do note that using the two integrations together may cause more trouble than it's worth.
 
-TBA
+    October may not send the exact same metadata as the Kobo integration so you might expect duplication of your highlights.
+
+    The ability to sync store-purchased highlights was more of a coincidental bug than an intentional feature but any side effects should be harmless.
+
+![](../assets/settings/settings_storehighlights_light.png#only-light)
+![](../assets/settings/settings_storehighlights_dark.png#only-dark)

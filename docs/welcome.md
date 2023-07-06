@@ -10,11 +10,13 @@ October's primary aim is to to just remove friction for Readwise users, not to b
 
 All releases are distributed via [Github Releases](https://github.com/marcus-crane/october/releases) with the source being licensed under the [MIT License](./license.md) which allows anyone to freely alter, fork and/or learn from the source code.
 
-Before you get started, **[there are a few prerequisites you should be aware of](./prerequisites.md)** in order to have the best experience.
+!!! warning "You may want to do some prep work first"
 
-Some features are disabled out of the box for varying reasons that are detailed at the link above.
+    Before you get started, **[there are a few prerequisites you should be aware of](./prerequisites.md)** in order to have the best experience.
 
-Once you're familiar with those, you should refer to the page for your particular platform in case there are any quirks that you need to be aware of.
+    Some features are disabled out of the box for varying reasons that are detailed at the link above.
+
+Once you're familiar with some of the extra setup steps, you should refer to the page for your particular platform in case there are any quirks that you need to be aware of.
 
 - [Linux](./installation/linux.md)
 - [macOS](./installation/macos.md)
