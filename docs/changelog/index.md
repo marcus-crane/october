@@ -7,6 +7,9 @@
 
 This release brings support for Linux systems which means that October is available for all major platforms.
 
+![](../assets/linux/linux_overview_light.png#only-light)
+![](../assets/linux/linux_overview_dark.png#only-dark)
+
 To celebrate this milestone, I've given the docs site a bit of a content refresh although there are still more changes I intend to make.
 
 There were also a few other small changes:
