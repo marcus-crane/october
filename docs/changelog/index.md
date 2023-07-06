@@ -3,6 +3,18 @@
 
 # Changelog
 
+## v1.5.0
+
+This release brings support for Linux systems which means that October is available for all major platforms.
+
+To celebrate this milestone, I've given the docs site a bit of a content refresh although there are still more changes I intend to make.
+
+There were also a few other small changes:
+
+- Fixed pesky sizing issue that means you could scroll down slightly on most screens. The Windows settings screen specifically may still have this issue depending on your screen resolution
+- Updated artifact file format naming to follow a consistent standard
+- Slightly increased the default window width for October to give it a little more breathing room
+
 ## v1.4.0
 
 _Note: This release was originally accidentally published as `v.1.4.0` instead of `v1.4.0`. The contents has not changed but the release was recreated as `v.1.4.0` is not a valid Windows version identifier._
