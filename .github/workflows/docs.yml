@@ -8,18 +8,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Install social card dependencies
-        run: sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev
-      - uses: actions/setup-python@v2
+        run: sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.x
-      - run: pip install requests
-      - uses: actions/cache@v2
+      - run: pip install requests mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 pillow cairosvg
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      - uses: actions/cache@v3
         with:
-          key: ${{ github.ref }}
+          key: mkdocs-material-${{ env.cache_id }}
           path: .cache
-      - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git Pillow cairosvg
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git
       - run: mkdocs build
       - name: Generate Netlify redirects file
         run: python scripts/generate-redirects.py

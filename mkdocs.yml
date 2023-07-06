@@ -1,12 +1,22 @@
 site_name: October
 site_author: Marcus Crane
 site_description: >-
-  Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise. 100% open source with support for Windows and macOS. If you're adventurous, it compiles properly on Linux too!
-
+  Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise. 100% open source with support for Windows, macOS and Linux!
+site_url: https://october.utf9k.net
 repo_url: https://github.com/marcus-crane/october
 repo_name: marcus-crane/october
+edit_uri: edit/main/docs/
 
 copyright: Copyright &copy; 2023 Marcus Crane
+
+extra:
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:october@utf9k.net
+    - icon: fontawesome/brands/github
+      link: https://github.com/marcus-crane/october
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/sentreh
 
 theme:
   name: material
@@ -14,7 +24,11 @@ theme:
   logo: logo.png
   custom_dir: theme
   features:
+    - content.action.edit
+    - navigation.footer
     - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
     - navigation.sections
     - navigation.tabs
     - navigation.top
@@ -34,11 +48,17 @@ theme:
       toggle:
         icon: material/weather-night
         name: Switch to light mode
-  plugins:
-    - privacy:
-        enabled: true
-    - search
-    - social
+
+plugins:
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - git-committers:
+      repository: marcus-crane/october
+      branch: main
+  - privacy:
+      enabled: true
+  - search
+  - social
 
 markdown_extensions:
   - abbr
@@ -50,8 +70,7 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
-  - pymdownx.arithmatex:
-      generic: true
+  - tables
   - pymdownx.betterem:
       smart_enable: all
   - pymdownx.caret
@@ -82,8 +101,21 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Getting started:
+  - Getting Started:
+    - Welcome: welcome.md
     - Prerequisites: prerequisites.md
-    - Installation: getting-started.md
-    - License: license.md
+    - Installation:
+      - Linux: installation/linux.md
+      - macOS: installation/macos.md
+      - Windows: installation/windows.md
+  - Extras:
+    #   - Database Analysis: miscellaneous/database-analysis.md
+    #   - Limitations: miscellaneous/limitations.md
+    - License: miscellaneous/license.md
+    - Reading Formats: miscellaneous/reading-formats.md
+    - Thanks: thanks.md
+    # - Contributions:
+    #   - Bugs: contributions/bugs.md
+    #   - Feature Requests: contributions/feature-requests.md
+    #   - Questions: contributions/questions.md
   - Changelog: changelog/index.md

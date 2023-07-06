@@ -1,8 +1,3 @@
----
-template: overrides/main.html
-title: License
----
-
 # License
 
 MIT License
