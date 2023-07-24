@@ -6,7 +6,7 @@ data = r.json()
 version = data["tag_name"]
 normalised_version = version.replace("v", "")
 
-mac_redirect = f"/download/mac/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_darwin_universal.dmg"
+mac_redirect = f"/download/mac/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_darwin_universal.zip"
 win_redirect = f"/download/win/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_windows_amd64.zip"
 linux_redirect = f"/download/linux/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_linux_amd64.deb"
 
