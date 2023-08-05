@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
 )
 
@@ -17,8 +16,8 @@ type Settings struct {
 	UploadStorePromptShown bool   `json:"upload_store_prompt_shown"`
 }
 
-func LoadSettings() (*Settings, error) {
-	settingsPath, err := xdg.ConfigFile(configFilename)
+func LoadSettings(portable bool) (*Settings, error) {
+	settingsPath, err := LocateConfigFile(configFilename, portable)
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to create settings directory. Do you have proper permissions?")
 	}
