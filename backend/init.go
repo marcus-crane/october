@@ -12,7 +12,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/adrg/xdg"
 	"github.com/sirupsen/logrus"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
@@ -30,10 +29,11 @@ type Backend struct {
 	Content        *Content
 	Bookmark       *Bookmark
 	version        string
+	portable       bool
 }
 
-func StartBackend(ctx *context.Context, version string) *Backend {
-	settings, err := LoadSettings()
+func StartBackend(ctx *context.Context, version string, portable bool) *Backend {
+	settings, err := LoadSettings(portable)
 	if err != nil {
 		logrus.WithContext(*ctx).WithError(err).Error("Failed to load settings")
 	}
@@ -47,6 +47,7 @@ func StartBackend(ctx *context.Context, version string) *Backend {
 		Content:        &Content{},
 		Bookmark:       &Bookmark{},
 		version:        version,
+		portable:       portable,
 	}
 }
 
@@ -81,7 +82,7 @@ func (b *Backend) NavigateExplorerToLogLocation() {
 	if runtime.GOOS == "linux" {
 		explorerCommand = "xdg-open"
 	}
-	logLocation, err := xdg.DataFile("october/logs")
+	logLocation, err := LocateDataFile("october/logs", b.portable)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to determine XDG data location for opening log location in explorer")
 	}

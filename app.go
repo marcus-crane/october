@@ -9,12 +9,15 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
+	portable bool
 }
 
 // NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func NewApp(portable bool) *App {
+	return &App{
+		portable: portable,
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -25,7 +28,7 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) domReady(ctx context.Context) {
 	a.ctx = ctx
-	backend.StartLogger()
+	backend.StartLogger(a.portable)
 	logrus.WithContext(ctx).Info("Logger should be initialised now")
 	logrus.WithContext(ctx).Info("Backend is about to start up")
 }

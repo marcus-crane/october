@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"strconv"
 
 	"github.com/marcus-crane/october/backend"
 	"github.com/wailsapp/wails/v2"
@@ -22,11 +23,18 @@ var icon []byte
 
 var version = "DEV"
 
-func main() {
-	// Create an instance of the app structure
-	app := NewApp()
+// Builds with this set to true cause files to be created
+// in the same directory as the running executable
+var portablebuild = "false"
 
-	backend := backend.StartBackend(&app.ctx, version)
+func main() {
+	isPortable := false
+	isPortable, _ = strconv.ParseBool(portablebuild)
+
+	// Create an instance of the app structure
+	app := NewApp(isPortable)
+
+	backend := backend.StartBackend(&app.ctx, version, isPortable)
 
 	// Create application with options
 	err := wails.Run(&options.App{

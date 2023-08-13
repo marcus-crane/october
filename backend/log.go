@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/adrg/xdg"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,8 +12,8 @@ var logFileHandle *os.File
 
 var logFile = fmt.Sprintf("october/logs/%s.json", time.Now().Format("20060102150405"))
 
-func StartLogger() {
-	logPath, err := xdg.DataFile(logFile)
+func StartLogger(portable bool) {
+	logPath, err := LocateDataFile(logFile, portable)
 	if err != nil {
 		panic("Failed to create location to store logfiles")
 	}
