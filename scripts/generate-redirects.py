@@ -8,7 +8,8 @@ normalised_version = version.replace("v", "")
 
 mac_redirect = f"/download/mac/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_darwin_universal.zip"
 win_redirect = f"/download/win/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_windows_amd64.zip"
-linux_redirect = f"/download/linux/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_linux_amd64.deb"
+win_redirect = f"/download/win-portable/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_windows-portable_amd64.zip"
+linux_redirect = f"/download/linux/latest https://github.com/marcus-crane/october/releases/download/{version}/october_{normalised_version}_linux_amd64.zip"
 
 with open("site/_redirects", "w") as file:
     file.write(mac_redirect + "\n")
