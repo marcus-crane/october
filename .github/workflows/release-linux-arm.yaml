@@ -35,6 +35,9 @@ jobs:
         with:
           go-version: 1.19
 
+      - name: Set up Zig
+        uses: goto-bus-stop/setup-zig@v2
+
       - name: Install wails
         shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -57,7 +60,7 @@ jobs:
 
       - name: Build wails app for Linux
         shell: bash
-        run: CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=1 CC="zig cc -target aarch64-linux-gnu" CXX="zig c++ -target aarch64-linux-gnu" wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
         shell: bash
