@@ -1,4 +1,4 @@
-name: Release October (Linux amd64)
+name: Release October (Linux arm64)
 
 on:
   release:
@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - linux/amd64
+          - linux/arm64
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
     
       - name: Install Ubuntu prerequisites
         shell: bash
-        run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+        run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
 
       - name: Set up Node
         uses: actions/setup-node@v2
@@ -57,16 +57,16 @@ jobs:
 
       - name: Build wails app for Linux
         shell: bash
-        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
         shell: bash
         run: |
-          mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
+          mv build/bin/october build/linux/october_0.0.0_arm64/usr/local/bin/
           cd build/linux
-          mv october_0.0.0_amd64 "october_${{ steps.normalise_version.outputs.version }}_amd64"
-          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_${{ steps.normalise_version.outputs.version }}_amd64/DEBIAN/control"
-          dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_amd64"
+          mv october_0.0.0_arm64 "october_${{ steps.normalise_version.outputs.version }}_arm64"
+          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_${{ steps.normalise_version.outputs.version }}_arm64/DEBIAN/control"
+          dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_arm64"
 
       - name: Get latest release from API
         id: get_upload_url
@@ -83,6 +83,6 @@ jobs:
           ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}
         with:
           upload_url:  ${{ steps.get_upload_url.outputs.url }}
-          asset_path: ./build/linux/october_${{ steps.normalise_version.outputs.version }}_amd64.deb
+          asset_path: ./build/linux/october_${{ steps.normalise_version.outputs.version }}_arm64.deb
           asset_name: ${{ env.ARTIFACT_NAME }}.deb
           asset_content_type: application/octet-stream
