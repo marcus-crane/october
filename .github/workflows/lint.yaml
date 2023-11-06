@@ -1,4 +1,4 @@
-name: "Run linters against codebase"
+name: Run linters against codebase
 on:
   push:
     branches:

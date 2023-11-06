@@ -1,4 +1,4 @@
-name: Release October
+name: Release October (Windows Portable)
 
 on:
   release:

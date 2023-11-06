@@ -1,4 +1,4 @@
-name: "Run tests"
+name: Run tests
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 jobs:
-  lint:
+  test:
     name: test
     runs-on: ubuntu-latest
     steps:
