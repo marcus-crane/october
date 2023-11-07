@@ -35,10 +35,10 @@ jobs:
         with:
           go-version: 1.19
       
-      - name: Install makensis
+      - name: Install dependencies
         uses: crazy-max/ghaction-chocolatey@v2
         with:
-          args: install nsis
+          args: install nsis mingw
 
       - name: Install wails
         shell: bash
