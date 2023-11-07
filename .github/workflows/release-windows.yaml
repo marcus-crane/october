@@ -34,6 +34,11 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.19
+
+      - name: Set up MinGW for cross-compilation
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
       
       - name: Install makensis
         uses: crazy-max/ghaction-chocolatey@v2
@@ -42,7 +47,7 @@ jobs:
 
       - name: Install wails
         shell: bash
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.6.0
 
       - name: Set up Node
         uses: actions/setup-node@v2
