@@ -4,7 +4,7 @@
   ],
   "bundle_id": "net.utf9k.October",
   "sign": {
-    "application_identity": "Developer ID Application: Marcus Crane"
+    "application_identity": "Developer ID Application: Marcus Crane (6RNEAKRYDT)"
   },
   "dmg": {
     "output_path": "build/bin/October.dmg",
