@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         uses: crazy-max/ghaction-chocolatey@v2
         with:
-          args: install nsis mingw
+          args: install nsis
 
       - name: Install wails
         shell: bash
