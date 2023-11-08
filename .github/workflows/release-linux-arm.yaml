@@ -60,7 +60,7 @@ jobs:
 
       - name: Build wails app for Linux
         shell: bash
-        run: CC="zig cc -target aarch64-linux-gnu" CXX="zig c++ -target aarch64-linux-gnu" wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CGO_ENABLED=0 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
         shell: bash
