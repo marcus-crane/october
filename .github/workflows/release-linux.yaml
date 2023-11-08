@@ -57,7 +57,7 @@ jobs:
 
       - name: Build wails app for Linux
         shell: bash
-        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
         shell: bash

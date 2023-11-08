@@ -58,7 +58,7 @@ jobs:
 
       - name: Build Windows NSIS installer
         shell: bash
-        run: CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }} -X main.portablebuild=true"
+        run: wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }} -X main.portablebuild=true"
         
       - name: Codesign Windows Portable
         run: |
