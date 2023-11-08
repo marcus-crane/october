@@ -35,13 +35,16 @@ jobs:
         with:
           go-version: 1.19
 
+      - name: Set up Zig
+        uses: goto-bus-stop/setup-zig@v2
+
       - name: Install wails
         shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
     
       - name: Install Ubuntu prerequisites
         shell: bash
-        run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+        run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -57,7 +60,7 @@ jobs:
 
       - name: Build wails app for Linux
         shell: bash
-        run: wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: CC="zig cc -target aarch64-linux-gnu" CXX="zig c++ -target aarch64-linux-gnu" wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
       
       - name: Package up deb file
         shell: bash
