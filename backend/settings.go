@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -35,7 +36,25 @@ func LoadSettings(portable bool) (*Settings, error) {
 	}
 	err = json.Unmarshal(b, s)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to parse settings file. Is it valid?")
+		// v1.6.0 and prior may have caused settings files to have an extra `}` so we check for common issues
+		// We're not gonna go overboard here though, just basic text checking
+		plainSettings := strings.TrimSpace(string(b))
+		if strings.HasPrefix(plainSettings, "{{") {
+			plainSettings = strings.Replace(plainSettings, "{{", "{", 1)
+		}
+		if strings.HasSuffix(plainSettings, "}}") {
+			plainSettings = strings.Replace(plainSettings, "}}", "}", 1)
+		}
+		err := json.Unmarshal([]byte(plainSettings), s)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to parse settings file. Is it valid?")
+		}
+		// We managed to fix the settings file so we'll persist it to disc
+		err = s.Save()
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to persist fixed up settings file!")
+		}
+		return s, nil
 	}
 	return s, nil
 }
@@ -68,6 +87,7 @@ func (s *Settings) SaveCoverUploading(uploadCovers bool) error {
 
 func (s *Settings) SaveStoreHighlights(uploadStoreHighlights bool) error {
 	s.UploadStoreHighlights = uploadStoreHighlights
+	s.UploadStorePromptShown = uploadStoreHighlights
 	return s.Save()
 }
 
