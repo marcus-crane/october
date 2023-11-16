@@ -143,7 +143,6 @@ export default function Settings() {
                         // TODO: This probably causes the render method to seize up
                         onInput={(e) => {
                           saveStoreHighlights(!e.currentTarget.checked)
-                          MarkUploadStorePromptShown()
                         }}
                         checked={storeHighlights}
                         id="storeBought"
