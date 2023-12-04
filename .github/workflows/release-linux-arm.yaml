@@ -41,7 +41,7 @@ jobs:
     
       - name: Install Ubuntu prerequisites
         shell: bash
-        run: sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev=
 
       - name: Set up Node
         uses: actions/setup-node@v4
