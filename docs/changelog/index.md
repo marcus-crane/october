@@ -3,6 +3,37 @@
 
 # Changelog
 
+## v1.7.0
+
+This release mostly contains maintenance fixes that have cropped up since the last release as well as a new distribution method.
+
+I'm looking to get back to some feature work during the quieter Christmas period but first I had to fix some breakages introduced by Apple changing how code signing works.
+
+- Removed dependency on `CGO` for database access which will make future maintenance much easier
+- Patched a race condition that can lead to an extra closing `}` being added to settings files
+- Added a small bit of logic that tries to repair settings files that may have been corrupted by the previously mentioned bug
+- Fixed up release pipelines which were affected by Apple code signing changes
+
+Additionally, October is now available via Homebrew going forward for macOS users.
+
+It can be installed by running `brew update` to get the latest Cask definition followed by `brew install --cask october`.
+
+![CleanShot 2023-12-05 at 10 17 50@2x](https://github.com/marcus-crane/october/assets/14816406/50ca1407-42b8-4ec0-85b0-5555f39f06a3)
+
+## v1.6.0
+
+This version introduces a portable version of October for Windows users who may want to sync highlights from their Kobo on a managed machine where they can't otherwise install software.
+
+You might also like to install it on a USB so you can use October across multiple computers without having to set it up each time.
+
+Come to think of it, I suppose you could technically copy this version to your Kobo itself (which is basically a glorified USB) and carry it around that way. That said, I haven't tested this out so your mileage may vary! I think it would work fine though.
+
+---
+
+Upon startup, it will create a folder next to the exe containing settings files so just make sure to keep the exe and folder together.
+
+While I haven't tested it extensively, one existing user seemed to have no problems using it.
+
 ## v1.5.0
 
 This release brings support for Linux systems which means that October is available for all major platforms.
