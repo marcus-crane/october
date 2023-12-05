@@ -2,7 +2,7 @@ Package: october
 Version: 0.0.0
 Section: base
 Priority: optional
-Architecture: amd64
+Architecture: ARCH
 Depends: libgtk-3-dev, libwebkit2gtk-4.0-dev
 Maintainer: Marcus Crane <marcus@utf9k.net>
 Homepage: https://october.utf9k.net

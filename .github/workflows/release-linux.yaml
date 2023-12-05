@@ -62,10 +62,11 @@ jobs:
       - name: Package up deb file
         shell: bash
         run: |
-          mv build/bin/october build/linux/october_0.0.0_amd64/usr/local/bin/
+          mv build/bin/october build/linux/october_0.0.0_ARCH/usr/local/bin/
           cd build/linux
-          mv october_0.0.0_amd64 "october_${{ steps.normalise_version.outputs.version }}_amd64"
-          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_${{ steps.normalise_version.outputs.version }}_amd64/DEBIAN/control"
+          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_0.0.0_ARCH/DEBIAN/control"
+          sed -i 's/ARCH/amd64/g' "october_0.0.0_ARCH/DEBIAN/control"
+          mv october_0.0.0_ARCH "october_${{ steps.normalise_version.outputs.version }}_amd64"
           dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_amd64"
 
       - name: Get latest release from API
