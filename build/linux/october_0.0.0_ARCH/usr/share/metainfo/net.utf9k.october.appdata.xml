@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018-2019 utf9k -->
+<component type="desktop-application">
+  <id>net.utf9k.october</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer_name>Marcus Crane</developer_name>
+  <update_contact>marcus@utf9k.net</update_contact>
+  <url type="homepage">https://october.utf9k.net</url>
+  <url type="bugtracker">https://github.com/marcus-crane/october/issues</url>
+  <name>October</name>
+  <summary>Send your Kobo highlights to Readwise in two clicks.</summary>
+  <description>
+    <p>Getting highlights off of your Kobo is quite fiddly on a technical level.</p>
+    <p>October is a community-driven desktop application that makes it really simple to send them to Readwise.</p>
+    <p>100% open source with support for Windows, macOS and Linux!</p>
+  </description>
+  <categories>
+    <category>Office</category>
+  </categories>
+  <launchable type="desktop-id">october.desktop</launchable>
+  <icon type="remote" height="512" width="512">https://raw.githubusercontent.com/marcus-crane/october/main/build/linux/october_0.0.0_ARCH/usr/share/icons/hicolor/512x512/apps/october.png</icon>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/marcus-crane/october/main/docs/assets/linux/linux_selector_light.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/marcus-crane/october/blob/main/docs/assets/linux/linux_upload_light.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/marcus-crane/october/main/docs/assets/linux/linux_settings_light.png</image>
+    </screenshot>
+  </screenshots>
+  <project_group>utf9k</project_group>
+  <content_rating type="oars-1.0" />
+  <releases>
+    <release version="1.7.0" date="2023-12-05" />
+    <release version="1.6.0" date="2023-08-22" />
+    <release version="1.5.0" date="2023-07-06" />
+  </releases>
+  <requires>
+    <internet>always</internet>
+  </requires>
+</component>
