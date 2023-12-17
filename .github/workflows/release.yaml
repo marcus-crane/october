@@ -132,7 +132,9 @@ jobs:
       - name: Compress deb
         if: runner.os == 'Linux'
         shell: bash
-        run: cd build/bin && zip -r october-${{ matrix.build.tag }}.zip october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.arch }}.deb
+        run: |
+          cd build/linux && zip -r october-${{ matrix.build.tag }}.zip october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.arch }}.deb
+          mv october-${{ matrix.build.tag }}.zip ../bin
 
       ## Windows
       - name: Remove old October binary
