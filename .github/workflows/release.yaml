@@ -34,7 +34,11 @@ jobs:
         id: normalise_version
         shell: bash
         run: |
-          version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+          else
+            version="1.0.0"
+          fi
           echo "::set-output name=version::$version"
 
       - name: Set up Go
@@ -59,13 +63,13 @@ jobs:
         shell: bash
         run: |
           npm install -g npm
-          node version.js ${{ github.event.release.tag_name }}
+          node version.js "v${{ steps.normalise_version.outputs.version }}"
           cd frontend && npm install
 
       - name: Build wails app for Linux
         if: runner.os == 'Linux'
         shell: bash
-        run: wails build -platform ${{ matrix.platform }} -ldflags "-X main.version=${{ github.event.release.tag_name }}"
+        run: wails build -platform ${{ matrix.build.platform }} -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
       
       - name: Package up deb file
         if: runner.os == 'Linux'
