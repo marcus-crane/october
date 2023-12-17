@@ -62,12 +62,16 @@ jobs:
         with:
           node-version: '20.8.0'
       
-      # Linux dependencies
+      # Dependencies
+
+      ## Linux
 
       - name: Install Ubuntu prerequisites
         if: runner.os == 'Linux'
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+      
+      ## Windows
 
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
@@ -105,7 +109,7 @@ jobs:
 
       # Codesigning
       - name: Codesign Windows NSIS Installer
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         run: |
           echo "Creating certificate file"
           New-Item -ItemType directory -Path certificate
@@ -113,6 +117,17 @@ jobs:
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
           echo "Signing October installer"
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-${{ matrix.build.arch }}-installer.exe
+        working-directory: ./build/bin
+
+      - name: Codesign Windows Portable
+        if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64'
+        run: |
+          echo "Creating certificate file"
+          New-Item -ItemType directory -Path certificate
+          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
+          certutil -decode certificate\certificate.txt certificate\certificate.pfx
+          echo "Signing October installer"
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october.exe
         working-directory: ./build/bin
 
       # Packaging
