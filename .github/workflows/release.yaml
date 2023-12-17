@@ -85,10 +85,9 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: october_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}
+          name: october_pr${{ github.event.pull_request.number }}_${{ github.event.pull_request.head.sha }}_${{ steps.normalise_platform.outputs.tag }}
           path: |
             ./build/linux/october_${{ steps.normalise_version.outputs.version }}_amd64.deb
-            
 
       - name: Get latest release from API
         if: startsWith(github.ref, 'refs/tags/')
