@@ -46,7 +46,7 @@ jobs:
             version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
           else
             version="1.0.0"
-          fiecho "version=$version" >> $GITHUB_OUTPUT
+          fi
           echo "version=$version" >> $GITHUB_OUTPUT
 
       # Set up development dependencies
