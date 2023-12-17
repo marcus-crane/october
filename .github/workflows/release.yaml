@@ -28,7 +28,7 @@ jobs:
             os: windows-latest
             tag: windows-portable_amd64
     runs-on: ${{ matrix.build.os }}
-    name: Release October (${{ matrix.build.platform }})
+    name: Release October (${{ matrix.build.tag }})
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -108,7 +108,7 @@ jobs:
         run: wails build -platform ${{ matrix.build.platform }} -nsis -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }} -X main.portablebuild=true"
 
       # Codesigning (only performed when releases are cut)
-      
+
       - name: Codesign Windows NSIS Installer
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
