@@ -182,12 +182,12 @@ jobs:
       - name: Compress macOS dmg
         if: runner.os == 'macOS' && startsWith(github.ref, 'refs/tags/')
         shell: bash
-        run: cd build/bin && zip -r october-${{ matrix.build.platform }}.zip October.dmg
+        run: cd build/bin && zip -r october-${{ matrix.build.tag }}.zip October.dmg
 
       - name: Compress macOS app
         if: ${{ runner.os == 'macOS' && !startsWith(github.ref, 'refs/tags/') }}
         shell: bash
-        run: cd build/bin && zip -r october-${{ matrix.build.platform }}.zip October.app
+        run: cd build/bin && zip -r october-${{ matrix.build.tag }}.zip October.app
 
       ## Windows
       - name: Remove old October binary
