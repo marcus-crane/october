@@ -1,0 +1,10 @@
+{
+  "source": [
+    "./build/bin/October.app"
+  ],
+  "bundle_id": "net.utf9k.October",
+  "dmg": {
+    "output_path": "build/bin/October.dmg",
+    "volume_name": "October"
+  }
+}
