@@ -118,7 +118,7 @@ jobs:
         run: wails build -platform ${{ matrix.build.platform }} -nsis -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
 
       - name: Build Windows NSIS installer (Portable)
-        if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64'
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
         shell: bash
         run: wails build -platform ${{ matrix.build.platform }} -nsis -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }} -X main.portablebuild=true"
 
@@ -202,7 +202,7 @@ jobs:
         working-directory: ./build/bin
 
       - name: Compress binary (Win Portable)
-        if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64'
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
         run: Compress-Archive october.exe october-${{ matrix.build.tag }}.zip
         working-directory: ./build/bin
         
