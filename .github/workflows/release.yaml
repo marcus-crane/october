@@ -134,15 +134,6 @@ jobs:
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
           AC_PROVIDER: "6RNEAKRYDT"
 
-      - name: Create macOS dmg only
-        if: ${{ runner.os == 'macOS' && !startsWith(github.ref, 'refs/tags/') }}
-        shell: bash
-        run: gon -log-level=info gon.nosign.config.json
-        env:
-          AC_USERNAME: ${{ secrets.AC_USERNAME }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-          AC_PROVIDER: "6RNEAKRYDT"
-
       ## Windows
       - name: Codesign Windows NSIS Installer
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
@@ -189,9 +180,14 @@ jobs:
 
       ## macOS
       - name: Compress macOS dmg
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: cd build/bin && zip -r october-${{ matrix.build.platform }}.zip October.dmg
+
+      - name: Compress macOS app
+        if: ${{ runner.os == 'macOS' && !startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
+        run: cd build/bin && zip -r october-${{ matrix.build.platform }}.zip October.app
 
       ## Windows
       - name: Remove old October binary
