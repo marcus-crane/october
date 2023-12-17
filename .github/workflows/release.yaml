@@ -22,6 +22,10 @@ jobs:
             platform: linux/amd64
             os: ubuntu-latest
             tag: linux_amd64
+          - arch: arm64
+            platform: linux/arm64
+            os: buildjet-4vcpu-ubuntu-2204-arm
+            tag: linux_arm64
           - arch: amd64
             platform: windows/amd64
             os: windows-latest
