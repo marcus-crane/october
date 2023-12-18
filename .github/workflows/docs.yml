@@ -17,14 +17,8 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
+      - run: pip install -U pip
       - run: pip install requests mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 pillow cairosvg
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v3
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
       - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git
       - run: mkdocs build
       - name: Generate Netlify redirects file
