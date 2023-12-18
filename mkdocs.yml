@@ -55,8 +55,7 @@ plugins:
   - git-committers:
       repository: marcus-crane/october
       branch: main
-  - privacy:
-      enabled: true
+  - privacy
   - search
   - social
 
