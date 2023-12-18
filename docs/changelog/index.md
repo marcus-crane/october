@@ -3,6 +3,16 @@
 
 # Changelog
 
+## v1.8.0
+
+This release adds support for Linux machines running arm64 such as newer Raspberry Pi devices apparently.
+
+It has been tested using an Ubuntu arm64 VM running on a macOS Silicon device via [Parallels](https://www.parallels.com/) but any feedback from users with real Linux arm64 devices would be appreciated.
+
+Some general improvements for the Linux `.deb` packages has been done too, mainly defining required dependencies that can cause October to not boot within certain distros, such as [pop_OS!](https://pop.system76.com/) due to dev libraries not being installed out of the box.
+
+Behind the scenes, a bunch of work has been done to slim down the release pipeline and generate build artifacts against pull requests, which should greatly speed up the feedback loop for development.
+
 ## v1.7.0
 
 This release mostly contains maintenance fixes that have cropped up since the last release as well as a new distribution method.
