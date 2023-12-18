@@ -15,6 +15,24 @@ If you're not sure which platform you're on, just pick the universal build. The 
 
 ## Installation
 
+### Homebrew
+
+For users of [Homebrew](https://brew.sh/), you'll be pleased to know that October is distributed as a cask.
+
+You can install it like so:
+
+```console
+brew install october
+```
+
+If a new version has been released, you can upgrade as normal like so:
+
+```console
+brew update && brew upgrade october
+```
+
+### Manual
+
 For experienced macOS users, there's nothing special in the setup process. It's a standard DMG so if you're familiar, feel free to skip this section.
 
 For those who are less familiar with the platform, you'll first want to download your build of choice, or if you're still unused, [the universal build](https://october.utf9k.net/download/mac/latest) is guaranteed to work.
