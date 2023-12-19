@@ -19,7 +19,7 @@ jobs:
           python-version: 3.x
       - run: pip install -U pip
       - run: pip install requests mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 pillow cairosvg
-      - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git@ 9.5.2-insiders-4.47.1
+      - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git@9.5.2-insiders-4.47.1
       - run: mkdocs build
       - name: Generate Netlify redirects file
         run: python scripts/generate-redirects.py
