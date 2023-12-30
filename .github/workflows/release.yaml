@@ -59,6 +59,7 @@ jobs:
         id: signing
         shell: bash
         run: |
+          echo "${{ github.event.pull_request.title }}"
           enabled="false"
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             enabled="true"
