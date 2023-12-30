@@ -209,19 +209,11 @@ jobs:
       - name: Codesign Windows NSIS Installer
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && steps.signing.outputs.enabled == 'true'
         run: |
-          echo "Creating certificate file"
-          New-Item -ItemType directory -Path certificate
-          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
-          certutil -decode certificate\certificate.txt certificate\certificate.pfx
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' .\build\bin\October-${{ matrix.build.arch }}-installer.exe
 
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64' && steps.signing.outputs.enabled == 'true'
         run: |
-          echo "Creating certificate file"
-          New-Item -ItemType directory -Path certificate
-          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
-          certutil -decode certificate\certificate.txt certificate\certificate.pfx
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' .\build\bin\october.exe
 
       # Packaging
@@ -280,7 +272,7 @@ jobs:
         with:
           name: october_pr${{ github.event.pull_request.number }}_${{ github.event.pull_request.head.sha }}_${{ matrix.build.tag }}.zip
           path: |
-            ./build/bin
+            ./build/bin/october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.tag }}.zip
 
       - name: Get latest release from API
         if: startsWith(github.ref, 'refs/tags/')
