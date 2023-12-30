@@ -2,6 +2,8 @@
   <img alt="October logo" src="appicon.png" height="240" />
 </div>
 
+blah
+
 # October
 > Easily submit your Kobo highlights to Readwise (and eventually more)
 
