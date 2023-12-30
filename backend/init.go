@@ -164,11 +164,11 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	uploadedBooks, err := b.Readwise.RetrieveUploadedBooks(b.Settings.ReadwiseToken)
-	if err != nil {
-		return numUploads, fmt.Errorf(fmt.Sprintf("Successfully uploaded %d bookmarks but failed to upload covers", numUploads))
-	}
 	if b.Settings.UploadCovers {
+		uploadedBooks, err := b.Readwise.RetrieveUploadedBooks(b.Settings.ReadwiseToken)
+		if err != nil {
+			return numUploads, fmt.Errorf(fmt.Sprintf("Successfully uploaded %d bookmarks", numUploads))
+		}
 		for _, book := range uploadedBooks.Results {
 			// We don't want to overwrite user uploaded covers or covers already present
 			if !strings.Contains(book.CoverURL, "uploaded_book_covers") {
