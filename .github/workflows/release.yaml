@@ -164,6 +164,11 @@ jobs:
         shell: bash
         run: mv cmd/october-cli/october-cli.exe build/bin
 
+      - name: Use NSI installer config that packages Windows CLI
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
+        shell: bash
+        run: mv build/windows/installer/projectcli.nsi build/windows/installer/project.nsi
+
       # Build -- app variants
 
       ## Linux + macOS
