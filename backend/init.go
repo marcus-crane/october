@@ -93,7 +93,6 @@ func (b *Backend) NavigateExplorerToLogLocation() {
 
 func (b *Backend) DetectKobos() []Kobo {
 	connectedKobos, err := kobo.Find()
-	logrus.WithField("kobos_found", len(connectedKobos)).Info("Detected one or more Kobos")
 	if err != nil {
 		panic(err)
 	}
