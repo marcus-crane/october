@@ -138,7 +138,8 @@ jobs:
         if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
         shell: bash
         run: |
-          codesign -s "Developer ID Application: Marcus Crane" -f -v --timestamp --options runtime ./build/bin/cli/october-cli
+          codesign -s "Developer ID Application: Marcus Crane" -f -v --timestamp --options runtime ./october-cli
+        working-directory: ./cmd/october-cli
 
       # TODO: Move Windows CLI inside folder for nsis bundling
       # - name: Move october-cli.exe inside Windows asset folder
