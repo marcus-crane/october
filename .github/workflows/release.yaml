@@ -112,8 +112,9 @@ jobs:
       # Build -- cli variants
 
       ## We skip Windows Portable for now because files have no consistent home and that's more weirdness than I want to deal with at the moment
+      ## We skip Darwin Universal because there is no build target for Go (that I am aware of!)
       - name: Build october-cli
-        if: ${{ matrix.build.tag != 'windows-portable_amd64' }}
+        if: ${{ matrix.build.tag != 'windows-portable_amd64' && matrix.build.tag != 'darwin_universal' }}
         shell: bash
         run: GOOS=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 1) GOARCH=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 2) go build -ldflags="-X main.version=v${{ steps.normalise_version.outputs.version }}"
         working-directory: ./cmd/october-cli
