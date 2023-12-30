@@ -132,7 +132,7 @@ jobs:
 
       ## We skip Windows Portable for now because files have no consistent home and that's more weirdness than I want to deal with at the moment
       - name: Build october-cli
-        if: ${{ !matrix.build.tag == 'windows-portable_amd64' }}
+        if: ${{ matrix.build.tag != 'windows-portable_amd64' }}
         shell: bash
         run: go build -X main.version=v${{ steps.normalise_version.outputs.version }}"
         working-directory: ./cmd/october-cli
