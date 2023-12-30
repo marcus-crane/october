@@ -134,7 +134,7 @@ jobs:
       - name: Build october-cli
         if: ${{ matrix.build.tag != 'windows-portable_amd64' }}
         shell: bash
-        run: go build ldflags="-X main.version=v${{ steps.normalise_version.outputs.version }}"
+        run: go build -ldflags="-X main.version=v${{ steps.normalise_version.outputs.version }}"
         working-directory: ./cmd/october-cli
 
       # Codesigning (only performed when releases are cut)
