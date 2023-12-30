@@ -127,6 +127,15 @@ jobs:
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
         shell: bash
         run: wails build -platform ${{ matrix.build.platform }} -nsis -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }} -X main.portablebuild=true"
+      
+      # Build -- cli variants
+
+      ## We skip Windows Portable for now because files have no consistent home and that's more weirdness than I want to deal with at the moment
+      - name: Build october-cli
+        if: ${{ !matrix.build.tag == 'windows-portable_amd64' }}
+        shell: bash
+        run: go build -X main.version=v${{ steps.normalise_version.outputs.version }}"
+        working-directory: ./cmd/october-cli
 
       # Codesigning (only performed when releases are cut)
 
@@ -171,6 +180,7 @@ jobs:
         shell: bash
         run: |
           mv build/bin/october build/linux/october_0.0.0_ARCH/usr/local/bin/
+          mv cmd/october-cli/october-cli build/linux/october_0.0.0_ARCH/usr/local/bin/
           cd build/linux
           sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' "october_0.0.0_ARCH/DEBIAN/control"
           sed -i 's/ARCH/${{ matrix.build.arch }}/g' "october_0.0.0_ARCH/DEBIAN/control"
@@ -185,6 +195,11 @@ jobs:
           mv october-${{ matrix.build.tag }}.zip ../bin
 
       ## macOS
+      - name: Move october-cli inside October.app
+        if: ${{ runner.os == 'macOS' && !startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
+        run: mv cmd/october-cli/october-cli build/bin/October.app/Contents/MacOS
+
       - name: Compress macOS dmg
         if: runner.os == 'macOS' && startsWith(github.ref, 'refs/tags/')
         shell: bash
