@@ -128,11 +128,11 @@ jobs:
         working-directory: ./cmd/october-cli
 
       # Codesign (CLI)
-      - name: Codesign Windows CLI
-        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october-cli.exe
-        working-directory: ./cmd/october-cli
+      # - name: Codesign Windows CLI
+      #   if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
+      #   run: |
+      #     & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october-cli.exe
+      #   working-directory: ./cmd/october-cli
 
       - name: Sign october-cli
         if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
