@@ -147,7 +147,7 @@ jobs:
       # Codesigning (only performed when releases are cut)
 
       - name: Move october-cli inside October.app
-        if: runner.os == 'macOS'
+        if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
         shell: bash
         run: mv cmd/october-cli/october-cli build/bin/October.app/Contents/MacOS
 
