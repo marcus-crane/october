@@ -123,7 +123,7 @@ jobs:
       - name: Move october-cli inside windows asset folder
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         shell: bash
-        run: mv cmd/october-cli/october-cli build/windows
+        run: mv cmd/october-cli/october-cli.exe build/windows
 
       # Build -- app variants
 
@@ -161,25 +161,29 @@ jobs:
           AC_PROVIDER: "6RNEAKRYDT"
 
       ## Windows
-      - name: Codesign Windows NSIS Installer
+      - name: Codesign Windows CLI
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
           echo "Creating certificate file"
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          echo "Signing October installer"
+      ### Set up certificates
+      - name: Codesign Windows CLI
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october-cli.exe
+        working-directory: ./build/bin
+
+      - name: Codesign Windows NSIS Installer
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
+        run: |
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-${{ matrix.build.arch }}-installer.exe
         working-directory: ./build/bin
 
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
-          echo "Creating certificate file"
-          New-Item -ItemType directory -Path certificate
-          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
-          certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          echo "Signing October installer"
           & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october.exe
         working-directory: ./build/bin
 
