@@ -89,6 +89,11 @@ Section
     !insertmacro wails.writeUninstaller
 SectionEnd
 
+Section "october-cli"
+    SetOutPath $INSTDIR
+    File "..\..\bin\${INFO_PROJECTNAME}-cli.exe"
+SectionEnd
+
 Section "uninstall" 
     RMDir /r "$AppData\${PRODUCT_EXECUTABLE}" # Remove the WebView2 DataPath
 

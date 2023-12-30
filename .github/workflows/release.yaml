@@ -114,6 +114,14 @@ jobs:
         with:
           args: install nsis
 
+      - name: Set up Windows certificates
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && steps.signing.outputs.enabled == 'true'
+        run: |
+          echo "Creating certificate file"
+          New-Item -ItemType directory -Path certificate
+          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
+          certutil -decode certificate\certificate.txt certificate\certificate.pfx
+
       # Build -- frontend
 
       - name: Build frontend assets
@@ -141,8 +149,7 @@ jobs:
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october-cli.exe
-        working-directory: ./cmd/october-cli
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' .\cmd\october-cli.exe
 
       - name: Sign october-cli
         if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' && steps.signing.outputs.enabled == 'true' }}
@@ -155,7 +162,7 @@ jobs:
       - name: Move october-cli.exe inside Windows asset folder
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         shell: bash
-        run: mv cmd/october-cli/october-cli.exe build/windows
+        run: mv cmd/october-cli/october-cli.exe build/bin
 
       # Build -- app variants
 
@@ -201,8 +208,7 @@ jobs:
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' October-${{ matrix.build.arch }}-installer.exe
-        working-directory: ./build/bin
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' .\build\bin\October-${{ matrix.build.arch }}-installer.exe
 
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64' && steps.signing.outputs.enabled == 'true'
@@ -211,8 +217,7 @@ jobs:
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
-          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' october.exe
-        working-directory: ./build/bin
+          & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ secrets.WIN_SIGNING_CERT_PASSWORD }}' .\build\bin\october.exe
 
       # Packaging
 
