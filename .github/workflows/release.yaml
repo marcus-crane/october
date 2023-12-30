@@ -108,22 +108,6 @@ jobs:
           npm install -g npm
           node version.js "v${{ steps.normalise_version.outputs.version }}"
           cd frontend && npm install
-      
-      # Build -- cli variants
-
-      ## We skip Windows Portable for now because files have no consistent home and that's more weirdness than I want to deal with at the moment
-      ## We skip Darwin Universal because there is no build target for Go (that I am aware of!)
-      - name: Build october-cli
-        if: ${{ matrix.build.tag != 'windows-portable_amd64' && matrix.build.tag != 'darwin_universal' }}
-        shell: bash
-        run: GOOS=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 1) GOARCH=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 2) go build -ldflags="-X main.version=v${{ steps.normalise_version.outputs.version }}"
-        working-directory: ./cmd/october-cli
-
-      # Windows
-      - name: Move october-cli inside windows asset folder
-        if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
-        shell: bash
-        run: mv cmd/october-cli/october-cli.exe build/windows
 
       # Build -- app variants
 
@@ -144,7 +128,23 @@ jobs:
         shell: bash
         run: wails build -platform ${{ matrix.build.platform }} -nsis -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }} -X main.portablebuild=true"
 
+      # Build -- cli variants
+
+      ## We skip Windows Portable for now because files have no consistent home and that's more weirdness than I want to deal with at the moment
+      ## We skip Darwin Universal because there is no build target for Go (that I am aware of!)
+      - name: Build october-cli
+        if: ${{ matrix.build.tag != 'windows-portable_amd64' && matrix.build.tag != 'darwin_universal' }}
+        shell: bash
+        run: GOOS=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 1) GOARCH=$(echo ${{ matrix.build.platform }} | cut -d '/' -f 2) go build -ldflags="-X main.version=v${{ steps.normalise_version.outputs.version }}"
+        working-directory: ./cmd/october-cli
+
       # Codesigning (only performed when releases are cut)
+
+      - name: Sign october-cli
+        if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
+        shell: bash
+        run: |
+          codesign -s "Developer ID Application: Marcus Crane" -f -v --timestamp --options runtime ./build/bin/cli/october-cli
 
       - name: Move october-cli inside October.app
         if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
@@ -161,14 +161,15 @@ jobs:
           AC_PROVIDER: "6RNEAKRYDT"
 
       ## Windows
-      - name: Codesign Windows CLI
+
+      - name: Set up certificates for Windows
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
           echo "Creating certificate file"
           New-Item -ItemType directory -Path certificate
           Set-Content -Path certificate\certificate.txt -Value '${{ secrets.WIN_SIGNING_CERT }}'
           certutil -decode certificate\certificate.txt certificate\certificate.pfx
-      ### Set up certificates
+
       - name: Codesign Windows CLI
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
