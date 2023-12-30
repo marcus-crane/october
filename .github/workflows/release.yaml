@@ -152,10 +152,10 @@ jobs:
         working-directory: ./cmd/october-cli
 
       # TODO: Move Windows CLI inside folder for nsis bundling
-      # - name: Move october-cli.exe inside Windows asset folder
-      #   if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
-      #   shell: bash
-      #   run: mv cmd/october-cli/october-cli build/bin/October.app/Contents/MacOS
+      - name: Move october-cli.exe inside Windows asset folder
+        if: ${{ runner.os == 'macOS' && matrix.build.tag != 'darwin_universal' }}
+        shell: bash
+        run: mv cmd/october-cli/october-cli.exe build/windows
 
       # Build -- app variants
 
