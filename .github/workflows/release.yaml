@@ -158,7 +158,7 @@ jobs:
       - name: Move october-cli.exe inside Windows asset folder
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         shell: bash
-        run: mv cmd/october-cli/october-cli.exe build/bin/
+        run: mv cmd/october-cli/october-cli.exe build/windows/
 
       - name: Use NSI installer config that packages Windows CLI
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'

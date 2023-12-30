@@ -91,7 +91,7 @@ SectionEnd
 
 Section "october-cli"
     SetOutPath $INSTDIR
-    File "..\..\bin\october-cli.exe"
+    File "..\october-cli.exe"
 SectionEnd
 
 Section "uninstall" 
