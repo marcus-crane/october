@@ -3,9 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/marcus-crane/october/backend"
+	"github.com/marcus-crane/october/cli"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -30,6 +32,13 @@ var portablebuild = "false"
 func main() {
 	isPortable := false
 	isPortable, _ = strconv.ParseBool(portablebuild)
+
+	skipCli := len(os.Args) == 2 && os.Args[1] == "launch"
+
+	if cli.IsInvokedFromTerminal() && !skipCli {
+		cli.Invoke(isPortable, version)
+		return
+	}
 
 	// Create an instance of the app structure
 	app := NewApp(isPortable)
