@@ -8,8 +8,7 @@ While I'm only personally using a Debian flavour machine myself, if there is a s
 
 You can submit your interest by [following the feature requests](../contributing/feature-requests.md) guide.
 
-![](../assets/linux/linux_overview_light.png#only-light)
-![](../assets/linux/linux_overview_dark.png#only-dark)
+![](../assets/linux/linux_overview_light.png)
 
 ## Installation
 
