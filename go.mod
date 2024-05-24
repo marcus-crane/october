@@ -2,7 +2,7 @@ module github.com/marcus-crane/october
 
 go 1.21
 
-toolchain go1.21.3
+toolchain go1.22.3
 
 require (
 	github.com/adrg/xdg v0.4.0
