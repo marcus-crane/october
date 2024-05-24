@@ -9,32 +9,29 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install social card dependencies
-        run: sudo apt-get install -y libcairo2-dev libfreetype6-dev libffi-dev libjpeg-dev libpng-dev libz-dev pngquant
-      - uses: actions/setup-python@v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          python-version: 3.x
-      - run: pip install -U pip
-      - run: pip install requests mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 pillow cairosvg
-      - run: pip install git+https://${{ secrets.GH_TOKEN }}@github.com/squidfunk/mkdocs-material-insiders.git@9.5.2-insiders-4.47.1
-      - run: mkdocs build
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+      - name: Build site
+        run: bun run docs:build
       - name: Generate Netlify redirects file
         run: python scripts/generate-redirects.py
       - name: Publish to Cloudflare Pages
         id: cloudflare-publish
-        if: ${{ !env.ACT }}
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 8e782a355544971b192db9e75d789dca
           projectName: 9koctober
-          directory: site
+          directory: .vitepress/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
       - uses: mshick/add-pr-comment@v2
-        if: ${{ !env.ACT }}
         with:
           message: |
             🚀 This branch can be previewed at ${{ steps.cloudflare-publish.outputs.url }}

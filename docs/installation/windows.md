@@ -1,19 +1,18 @@
 # Windows
 
-For Windows users, there is one build available:
+For Windows users, there is one build and one variant available:
 
-- amd64 (NSIS installer)
+- amd64 (NSIS installer + portable exe for USB drives)
 
-![](../assets/windows/windows_overview_light.png#only-light)
-![](../assets/windows/windows_overview_dark.png#only-dark)
+![](../public/windows/windows_overview_light.png#only-light)
+![](../public/windows/windows_overview_dark.png#only-dark)
 
-!!! note "Not using Windows 11?"
-
-    While October should work on older versions of Windows, it has only officially been tested on Windows 11.
-
-    You may be prompted upon first start to install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) which is a component of Windows used by October.
-
-    It is included by default on Windows 11 but will need to be manually installed on older Windows versions.
+> [!TIP]
+> While October should work on older versions of Windows, it has only officially been tested on Windows 11.
+>
+> You may be prompted upon first start to install [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) which is a component of Windows used by October.
+>
+> It is included by default on Windows 11 but will need to be manually installed on older Windows versions.
 
 ## Installation
 
@@ -26,7 +25,9 @@ Once downloaded, you'll find an application installer within the zip file.
 Running it will present you with a fairly standard install wizard.
 
 <center>
-![](../assets/windows/windows_installer_location.png)
+
+![](../public/windows/windows_installer_location.png)
+
 </center>
 
 As mentioned, there aren't any custom options so you'll just want to click Next until the process is complete.

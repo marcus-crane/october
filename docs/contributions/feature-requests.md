@@ -1,6 +1,8 @@
 # Feature Requests
 
-So you have an idea in mind for October and you'd like to share it? Before you get too excited, October isn't intended to be a big, sprawling piece of software but rather it just needs to be good enough to get the job done.
+So you have an idea in mind for October and you'd like to share it?
+
+Before you get too excited, October isn't intended to be a big, sprawling piece of software but rather it just needs to be good enough to get the job done.
 
 In this case, the job is just syncing highlights and annotations from Kobo devices to Readwise.
 
