@@ -6,6 +6,7 @@ export default defineConfig({
   description: "Getting highlights off of your Kobo is very fiddly on a technical level. October is a community-driven desktop application that makes it really simple to send them to Readwise. 100% open source with support for Windows, macOS and Linux!",
   srcDir: "./docs",
   srcExclude: [
+    "assets", // exists for legacy reasons -- linux deb points to github files
     "node_modules",
     "contributions/*.md",
     "miscellaneous/limitations.md",

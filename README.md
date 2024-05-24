@@ -3,9 +3,9 @@
 </div>
 
 # October
-> Easily submit your Kobo highlights to Readwise (and eventually more)
+> A desktop application that can send your Kobo highlights to Readwise in a couple of clicks
 
-![](./docs/assets/heroimage.png)
+![](./docs/public/heroimage.png)
 
 ## What is October?
 
