@@ -74,8 +74,7 @@ The very last thing is to enable covers in October itself.
 
 You can find the cover upload toggle in October under the "Settings" button in the top left once you've selected your Kobo.
 
-![](./public/settings/settings_coveruploads_light.png#only-light)
-![](./public/settings/settings_coveruploads_dark.png#only-dark)
+![](./public/settings/settings_coveruploads_light.png)
 
 If you're reading this documentation in order, this step will be mentioned again so you don't forget to turn it.
 
@@ -96,5 +95,4 @@ A few users have reported having issues with the official integration from time 
 >
 > The ability to sync store-purchased highlights was more of a coincidental bug than an intentional feature but any side effects should be harmless.
 
-![](./public/settings/settings_storehighlights_light.png#only-light)
-![](./public/settings/settings_storehighlights_dark.png#only-dark)
+![](./public/settings/settings_storehighlights_light.png)

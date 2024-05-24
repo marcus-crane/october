@@ -7,7 +7,6 @@ For Linux users, there is one build available:
 While I'm only personally using a Debian flavour machine myself, if there is a strong enough interest in either alternative distro formats (ie; `rpm`) or in alternative packaging formats (ie; `AppImage`, `flatpak`), I'd be happy to consider looking into these.
 
 ![](../public/linux/linux_overview_light.png)
-![](../public/linux/linux_overview_dark.png)
 
 ## Installation
 

@@ -4,8 +4,7 @@ For Windows users, there is one build and one variant available:
 
 - amd64 (NSIS installer + portable exe for USB drives)
 
-![](../public/windows/windows_overview_light.png#only-light)
-![](../public/windows/windows_overview_dark.png#only-dark)
+![](../public/windows/windows_overview_light.png)
 
 > [!TIP]
 > While October should work on older versions of Windows, it has only officially been tested on Windows 11.

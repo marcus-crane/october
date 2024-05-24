@@ -10,8 +10,7 @@ There is functionally no difference between the universal build and a platform s
 
 If you're not sure which platform you're on, just pick the universal build. The file size difference is 5 megabytes so it's not going to make or break your hard drive by any means.
 
-![](../public/macos/macos_overview_light.png#only-light)
-![](../public/macos/macos_overview_dark.png#only-dark)
+![](../public/macos/macos_overview_light.png)
 
 ## Installation
 

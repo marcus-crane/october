@@ -48,8 +48,7 @@ While I haven't tested it extensively, one existing user seemed to have no probl
 
 This release brings support for Linux systems which means that October is available for all major platforms.
 
-![](./public/linux/linux_overview_light.png#only-light)
-![](./public/linux/linux_overview_dark.png#only-dark)
+![](./public/linux/linux_overview_light.png)
 
 To celebrate this milestone, I've given the docs site a bit of a content refresh although there are still more changes I intend to make.
 
