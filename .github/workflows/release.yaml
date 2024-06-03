@@ -26,16 +26,24 @@ jobs:
             tag: linux_amd64
           - arch: arm64
             platform: linux/arm64
-            os: buildjet-4vcpu-ubuntu-2204-arm
+            os: ubuntu-latest
             tag: linux_arm64
           - arch: amd64
             platform: windows/amd64
             os: windows-latest
             tag: windows_amd64
+          - arch: arm64
+            platform: windows/arm64
+            os: windows-latest
+            tag: windows_arm64
           - arch: amd64
             platform: windows/amd64
             os: windows-latest
             tag: windows-portable_amd64
+          - arch: arm64
+            platform: windows/arm64
+            os: windows-latest
+            tag: windows-portable_arm64
     runs-on: ${{ matrix.build.os }}
     name: Release October (${{ matrix.build.tag }})
     steps:
