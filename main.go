@@ -33,9 +33,7 @@ func main() {
 	isPortable := false
 	isPortable, _ = strconv.ParseBool(portablebuild)
 
-	skipCli := version == "DEV" || len(os.Args) == 2 && os.Args[1] == "launch"
-
-	if cli.IsInvokedFromTerminal() && !skipCli {
+	if len(os.Args) >= 2 && os.Args[1] == "cli" {
 		cli.Invoke(isPortable, version)
 		return
 	}

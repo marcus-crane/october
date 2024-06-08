@@ -24,8 +24,8 @@ func IsInvokedFromTerminal() bool {
 
 func Invoke(isPortable bool, version string) {
 	app := &cli.App{
-		Name:     "october",
-		HelpName: "october",
+		Name:     "october cli",
+		HelpName: "october cli",
 		Version:  version,
 		Authors: []*cli.Author{
 			{
@@ -35,10 +35,6 @@ func Invoke(isPortable bool, version string) {
 		},
 		Usage: "sync your kobo highlights to readwise from your terminal",
 		Commands: []*cli.Command{
-			{
-				Name:  "launch",
-				Usage: "skip cli tool and launch desktop ui",
-			},
 			{
 				Name:    "sync",
 				Aliases: []string{"s"},
@@ -71,7 +67,19 @@ func Invoke(isPortable bool, version string) {
 		},
 	}
 
-	err := app.Run(os.Args)
+	// We remove the cli command so that urfave/cli doesn't try to literally parse it
+	// but the help text of the cli tool still shows the user `october cli` so they don't
+	// get disoriented and know that we're juggling text under the hood
+	var args []string
+
+	for k, v := range os.Args {
+		if k == 1 && v == "cli" {
+			continue
+		}
+		args = append(args, v)
+	}
+
+	err := app.Run(args)
 	if err != nil {
 		log.Fatal(err)
 	}
