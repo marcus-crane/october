@@ -42,12 +42,14 @@ func StartBackend(ctx *context.Context, version string, portable bool) *Backend 
 		ConnectedKobos: map[string]Kobo{},
 		RuntimeContext: ctx,
 		Settings:       settings,
-		Readwise:       &Readwise{},
-		Kobo:           &Kobo{},
-		Content:        &Content{},
-		Bookmark:       &Bookmark{},
-		version:        version,
-		portable:       portable,
+		Readwise: &Readwise{
+			UserAgent: fmt.Sprintf(UserAgentFmt, version),
+		},
+		Kobo:     &Kobo{},
+		Content:  &Content{},
+		Bookmark: &Bookmark{},
+		version:  version,
+		portable: portable,
 	}
 }
 

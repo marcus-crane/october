@@ -9,5 +9,5 @@ var (
 	MaxHighlightLen    = 8096 // It's actually 8191 but we'll go under the limit anyway
 	SourceCategory     = "books"
 	SourceType         = "OctoberForKobo"
-	UserAgent          = "october/2.0.0 <https://github.com/marcus-crane/october>"
+	UserAgentFmt       = "october/%s <https://github.com/marcus-crane/october>"
 )

@@ -51,7 +51,9 @@ type BookListEntry struct {
 	SourceURL string `json:"source_url"`
 }
 
-type Readwise struct{}
+type Readwise struct {
+	UserAgent string
+}
 
 func (r *Readwise) CheckTokenValidity(token string) error {
 	req, err := http.NewRequest("GET", AuthEndpoint, nil)
@@ -60,7 +62,7 @@ func (r *Readwise) CheckTokenValidity(token string) error {
 	}
 	client := &http.Client{}
 	req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
-	req.Header.Add("User-Agent", UserAgent)
+	req.Header.Add("User-Agent", r.UserAgent)
 	resp, err := client.Do(req)
 	if err != nil {
 		return errors.New(resp.Status)
@@ -87,7 +89,7 @@ func (r *Readwise) SendBookmarks(payloads []Response, token string) (int, error)
 		}
 		req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
 		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("User-Agent", UserAgent)
+		req.Header.Add("User-Agent", r.UserAgent)
 		resp, err := client.Do(req)
 		if err != nil {
 			return 0, fmt.Errorf("failed to send request to Readwise: code %d", resp.StatusCode)
@@ -110,7 +112,7 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	bookList := BookListResponse{}
 	headers := map[string][]string{
 		"Authorization": {fmt.Sprintf("Token %s", token)},
-		"User-Agent":    {UserAgent},
+		"User-Agent":    {r.UserAgent},
 	}
 	client := http.Client{}
 	remoteURL, err := url.Parse(BooksEndpoint)
@@ -170,7 +172,7 @@ func (r *Readwise) UploadCover(encodedCover string, bookId int, token string) er
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("User-Agent", UserAgent)
+	req.Header.Add("User-Agent", r.UserAgent)
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to upload cover to Readwise: code %d", resp.StatusCode)
