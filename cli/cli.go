@@ -7,19 +7,16 @@ import (
 	"os"
 
 	"github.com/marcus-crane/october/backend"
-	"github.com/mattn/go-isatty"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
-func IsInvokedFromTerminal() bool {
-	if isatty.IsTerminal(os.Stdout.Fd()) {
-		return true
+func IsCLIInvokedExplicitly(args []string) bool {
+	for k, v := range os.Args {
+		if k == 1 && v == "cli" {
+			return true
+		}
 	}
-	if isatty.IsCygwinTerminal(os.Stdout.Fd()) {
-		return true
-	}
-	return false
 }
 
 func Invoke(isPortable bool, version string) {
