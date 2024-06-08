@@ -17,6 +17,7 @@ func IsCLIInvokedExplicitly(args []string) bool {
 			return true
 		}
 	}
+	return false
 }
 
 func Invoke(isPortable bool, version string) {
