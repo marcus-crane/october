@@ -33,6 +33,7 @@ func main() {
 	isPortable := false
 	isPortable, _ = strconv.ParseBool(portablebuild)
 
+	fmt.Println(os.Args)
 	if cli.IsCLIInvokedExplicitly(os.Args) {
 		cli.Invoke(isPortable, version)
 		return
