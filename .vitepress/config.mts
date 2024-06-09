@@ -55,11 +55,17 @@ export default defineConfig({
         ]
       },
       {
+        text: 'Advanced',
+        items: [
+          { text: 'October CLI', link: '/user-guide/advanced/cli' },
+          { text: 'Reading Formats', link: '/user-guide/advanced/reading-formats' },
+        ]
+      },
+      {
         text: 'Extras',
         items: [
           { text: 'Changelog', link: '/changelog' },
-          { text: 'LICENSE', link: '/miscellaneous/license' },
-          { text: 'Reading Formats', link: '/miscellaneous/reading-formats' },
+          { text: 'Software License', link: '/license' },
           { text: 'Thanks', link: '/thanks' }
         ]
       }
