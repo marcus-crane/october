@@ -10,6 +10,16 @@ At the moment, it just has basic sync functionality with settings still powered 
 
 ![](./public/macos/macos_cli.png)
 
+This release also brings official support for the following newer devices:
+
+- Clara 2E
+- Elipsa 2E
+- Libra Colour
+- Clara BW
+- Clara Colour
+
+Functionally, they should have always worked but the UI will now recognise their model names.
+
 ## v1.8.0
 
 This release adds support for Linux machines running arm64 such as newer Raspberry Pi devices apparently.
