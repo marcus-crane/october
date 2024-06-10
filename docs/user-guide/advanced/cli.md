@@ -1,6 +1,6 @@
 # October CLI
 
-As of [v1.9.0](http://localhost:5173/changelog#v1-9-0), October ships with a [CLI interface](https://en.wikipedia.org/wiki/Command-line_interface).
+As of [v1.9.0](/changelog#v1-9-0), October ships with a [CLI interface](https://en.wikipedia.org/wiki/Command-line_interface).
 
 If you are unfamiliar with that means, it's probably not the right tool for you and you can continue to use the existing desktop app as normal.
 
