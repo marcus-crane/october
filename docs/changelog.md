@@ -1,7 +1,24 @@
----
----
-
 # Changelog
+
+## v1.9.0
+
+This release introduces a command line interface (CLI) for power users of October, who prefer to sync highlights without opening the desktop UI.
+
+Users of automation software may also find this handy for automatically triggering a sync when their automation software detects that a Kobo is connected.
+
+At the moment, it just has basic sync functionality with settings still powered by the UI but eventually it'll be brought up to feature parity with the rest of the desktop UI.
+
+![](./public/macos/macos_cli.png)
+
+This release also brings official support for the following newer devices:
+
+- Clara 2E
+- Elipsa 2E
+- Libra Colour
+- Clara BW
+- Clara Colour
+
+Functionally, they should have always worked but the UI will now recognise their model names.
 
 ## v1.8.0
 

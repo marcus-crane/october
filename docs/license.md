@@ -1,4 +1,8 @@
-# License
+# Software License
+
+October is released under the MIT License which is replicated below from the [source file](https://github.com/marcus-crane/october/blob/main/LICENSE).
+
+---
 
 MIT License
 
