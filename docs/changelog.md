@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.9.0
+
+This release introduces a command line interface (CLI) for power users of October, who prefer to sync highlights without opening the desktop UI.
+
+Users of automation software may also find this handy for automatically triggering a sync when their automation software detects that a Kobo is connected.
+
+At the moment, it just has basic sync functionality with settings still powered by the UI but eventually it'll be brought up to feature parity with the rest of the desktop UI.
+
+![](./public/macos/macos_cli.png)
+
 ## v1.8.0
 
 This release adds support for Linux machines running arm64 such as newer Raspberry Pi devices apparently.
