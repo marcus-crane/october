@@ -206,7 +206,6 @@ export namespace backend {
 	    readwise_token: string;
 	    upload_covers: boolean;
 	    upload_store_highlights: boolean;
-	    upload_store_prompt_shown: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -217,7 +216,6 @@ export namespace backend {
 	        this.readwise_token = source["readwise_token"];
 	        this.upload_covers = source["upload_covers"];
 	        this.upload_store_highlights = source["upload_store_highlights"];
-	        this.upload_store_prompt_shown = source["upload_store_prompt_shown"];
 	    }
 	}
 

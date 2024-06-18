@@ -7,11 +7,8 @@ import { GetSettings, GetSelectedKobo, ForwardToReadwise } from "../../wailsjs/g
 export default function Overview(props) {
   const [settingsLoaded, setSettingsLoaded] = useState(false)
   const [readwiseConfigured, setReadwiseConfigured] = useState(false)
-  const [uploadStorePromptSeen, setUploadStorePromptSeen] = useState(false)
   const [selectedKobo, setSelectedKobo] = useState({})
   const [highlightCounts, setHighlightCounts] = useState({})
-  const [storeUploadWarningOpen, setStoreUploadWarningOpen] = useState(false)
-  const [uploadStoreHighlights, setUploadStoreHighlights] = useState(false)
 
   const cancelButtonRef = useRef(null)
 
@@ -30,7 +27,6 @@ export default function Overview(props) {
   useEffect(() => {
     GetSettings().then((settings) => {
       setSettingsLoaded(true);
-      setUploadStorePromptSeen(settings.upload_store_prompt_shown)
       setReadwiseConfigured(settings.readwise_token !== "")
       setUploadStoreHighlights(settings.upload_store_highlights)
     });
@@ -53,10 +49,8 @@ export default function Overview(props) {
       .catch(err => {
         if (err.includes("401")) {
           toast.error("Received 401 Unauthorised from Readwise. Is your access token correct?", { id: toastId })
-        } else if (err.includes("failed to upload covers")) {
-          toast.error(err, { id: toastId })
         } else {
-          toast.error(`There was a problem sending your highlights: ${err}`, { id: toastId })
+          toast.error(err, { id: toastId, duration: 8000 })
         }
       })
   }
@@ -88,11 +82,7 @@ export default function Overview(props) {
               <li>
                 <button onClick={() => {
                     if (readwiseConfigured) {
-                      if (uploadStorePromptSeen || uploadStoreHighlights) {
                         syncWithReadwise()
-                      } else {
-                        setStoreUploadWarningOpen(true)
-                      }
                     } else {
                       promptReadwise()
                     }
