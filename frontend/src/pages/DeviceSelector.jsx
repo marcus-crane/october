@@ -20,12 +20,11 @@ export default function DeviceSelector() {
   function detectDevices() {
     DetectKobos()
       .then(devices => {
-        console.log(devices)
         if (devices == null) {
-          toast("No devices were found")
+          toast("No devices were found", { id: 'no-devices-found' })
           return
         }
-        toast.success(`${devices.length} kobos detected`)
+        toast.success(`${devices.length} kobo${devices.length > 1 ? "s" : ""} detected`, { id: 'devices-found' })
         setDevices(devices)
       })
       .catch(err => {
