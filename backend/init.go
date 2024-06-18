@@ -70,7 +70,11 @@ func (b *Backend) GetPlainSystemDetails() string {
 }
 
 func (b *Backend) FormatSystemDetails() string {
-	return fmt.Sprintf("<details><summary>System Details</summary><ul><li>Version: %s</li><li>Platform: %s</li><li>Architecture: %s</li></details>", b.version, runtime.GOOS, runtime.GOARCH)
+	onboardingComplete := false
+	if b.Settings.ReadwiseToken != "" {
+		onboardingComplete = true
+	}
+	return fmt.Sprintf("<details><summary>System Details</summary><ul><li>Version: %s</li><li>Platform: %s</li><li>Architecture: %s</li><li>Onboarding Complete: %t</li></details>", b.version, runtime.GOOS, runtime.GOARCH, onboardingComplete)
 }
 
 func (b *Backend) NavigateExplorerToLogLocation() {

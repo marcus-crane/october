@@ -23,8 +23,9 @@ func LoadSettings(portable bool) (*Settings, error) {
 		return nil, errors.Wrap(err, "Failed to create settings directory. Do you have proper permissions?")
 	}
 	s := &Settings{
-		path:         settingsPath,
-		UploadCovers: false,
+		path:                  settingsPath,
+		UploadStoreHighlights: true, // default on as users with only store purchased books are blocked from usage otherwise but give ample warning during setup
+		UploadCovers:          false,
 	}
 	b, err := os.ReadFile(settingsPath)
 	if err != nil {
