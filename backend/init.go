@@ -70,7 +70,11 @@ func (b *Backend) GetPlainSystemDetails() string {
 }
 
 func (b *Backend) FormatSystemDetails() string {
-	return fmt.Sprintf("<details><summary>System Details</summary><ul><li>Version: %s</li><li>Platform: %s</li><li>Architecture: %s</li></details>", b.version, runtime.GOOS, runtime.GOARCH)
+	onboardingComplete := false
+	if b.Settings.ReadwiseToken != "" {
+		onboardingComplete = true
+	}
+	return fmt.Sprintf("<details><summary>System Details</summary><ul><li>Version: %s</li><li>Platform: %s</li><li>Architecture: %s</li><li>Onboarding Complete: %t</li></details>", b.version, runtime.GOOS, runtime.GOARCH, onboardingComplete)
 }
 
 func (b *Backend) NavigateExplorerToLogLocation() {
@@ -148,7 +152,16 @@ func (b *Backend) PromptForLocalDBPath() error {
 }
 
 func (b *Backend) ForwardToReadwise() (int, error) {
+	highlightBreakdown := b.Kobo.CountDeviceBookmarks()
+	if highlightBreakdown.Total == 0 {
+		logrus.Error("Tried to submit highlights when there are none on device.")
+		return 0, fmt.Errorf("Your device doesn't seem to have any highlights so there is nothing left to sync.")
+	}
 	includeStoreBought := b.Settings.UploadStoreHighlights
+	if !includeStoreBought && highlightBreakdown.Sideloaded == 0 {
+		logrus.Error("Tried to submit highlights with no sideloaded highlights + store-bought syncing disabled. Result is that no highlights would be fetched.")
+		return 0, fmt.Errorf("You have disabled store-bought syncing but you don't have any sideloaded highlights either. This combination means there are no highlights left to be synced.")
+	}
 	content, err := b.Kobo.ListDeviceContent(includeStoreBought)
 	if err != nil {
 		return 0, err

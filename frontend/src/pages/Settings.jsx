@@ -11,8 +11,7 @@ import {
 import {
   SaveToken,
   SaveCoverUploading,
-  SaveStoreHighlights,
-  MarkUploadStorePromptShown
+  SaveStoreHighlights
 } from "../../wailsjs/go/backend/Settings";
 import { CheckTokenValidity } from "../../wailsjs/go/backend/Readwise";
 

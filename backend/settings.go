@@ -10,11 +10,10 @@ import (
 )
 
 type Settings struct {
-	path                   string `json:"-"`
-	ReadwiseToken          string `json:"readwise_token"`
-	UploadCovers           bool   `json:"upload_covers"`
-	UploadStoreHighlights  bool   `json:"upload_store_highlights"`
-	UploadStorePromptShown bool   `json:"upload_store_prompt_shown"`
+	path                  string `json:"-"`
+	ReadwiseToken         string `json:"readwise_token"`
+	UploadCovers          bool   `json:"upload_covers"`
+	UploadStoreHighlights bool   `json:"upload_store_highlights"`
 }
 
 func LoadSettings(portable bool) (*Settings, error) {
@@ -23,8 +22,9 @@ func LoadSettings(portable bool) (*Settings, error) {
 		return nil, errors.Wrap(err, "Failed to create settings directory. Do you have proper permissions?")
 	}
 	s := &Settings{
-		path:         settingsPath,
-		UploadCovers: false,
+		path:                  settingsPath,
+		UploadStoreHighlights: true, // default on as users with only store purchased books are blocked from usage otherwise but give ample warning during setup
+		UploadCovers:          false,
 	}
 	b, err := os.ReadFile(settingsPath)
 	if err != nil {
@@ -87,11 +87,5 @@ func (s *Settings) SaveCoverUploading(uploadCovers bool) error {
 
 func (s *Settings) SaveStoreHighlights(uploadStoreHighlights bool) error {
 	s.UploadStoreHighlights = uploadStoreHighlights
-	s.UploadStorePromptShown = uploadStoreHighlights
-	return s.Save()
-}
-
-func (s *Settings) MarkUploadStorePromptShown() error {
-	s.UploadStorePromptShown = true
 	return s.Save()
 }
