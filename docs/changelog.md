@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.10.0
+
+This release adds some better error handling around some long standing bugs that users can run into.
+
+It also adds a one-time setup process that should eliminate some common issues that first-time users run into.
+
+As a result, the new default (that only applies to new installations and not existing ones) is for all books to be uploaded by default (from both the store and sideloaded).
+
+This allows for removing the jarring prompt that appears when trying to upload books for the first time while making it explicit during setup that the user may not want this item ticked and/or that they should consider the consequences
+
+The goal is this release is mostly to patch up some long-standing issues so that I can start focusing on rearranging October's internals to be properly tested and less messy.
+
+---
+
+![Screenshot 2024-06-23 at 5 30 34 PM](https://github.com/marcus-crane/october/assets/14816406/4d407e66-24b8-4520-a1b1-2a443c52e60b)
+
+![Screenshot 2024-06-23 at 5 29 44 PM](https://github.com/marcus-crane/october/assets/14816406/369d3ce4-6dff-4157-b300-8c92df07c0ce)
+
+![Screenshot 2024-06-18 at 8 13 01 PM](https://github.com/marcus-crane/october/assets/14816406/b3857403-f876-410c-ade3-4ae614d2766a)
+
 ## v1.9.0
 
 This release introduces a command line interface (CLI) for power users of October, who prefer to sync highlights without opening the desktop UI.
