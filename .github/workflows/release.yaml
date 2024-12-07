@@ -23,6 +23,10 @@ jobs:
           - arch: amd64
             platform: linux/amd64
             os: ubuntu-latest
+            tag: linux_amd64_webkit2gtk40
+          - arch: amd64
+            platform: linux/amd64
+            os: ubuntu-latest
             tag: linux_amd64
           - arch: arm64
             platform: linux/arm64
@@ -111,12 +115,24 @@ jobs:
     
       # Build -- app variants
 
-      ## Linux 
-      - name: Build wails app for Linux / macOS
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+      ## Linux (webkit2gtk-4.0) -- We explicitly set 4.0 in this tag because it'll only be less used over time
+      - name: Build wails app for Linux (webkit2gtk-4.0)
+        if: runner.os == 'Linux' && matrix.build.tag == 'linux_amd64_webkit2gtk40'
         shell: bash
         run: wails build -platform ${{ matrix.build.platform }} -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
-      
+
+      ## Linux (webkit2gtk-4.1) -- We set this as the new default as more users will use 24.0x+ over time
+      - name: Build wails app for Linux (webkit2gtk-4.1)
+        if: runner.os == 'Linux' && matrix.build.tag == 'linux_amd64'
+        shell: bash
+        run: wails build -platform ${{ matrix.build.platform }} -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
+
+      ## macOS
+      - name: Build wails app for macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: wails build -platform ${{ matrix.build.platform }} -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
+
       ## Windows
       - name: Build Windows NSIS installer (Normal)
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
@@ -153,7 +169,7 @@ jobs:
         working-directory: ./build/bin
 
       - name: Codesign Windows Portable
-        if: runner.os == 'Windows' && matrix.build.portable == 'windows-portable_amd64' && startsWith(github.ref, 'refs/tags/')
+        if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
           echo "Creating certificate file"
           New-Item -ItemType directory -Path certificate
