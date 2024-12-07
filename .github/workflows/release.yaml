@@ -77,12 +77,17 @@ jobs:
       
       # Dependencies
 
-      ## Linux
-
+      ## Linux (webkit2gtk-4.0)
       - name: Install Ubuntu prerequisites
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && matrix.build.tag == 'linux_amd64_webkit2gtk40'
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      ## Linux (webkit2gtk-4.1)
+      - name: Install Ubuntu prerequisites
+        if: runner.os == 'Linux' && matrix.build.tag == 'linux_amd64'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
       
       ## macOS
       - name: Setup Gon
@@ -125,7 +130,7 @@ jobs:
       - name: Build wails app for Linux (webkit2gtk-4.1)
         if: runner.os == 'Linux' && matrix.build.tag == 'linux_amd64'
         shell: bash
-        run: wails build -platform ${{ matrix.build.platform }} -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
+        run: wails build -platform ${{ matrix.build.platform }} -tags webkit2_41 -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
 
       ## macOS
       - name: Build wails app for macOS
