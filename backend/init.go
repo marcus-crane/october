@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/exec"
@@ -28,11 +29,12 @@ type Backend struct {
 	Kobo           *Kobo
 	Content        *Content
 	Bookmark       *Bookmark
+	logger         *slog.Logger
 	version        string
 	portable       bool
 }
 
-func StartBackend(ctx *context.Context, version string, portable bool) *Backend {
+func StartBackend(ctx *context.Context, version string, portable bool, logger *slog.Logger) *Backend {
 	settings, err := LoadSettings(portable)
 	if err != nil {
 		logrus.WithContext(*ctx).WithError(err).Error("Failed to load settings")

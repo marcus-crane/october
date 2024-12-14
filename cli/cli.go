@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 
 	"github.com/marcus-crane/october/backend"
@@ -20,7 +21,7 @@ func IsCLIInvokedExplicitly(args []string) bool {
 	return false
 }
 
-func Invoke(isPortable bool, version string) {
+func Invoke(isPortable bool, version string, logger *slog.Logger) {
 	app := &cli.App{
 		Name:     "october cli",
 		HelpName: "october cli",
@@ -39,7 +40,7 @@ func Invoke(isPortable bool, version string) {
 				Usage:   "sync kobo highlights to readwise",
 				Action: func(c *cli.Context) error {
 					ctx := context.Background()
-					b := backend.StartBackend(&ctx, version, isPortable)
+					b := backend.StartBackend(&ctx, version, isPortable, logger)
 					if b.Settings.ReadwiseToken == "" {
 						return fmt.Errorf("no readwise token was configured. please set this up using the gui as the cli does not support this yet")
 					}
