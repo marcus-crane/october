@@ -3,8 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
-	slog "log/slog"
+	"log/slog"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -51,6 +52,9 @@ func main() {
 		slog.Bool("portable", isPortable),
 		slog.String("user_cache_dir", usr_cache_dir),
 		slog.String("user_config_dir", usr_config_dir),
+		slog.String("goarch", runtime.GOARCH),
+		slog.String("goos", runtime.GOOS),
+		slog.String("goversion", runtime.Version()),
 	)
 
 	if cli.IsCLIInvokedExplicitly(os.Args) {
@@ -64,7 +68,13 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp(isPortable, logger)
 
-	backend := backend.StartBackend(&app.ctx, version, isPortable, logger)
+	backend, err := backend.StartBackend(&app.ctx, version, isPortable, logger)
+	if err != nil {
+		logger.Error("Backend failed to start up",
+			slog.String("error", err.Error()),
+		)
+		panic("Failed to start backend")
+	}
 
 	// Create application with options
 	err = wails.Run(&options.App{
