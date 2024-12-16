@@ -1,12 +1,11 @@
 package backend
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 var logFileHandle *os.File
@@ -18,8 +17,6 @@ func StartLogger(portable bool, level slog.Leveler) (*slog.Logger, error) {
 	if err != nil {
 		panic("Failed to create location to store logfiles")
 	}
-
-	logrus.SetFormatter(&logrus.JSONFormatter{})
 	file, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		return &slog.Logger{}, err
@@ -35,3 +32,10 @@ func StartLogger(portable bool, level slog.Leveler) (*slog.Logger, error) {
 func CloseLogFile() {
 	logFileHandle.Close()
 }
+
+// Dummy until real handler ships in Go 1.24
+type discardHandler struct {
+	slog.TextHandler
+}
+
+func (d *discardHandler) Enabled(context.Context, slog.Level) bool { return false }

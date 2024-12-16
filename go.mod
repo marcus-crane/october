@@ -9,7 +9,6 @@ require (
 	github.com/glebarez/sqlite v1.10.0
 	github.com/pgaskin/koboutils/v2 v2.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.9.0
 	github.com/urfave/cli/v2 v2.27.0
 	github.com/wailsapp/wails/v2 v2.9.2

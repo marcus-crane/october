@@ -6,14 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"path"
 	"strings"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -52,6 +51,7 @@ type BookListEntry struct {
 }
 
 type Readwise struct {
+	logger    *slog.Logger
 	UserAgent string
 }
 
@@ -70,7 +70,7 @@ func (r *Readwise) CheckTokenValidity(token string) error {
 	if resp.StatusCode != 204 {
 		return errors.New(resp.Status)
 	}
-	logrus.Info("Successfully validated token against the Readwise API")
+	r.logger.Info("Successfully validated token against the Readwise API")
 	return nil
 }
 
@@ -98,13 +98,18 @@ func (r *Readwise) SendBookmarks(payloads []Response, token string) (int, error)
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err == nil {
-				logrus.WithFields(logrus.Fields{"status_code": resp.StatusCode, "response": string(body)}).Error("Received a non-200 response from Readwise")
+				r.logger.Error("Received a non-200 response from Readwise",
+					slog.Int("status_code", resp.StatusCode),
+					slog.String("response", string(body)),
+				)
 			}
 			return 0, fmt.Errorf("received a non-200 status code from Readwise: code %d", resp.StatusCode)
 		}
 		submittedHighlights += len(payload.Highlights)
 	}
-	logrus.WithField("batch_count", len(payloads)).Info("Successfully sent bookmarks to Readwise")
+	r.logger.Info("Successfully sent bookmarks to Readwise",
+		slog.Int("batch_count", len(payloads)),
+	)
 	return submittedHighlights, nil
 }
 
@@ -117,7 +122,9 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	client := http.Client{}
 	remoteURL, err := url.Parse(BooksEndpoint)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to parse URL for Readwise book upload endpoint")
+		r.logger.Error("Failed to parse URL for Readwise book upload endpoint",
+			slog.String("error", err.Error()),
+		)
 	}
 	request := http.Request{
 		Method: "GET",
@@ -126,7 +133,10 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	}
 	res, err := client.Do(&request)
 	if err != nil {
-		logrus.WithError(err).WithField("status_code", res.StatusCode).Error("An unexpected error occurred while retrieving uploads from Readwise")
+		r.logger.Error("An unexpected error occurred while retrieving uploads from Readwise",
+			slog.String("error", err.Error()),
+			slog.Int("status_code", res.StatusCode),
+		)
 		return bookList, err
 	}
 	defer func(Body io.ReadCloser) {
@@ -136,24 +146,37 @@ func (r *Readwise) RetrieveUploadedBooks(token string) (BookListResponse, error)
 	}(res.Body)
 	b, err := httputil.DumpResponse(res, true)
 	if err != nil {
-		logrus.WithError(err).Error("Encountered an error while dumping response from Readwise")
+		r.logger.Error("Encountered an error while dumping response from Readwise",
+			slog.String("error", err.Error()),
+		)
 		return bookList, err
 	}
 	if res.StatusCode != 200 {
-		logrus.WithFields(logrus.Fields{"status": res.StatusCode, "body": string(b)}).Error("Received a non-200 response from Readwise")
+		r.logger.Error("Received a non-200 response from Readwise",
+			slog.Int("status", res.StatusCode),
+			slog.String("body", string(b)),
+		)
 		return bookList, err
 	}
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to parse response from Readwise")
+		r.logger.Error("Failed to parse response from Readwise",
+			slog.String("error", err.Error()),
+		)
 		return bookList, err
 	}
 	err = json.Unmarshal(body, &bookList)
 	if err != nil {
-		logrus.WithError(err).WithFields(logrus.Fields{"status": res.StatusCode, "body": string(b)}).Error("Failed to unmarshal response from Readwise")
+		r.logger.Error("Failed to unmarshal response from Readwise",
+			slog.String("error", err.Error()),
+			slog.Int("status", res.StatusCode),
+			slog.String("body", string(b)),
+		)
 		return bookList, err
 	}
-	logrus.WithField("book_count", bookList.Count).Info("Successfully retrieved books from Readwise API")
+	r.logger.Info("Successfully retrieved books from Readwise API",
+		slog.Int("book_count", bookList.Count),
+	)
 	return bookList, nil
 }
 
@@ -181,14 +204,17 @@ func (r *Readwise) UploadCover(encodedCover string, bookId int, token string) er
 		defer resp.Body.Close()
 		body, err := io.ReadAll(resp.Body)
 		if err == nil {
-			logrus.WithFields(logrus.Fields{"status_code": resp.StatusCode, "response": string(body)}).Error("Received a non-200 response from Readwise")
+			r.logger.Error("Received a non-200 response from Readwise",
+				slog.Int("status", resp.StatusCode),
+				slog.String("body", string(body)),
+			)
 		}
 		return fmt.Errorf("failed to upload cover for book with id %d", bookId)
 	}
 	return nil
 }
 
-func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Response, error) {
+func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content, logger *slog.Logger) ([]Response, error) {
 	var payloads []Response
 	var currentBatch Response
 	for count, entry := range bookmarks {
@@ -199,17 +225,30 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Resp
 			currentBatch = Response{}
 		}
 		source := contentIndex[entry.VolumeID]
-		logrus.WithField("title", source.Title).Debug("Parsing highlight")
+		logger.Debug("Parsing highlight",
+			slog.String("title", source.Title),
+		)
 		var createdAt string
 		if entry.DateCreated == "" {
-			logrus.WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("No date created for bookmark. Defaulting to date last modified.")
+			logger.Warn("No date created for bookmark. Defaulting to date last modified.",
+				slog.String("title", source.Title),
+				slog.String("volume_id", entry.VolumeID),
+			)
 			if entry.DateModified == "" {
-				logrus.WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("No date modified for bookmark. Default to current date.")
+				logger.Warn("No date modified for bookmark. Default to current date.",
+					slog.String("title", source.Title),
+					slog.String("volume_id", entry.VolumeID),
+				)
 				createdAt = time.Now().Format("2006-01-02T15:04:05-07:00")
 			} else {
 				t, err := time.Parse("2006-01-02T15:04:05Z", entry.DateModified)
 				if err != nil {
-					logrus.WithError(err).WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date modified field")
+					logger.Error("Failed to parse a valid timestamp from date modified field",
+						slog.String("error", err.Error()),
+						slog.String("title", source.Title),
+						slog.String("volume_id", entry.VolumeID),
+						slog.String("date_modified", entry.DateModified),
+					)
 					return []Response{}, err
 				}
 				createdAt = t.Format("2006-01-02T15:04:05-07:00")
@@ -217,7 +256,12 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Resp
 		} else {
 			t, err := time.Parse("2006-01-02T15:04:05.000", entry.DateCreated)
 			if err != nil {
-				logrus.WithError(err).WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID, "date_modified": entry.DateModified}).Error("Failed to parse a valid timestamp from date created field")
+				logger.Error("Failed to parse a valid timestamp from date created field",
+					slog.String("error", err.Error()),
+					slog.String("title", source.Title),
+					slog.String("volume_id", entry.VolumeID),
+					slog.String("date_modified", entry.DateModified),
+				)
 				return []Response{}, err
 			}
 			createdAt = t.Format("2006-01-02T15:04:05-07:00")
@@ -231,7 +275,10 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Resp
 		}
 		if entry.Annotation == "" && text == "" {
 			// This state should be impossible but stranger things have happened so worth a sanity check
-			logrus.WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("Found an entry with neither highlighted text nor an annotation so skipping entry")
+			logger.Warn("Found an entry with neither highlighted text nor an annotation so skipping entry",
+				slog.String("title", source.Title),
+				slog.String("volume_id", entry.VolumeID),
+			)
 			continue
 		}
 		if source.Title == "" {
@@ -244,11 +291,17 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Resp
 				// or even just arbitrary strings. Given we don't set a title here, we will use the Readwise fallback which is to add
 				// these highlights to a book called "Quotes" and let the user figure out their metadata situation. That reminds me though:
 				// TODO: Test exports with non-epub files
-				logrus.WithError(err).WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID}).Warn("Failed to retrieve epub title. This is not a hard requirement so sending with a dummy title.")
+				logger.Warn("Failed to retrieve epub title. This is not a hard requirement so sending with a dummy title.",
+					slog.String("error", err.Error()),
+					slog.String("title", source.Title),
+					slog.String("volume_id", entry.VolumeID),
+				)
 				goto sendhighlight
 			}
 			filename := path.Base(sourceFile.Path)
-			logrus.WithField("filename", filename).Debug("No source title. Constructing title from filename")
+			logger.Debug("No source title. Constructing title from filename",
+				slog.String("filename", filename),
+			)
 			source.Title = strings.TrimSuffix(filename, ".epub")
 		}
 	sendhighlight:
@@ -266,10 +319,17 @@ func BuildPayload(bookmarks []Bookmark, contentIndex map[string]Content) ([]Resp
 			}
 			currentBatch.Highlights = append(currentBatch.Highlights, highlight)
 		}
-		logrus.WithFields(logrus.Fields{"title": source.Title, "volume_id": entry.VolumeID, "chunks": len(highlightChunks)}).Debug("Successfully compiled highlights for book")
+		logger.Debug("Successfully compiled highlights for book",
+			slog.String("title", source.Title),
+			slog.String("volume_id", entry.VolumeID),
+			slog.Int("chunks", len(highlightChunks)),
+		)
 	}
 	payloads = append(payloads, currentBatch)
-	logrus.WithFields(logrus.Fields{"highlight_count": len(currentBatch.Highlights), "batch_count": len(payloads)}).Info("Successfully parsed highlights")
+	logger.Info("Succcessfully parsed highlights",
+		slog.Int("highlight_count", len(currentBatch.Highlights)),
+		slog.Int("batch_count", len(payloads)),
+	)
 	return payloads, nil
 }
 

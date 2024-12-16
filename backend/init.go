@@ -51,6 +51,7 @@ func StartBackend(ctx *context.Context, version string, portable bool, logger *s
 		RuntimeContext: ctx,
 		Settings:       settings,
 		Readwise: &Readwise{
+			logger:    logger,
 			UserAgent: fmt.Sprintf(UserAgentFmt, version),
 		},
 		Kobo:     &Kobo{},
@@ -122,7 +123,7 @@ func (b *Backend) DetectKobos() []Kobo {
 		b.logger.Error("Failed to detect any connected Kobos")
 		panic(err)
 	}
-	kobos := GetKoboMetadata(connectedKobos)
+	kobos := GetKoboMetadata(connectedKobos, b.logger)
 	b.logger.Info("Found one or more kobos",
 		"count", len(kobos),
 	)
@@ -159,6 +160,10 @@ func (b *Backend) SelectKobo(devicePath string) error {
 		}
 	}
 	if err := OpenConnection(b.SelectedKobo.DbPath); err != nil {
+		b.logger.Error("Failed to open DB connection",
+			slog.String("error", err.Error()),
+			slog.String("db_path", b.SelectedKobo.DbPath),
+		)
 		return err
 	}
 	return nil
@@ -185,7 +190,7 @@ func (b *Backend) PromptForLocalDBPath() error {
 }
 
 func (b *Backend) ForwardToReadwise() (int, error) {
-	highlightBreakdown := b.Kobo.CountDeviceBookmarks()
+	highlightBreakdown := b.Kobo.CountDeviceBookmarks(b.logger)
 	slog.Info("Got highlight counts from device",
 		slog.Int("highlight_count_sideload", int(highlightBreakdown.Sideloaded)),
 		slog.Int("highlight_count_official", int(highlightBreakdown.Official)),
@@ -200,22 +205,22 @@ func (b *Backend) ForwardToReadwise() (int, error) {
 		slog.Error("Tried to submit highlights with no sideloaded highlights + store-bought syncing disabled. Result is that no highlights would be fetched.")
 		return 0, fmt.Errorf("You have disabled store-bought syncing but you don't have any sideloaded highlights either. This combination means there are no highlights left to be synced.")
 	}
-	content, err := b.Kobo.ListDeviceContent(includeStoreBought)
+	content, err := b.Kobo.ListDeviceContent(includeStoreBought, b.logger)
 	if err != nil {
 		slog.Error("Received an error trying to list content from device",
 			slog.String("error", err.Error()),
 		)
 		return 0, err
 	}
-	contentIndex := b.Kobo.BuildContentIndex(content)
-	bookmarks, err := b.Kobo.ListDeviceBookmarks(includeStoreBought)
+	contentIndex := b.Kobo.BuildContentIndex(content, b.logger)
+	bookmarks, err := b.Kobo.ListDeviceBookmarks(includeStoreBought, b.logger)
 	if err != nil {
 		slog.Error("Received an error trying to list bookmarks from device",
 			slog.String("error", err.Error()),
 		)
 		return 0, err
 	}
-	payload, err := BuildPayload(bookmarks, contentIndex)
+	payload, err := BuildPayload(bookmarks, contentIndex, b.logger)
 	if err != nil {
 		slog.Error("Received an error trying to build Readwise payload",
 			slog.String("error", err.Error()),

@@ -3,12 +3,10 @@ package cli
 import (
 	"context"
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 
 	"github.com/marcus-crane/october/backend"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,7 +38,10 @@ func Invoke(isPortable bool, version string, logger *slog.Logger) {
 				Usage:   "sync kobo highlights to readwise",
 				Action: func(c *cli.Context) error {
 					ctx := context.Background()
-					b := backend.StartBackend(&ctx, version, isPortable, logger)
+					b, err := backend.StartBackend(&ctx, version, isPortable, logger)
+					if err != nil {
+						return err
+					}
 					if b.Settings.ReadwiseToken == "" {
 						return fmt.Errorf("no readwise token was configured. please set this up using the gui as the cli does not support this yet")
 					}
@@ -51,15 +52,16 @@ func Invoke(isPortable bool, version string, logger *slog.Logger) {
 					if len(kobos) > 1 {
 						return fmt.Errorf("cli only supports one connected kobo at a time")
 					}
-					err := b.SelectKobo(kobos[0].MntPath)
-					if err != nil {
+					if err := b.SelectKobo(kobos[0].MntPath); err != nil {
 						return fmt.Errorf("an error occurred trying to connect to the kobo at %s", kobos[0].MntPath)
 					}
 					num, err := b.ForwardToReadwise()
 					if err != nil {
 						return err
 					}
-					logrus.Infof("Successfully synced %d highlights to Readwise", num)
+					logger.Info("Successfully synced highlights to Readwise",
+						slog.Int("count", num),
+					)
 					return nil
 				},
 			},
@@ -80,6 +82,7 @@ func Invoke(isPortable bool, version string, logger *slog.Logger) {
 
 	err := app.Run(args)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err.Error())
+		os.Exit(1)
 	}
 }
