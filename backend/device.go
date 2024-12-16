@@ -2,9 +2,8 @@ package backend
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
-
-	"github.com/sirupsen/logrus"
 
 	"github.com/pgaskin/koboutils/v2/kobo"
 )
@@ -155,14 +154,20 @@ func (Bookmark) TableName() string {
 	return "Bookmark"
 }
 
-func GetKoboMetadata(detectedPaths []string) []Kobo {
+func GetKoboMetadata(detectedPaths []string, logger *slog.Logger) []Kobo {
 	var kobos []Kobo
 	for _, path := range detectedPaths {
 		_, _, deviceId, err := kobo.ParseKoboVersion(path)
 		if err != nil {
-			logrus.WithField("kobo_path", path).WithError(err).Error("Failed to parse Kobo version")
+			logger.Error("Failed to parse Kobo version",
+				slog.String("error", err.Error()),
+				slog.String("kobo_path", path),
+			)
 		}
-		logrus.WithField("device_id", deviceId).Info("Found an attached device")
+		logger.Info("Found attached device",
+			slog.String("device_id", deviceId),
+			slog.String("kobo_path", path),
+		)
 		device, found := kobo.DeviceByID(deviceId)
 		if found {
 			kobos = append(kobos, Kobo{
@@ -187,7 +192,9 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 			})
 			continue
 		}
-		logrus.WithField("device_id", deviceId).Warn("Found a device that isn't officially supported but will likely still operate just fine")
+		logger.Warn("Found a device that isn't officially supported but will likely still operate just fine",
+			slog.String("device_id", deviceId),
+		)
 		// We can handle unsupported Kobos in future but at present, there are none
 		kobos = append(kobos, Kobo{
 			MntPath: path,
@@ -197,55 +204,67 @@ func GetKoboMetadata(detectedPaths []string) []Kobo {
 	return kobos
 }
 
-func (k *Kobo) ListDeviceContent(includeStoreBought bool) ([]Content, error) {
+func (k *Kobo) ListDeviceContent(includeStoreBought bool, logger *slog.Logger) ([]Content, error) {
 	var content []Content
-	logrus.Debug("Retrieving content list from device")
+	logger.Debug("Retrieving content list from device")
 	result := Conn.Where(&Content{ContentType: "6", VolumeIndex: -1})
 	if !includeStoreBought {
 		result = result.Where("ContentID LIKE '%file:///%'")
 	}
 	result = result.Order("___PercentRead desc, title asc").Find(&content)
 	if result.Error != nil {
-		logrus.WithError(result.Error).Error("Failed to retrieve content from device")
+		logger.Error("Failed to retrieve content from device",
+			slog.String("error", result.Error.Error()),
+		)
 		return nil, result.Error
 	}
-	logrus.WithField("content_count", len(content)).Debug("Successfully retrieved device content")
+	logger.Debug("Successfully retrieved device content",
+		slog.Int("content_count", len(content)),
+	)
 	return content, nil
 }
 
-func (k *Kobo) ListDeviceBookmarks(includeStoreBought bool) ([]Bookmark, error) {
+func (k *Kobo) ListDeviceBookmarks(includeStoreBought bool, logger *slog.Logger) ([]Bookmark, error) {
 	var bookmarks []Bookmark
-	logrus.Debug("Retrieving bookmarks from device")
+	logger.Debug("Retrieving bookmarks from device")
 	result := Conn
 	if !includeStoreBought {
 		result = result.Where("VolumeID LIKE '%file:///%'")
 	}
 	result = result.Order("VolumeID ASC, ChapterProgress ASC").Find(&bookmarks).Limit(1)
 	if result.Error != nil {
-		logrus.WithError(result.Error).Error("Failed to retrieve bookmarks from device")
+		logger.Error("Failed to retrieve bookmarks from device",
+			slog.String("error", result.Error.Error()),
+		)
 		return nil, result.Error
 	}
-	logrus.WithField("bookmark_count", len(bookmarks)).Debug("Successfully retrieved device bookmarks")
+	logger.Debug("Successfully retrieved device bookmarks",
+		slog.Int("bookmark_count", len(bookmarks)),
+	)
 	return bookmarks, nil
 }
 
-func (k *Kobo) BuildContentIndex(content []Content) map[string]Content {
-	logrus.Debug("Building an index out of device content")
+func (k *Kobo) BuildContentIndex(content []Content, logger *slog.Logger) map[string]Content {
+	logger.Debug("Building an index out of device content")
 	contentIndex := make(map[string]Content)
 	for _, item := range content {
 		contentIndex[item.ContentID] = item
 	}
-	logrus.WithField("index_count", len(contentIndex)).Debug("Built content index")
+	logger.Debug("Built content index",
+		slog.Int("index_count", len(contentIndex)),
+	)
 	return contentIndex
 }
 
-func (k *Kobo) CountDeviceBookmarks() HighlightCounts {
+func (k *Kobo) CountDeviceBookmarks(logger *slog.Logger) HighlightCounts {
 	var totalCount int64
 	var officialCount int64
 	var sideloadedCount int64
 	result := Conn.Model(&Bookmark{}).Count(&totalCount)
 	if result.Error != nil {
-		logrus.WithError(result.Error).Error("Failed to count bookmarks on device")
+		logger.Error("Failed to count bookmarks on device",
+			slog.String("error", result.Error.Error()),
+		)
 	}
 	Conn.Model(&Bookmark{}).Where("VolumeID LIKE '%file:///%'").Count(&sideloadedCount)
 	Conn.Model(&Bookmark{}).Where("VolumeID NOT LIKE '%file:///%'").Count(&officialCount)

@@ -1,11 +1,11 @@
 package backend
 
 import (
+	"log/slog"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,20 +22,18 @@ func setupTmpKobo(dir string, deviceId string) string {
 	content := []byte(deviceId)
 	err := os.Mkdir(filepath.Join(dir, ".kobo"), 0777)
 	if err != nil {
-		logrus.Fatal(err)
-		return ""
+		panic(err)
 	}
 	tmpfn := filepath.Join(dir, ".kobo", "version")
 	if err := os.WriteFile(tmpfn, content, 0666); err != nil {
-		logrus.Fatal(err)
-		return ""
+		panic(err)
 	}
 	return dir
 }
 
 func TestGetKoboMetadata_HandleNoDevices(t *testing.T) {
 	var expected []Kobo
-	actual := GetKoboMetadata([]string{})
+	actual := GetKoboMetadata([]string{}, slog.New(&discardHandler{}))
 	assert.Equal(t, expected, actual)
 }
 
@@ -85,6 +83,6 @@ func TestGetKoboMetadata_HandleConnectedDevices(t *testing.T) {
 		},
 	}
 	detectedPaths := []string{fakeLibraVolume, fakeMiniVolume, fakeElipsaVolume, fakeClara2EVolume, fakeUnknownVolume}
-	actual := GetKoboMetadata(detectedPaths)
+	actual := GetKoboMetadata(detectedPaths, slog.New(&discardHandler{}))
 	assert.Equal(t, expected, actual)
 }
