@@ -14,6 +14,11 @@ At the time of writing, the Linux build doesn't have any build requirements so i
 
 Having said that, I've spent the least time with the Linux build to date so the installation process could need some improvement. To my knowledge, everything should be compiled in though.
 
+> [!NOTE]
+> The default Linux `.deb` is built against webkit2gtk-4.1 as that is the version that ships with most recent Distros. If you have no idea what that is and you're on a recent Linux distro, you should use the default package.
+>
+> If you're on an older distro and/or you know that you need webkit2gtk-4.0, a separate `.deb` package is available.
+
 The quickest way to install is by grabbing the latest `.deb` build from [Github](https://github.com/marcus-crane/october/releases) or [from this shortcut](https://october.utf9k.net/download/linux/latest) and installing it like so:
 
 ```console
