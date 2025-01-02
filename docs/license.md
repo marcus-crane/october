@@ -6,7 +6,7 @@ October is released under the MIT License which is replicated below from the [so
 
 MIT License
 
-Copyright (c) 2024 Marcus Crane <marcus@utf9k.net>
+Copyright (c) 2025 Marcus Crane <marcus@utf9k.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
