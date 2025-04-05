@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24
+          go-version: 1.23 # github.com/glebarez/sqlite appears incompatible with 1.24
       - run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
       - run: go mod download
       - run: go fmt ./...
