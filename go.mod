@@ -2,8 +2,6 @@ module github.com/marcus-crane/october
 
 go 1.22.0
 
-toolchain go1.23.2
-
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/glebarez/sqlite v1.11.0
