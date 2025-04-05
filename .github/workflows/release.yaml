@@ -11,9 +11,9 @@ on:
 
 jobs:
   release:
-    fail-fast: false # Build all other releases if a single one fails
     continue-on-error: true
     strategy:
+      fail-fast: false # Build all other releases if a single one fails
       matrix:
         build:
           - platform: darwin/amd64
