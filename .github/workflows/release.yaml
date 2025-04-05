@@ -22,7 +22,7 @@ jobs:
             tag: darwin_universal
           - arch: amd64
             platform: linux/amd64
-            os: ubuntu-latest
+            os: ubuntu-22.04
             tag: linux_amd64_webkit2gtk40
           - arch: amd64
             platform: linux/amd64
@@ -45,6 +45,8 @@ jobs:
             os: windows-latest
             tag: windows-portable_amd64
     runs-on: ${{ matrix.build.os }}
+    fail-fast: false # Build all other releases if a single one fails
+    continue-on-error: true
     name: Release October (${{ matrix.build.tag }})
     steps:
       - name: Checkout source code
