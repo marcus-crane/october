@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.11.1
+
+This patch release irons out some build issues that prevented artifacts for being built for the v1.11.0 release.
+
 ## v1.11.0
 
 This release introduces a few changes:
