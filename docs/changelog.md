@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.11.0
+
+This release introduces a few changes:
+
+- Logging has been revamped to store more detail. Logs are now stored in `.txt` format for improved readability
+- Linux builds have been split into two versions: webkit4.0 and webkit4.1. Linux users on modern releases that don't have webkit in their name.
+  - The webkit 4.0 releases are provided for users on older versions of Ubuntu/Debian etc where webkit4.0 are still the default rather than webkit4.1.
+
 ## v1.10.0
 
 This release adds some better error handling around some long standing bugs that users can run into.
