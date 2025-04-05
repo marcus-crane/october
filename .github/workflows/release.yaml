@@ -11,6 +11,8 @@ on:
 
 jobs:
   release:
+    fail-fast: false # Build all other releases if a single one fails
+    continue-on-error: true
     strategy:
       matrix:
         build:
@@ -48,8 +50,6 @@ jobs:
             os: windows-latest
             tag: windows-portable_amd64
     runs-on: ${{ matrix.build.os }}
-    fail-fast: false # Build all other releases if a single one fails
-    continue-on-error: true
     name: Release October (${{ matrix.build.tag }})
     steps:
       - name: Checkout source code
