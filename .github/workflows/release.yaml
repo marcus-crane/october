@@ -77,7 +77,7 @@ jobs:
 
       - name: Install wails
         shell: bash
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.2
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.1
 
       - name: Set up Node
         uses: actions/setup-node@v4
