@@ -120,8 +120,8 @@ jobs:
 
       - name: Download and Setup CodeSignTool
         run: |
-          curl -o /tmp/CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
-          cd /tmp
+          curl -o $env:TEMP\CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
+          cd $env:TEMP\
           unzip CodeSignTool.zip
 
       - name: Install Windows dependencies
@@ -185,7 +185,7 @@ jobs:
       - name: Codesign Windows NSIS Installer
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
-          java -jar /tmp/CodeSignTool.jar sign \
+          java -jar $env:TEMP\CodeSignTool.jar sign \
             -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" \
             -username="${{ secrets.ESIGNER_USERNAME }}" \
             -password="${{ secrets.ESIGNER_PASSWORD }}" \
@@ -196,7 +196,7 @@ jobs:
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64' && startsWith(github.ref, 'refs/tags/')
         run: |
-          java -jar /tmp/CodeSignTool.jar sign \
+          java -jar $env:TEMP\CodeSignTool.jar sign \
             -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" \
             -username="${{ secrets.ESIGNER_USERNAME }}" \
             -password="${{ secrets.ESIGNER_PASSWORD }}" \
