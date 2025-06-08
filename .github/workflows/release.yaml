@@ -113,12 +113,14 @@ jobs:
       ## Windows
 
       - name: Setup Java for CodeSignTool
+        if: runner.os == 'Windows'
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
       - name: Download and Setup CodeSignTool
+        if: runner.os == 'Windows'
         run: |
           curl -o $env:TEMP\CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
           cd $env:TEMP\
