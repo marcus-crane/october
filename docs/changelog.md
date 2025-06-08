@@ -1,10 +1,24 @@
 # Changelog
 
+## v1.12.0
+
+This patch release finally fixes a series of build issues that prevented the v1.11.x series of patches from having build artifacts.
+
+Primarily, certificate signing needed to be reworked for Windows as well as some macOS changes behind the scenes.
+
+It contains all of the changes introduced in v1.11.0, namely better logging.
+
 ## v1.11.1
+
+> [!CAUTION]
+> Artifacts for this version were never properly generated but the patch notes are left for historical reference. Jump to v1.12.0 for the contents of this release.
 
 This patch release irons out some build issues that prevented artifacts for being built for the v1.11.0 release.
 
 ## v1.11.0
+
+> [!CAUTION]
+> Artifacts for this version were never properly generated but the patch notes are left for historical reference. Jump to v1.12.0 for the contents of this release.
 
 This release introduces a few changes:
 
