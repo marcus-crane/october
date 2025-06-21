@@ -192,12 +192,16 @@ jobs:
         run: '"C:\Runner\CodeSignTool\CodeSignTool.bat" sign -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" -username="${{ secrets.ESIGNER_USERNAME }}" -password="${{ secrets.ESIGNER_PASSWORD }}" -totp_secret="${{ secrets.ESIGNER_TOTP_SECRET }}" -input_file_path="October-${{ matrix.build.arch }}-installer.exe"'
         shell: cmd
         working-directory: ./build/bin
+        env:
+          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64' && (startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main')
         run: '"C:\Runner\CodeSignTool\CodeSignTool.bat" sign -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" -username="${{ secrets.ESIGNER_USERNAME }}" -password="${{ secrets.ESIGNER_PASSWORD }}" -totp_secret="${{ secrets.ESIGNER_TOTP_SECRET }}" -input_file_path="october.exe"'
         shell: cmd
         working-directory: ./build/bin
+        env:
+          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       # Packaging
 
@@ -237,15 +241,11 @@ jobs:
         shell: bash
         run: rm October.exe
         working-directory: ./build/bin
-        env:
-          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       - name: Compress binary (Win Normal)
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         run: Compress-Archive October-${{ matrix.build.arch }}-installer.exe october-${{ matrix.build.tag }}.zip
         working-directory: ./build/bin
-        env:
-          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       - name: Compress binary (Win Portable)
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
