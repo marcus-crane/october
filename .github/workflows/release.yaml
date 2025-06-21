@@ -136,7 +136,6 @@ jobs:
           echo "Trying to type the file..."
           type "C:\Runner\CodeSignTool\CodeSignTool.bat"
         shell: cmd
-        working-directory: ./build/bin
 
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
