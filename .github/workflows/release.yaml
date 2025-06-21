@@ -124,7 +124,9 @@ jobs:
         run: |
           curl -o $env:TEMP\CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
           cd $env:TEMP\
-          unzip CodeSignTool.zip
+          Expand-Archive -Path CodeSignTool.zip
+          $topLevelDir = Get-ChildItem $env:TEMP\CodeSignTool -Directory | Select-Object -First 1
+          Write-Host "Found top-level directory: $($topLevelDir.Name)"
 
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
