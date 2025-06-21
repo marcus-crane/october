@@ -128,6 +128,16 @@ jobs:
           Expand-Archive -Path CodeSignTool.zip
           Get-ChildItem -Force -Path "C:\Runner\CodeSignTool"
 
+      - name: Validate if CodeSignTool is executable
+        if: runner.os == 'Windows'
+        run: |
+          echo "Testing file existence and properties..."
+          dir "C:\Runner\CodeSignTool\CodeSignTool.bat"
+          echo "Trying to type the file..."
+          type "C:\Runner\CodeSignTool\CodeSignTool.bat"
+        shell: cmd
+        working-directory: ./build/bin
+
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
         uses: crazy-max/ghaction-chocolatey@v3
