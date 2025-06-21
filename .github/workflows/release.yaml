@@ -125,6 +125,7 @@ jobs:
           curl -o $env:TEMP\CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
           cd $env:TEMP\
           Expand-Archive -Path CodeSignTool.zip
+          Get-ChildItem -Force
 
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
