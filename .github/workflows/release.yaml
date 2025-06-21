@@ -128,15 +128,6 @@ jobs:
           Expand-Archive -Path CodeSignTool.zip
           Get-ChildItem -Force -Path "C:\Runner\CodeSignTool"
 
-      - name: Validate if CodeSignTool is executable
-        if: runner.os == 'Windows'
-        run: |
-          echo "Testing file existence and properties..."
-          dir "C:\Runner\CodeSignTool\CodeSignTool.bat"
-          echo "Trying to type the file..."
-          type "C:\Runner\CodeSignTool\CodeSignTool.bat"
-        shell: cmd
-
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
         uses: crazy-max/ghaction-chocolatey@v3
@@ -246,11 +237,15 @@ jobs:
         shell: bash
         run: rm October.exe
         working-directory: ./build/bin
+        env:
+          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       - name: Compress binary (Win Normal)
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64'
         run: Compress-Archive October-${{ matrix.build.arch }}-installer.exe october-${{ matrix.build.tag }}.zip
         working-directory: ./build/bin
+        env:
+          CODE_SIGN_TOOL_PATH: C:\Runner\CodeSignTool
 
       - name: Compress binary (Win Portable)
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
