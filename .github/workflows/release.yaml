@@ -125,7 +125,7 @@ jobs:
           curl -o $env:TEMP\CodeSignTool.zip https://www.ssl.com/download/codesigntool-for-windows/
           cd $env:TEMP\
           Expand-Archive -Path CodeSignTool.zip
-          Get-ChildItem -Force
+          Get-ChildItem -Force -Path $env:TEMP\CodeSignTool
 
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
@@ -189,7 +189,7 @@ jobs:
       - name: Codesign Windows NSIS Installer
         if: runner.os == 'Windows' && matrix.build.tag == 'windows_amd64' && (startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main')
         run: |
-          cmd.exe /c "$env:TEMP\CodeSignTool.bat" sign `
+          cmd.exe /c "$env:TEMP\CodeSignTool\CodeSignTool.bat" sign `
             -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" `
             -username="${{ secrets.ESIGNER_USERNAME }}" `
             -password="${{ secrets.ESIGNER_PASSWORD }}" `
@@ -200,7 +200,7 @@ jobs:
       - name: Codesign Windows Portable
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64' && (startsWith(github.ref, 'refs/tags/') || github.ref_name == 'main')
         run: |
-          cmd.exe /c "$env:TEMP\CodeSignTool.bat" sign `
+          cmd.exe /c "$env:TEMP\CodeSignTool\CodeSignTool.bat" sign `
             -credential_id="${{ secrets.ESIGNER_CREDENTIAL_ID }}" `
             -username="${{ secrets.ESIGNER_USERNAME }}" `
             -password="${{ secrets.ESIGNER_PASSWORD }}" `
