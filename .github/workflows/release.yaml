@@ -5,7 +5,7 @@ on:
     branches: [main]
   push:
     branches:
-      - 'main'
+      - "main"
   release:
     types: [published]
 
@@ -41,6 +41,14 @@ jobs:
             platform: linux/arm64
             os: buildjet-4vcpu-ubuntu-2204-arm
             tag: linux_arm64
+          - arch: amd64
+            platform: linux/amd64
+            os: ubuntu-latest
+            tag: linux_amd64_rpm
+          - arch: arm64
+            platform: linux/arm64
+            os: buildjet-4vcpu-ubuntu-2204-arm
+            tag: linux_arm64_rpm
           - arch: amd64
             platform: windows/amd64
             os: windows-latest
@@ -82,8 +90,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '23.11.0'
-      
+          node-version: "23.11.0"
+
       # Dependencies
 
       ## Linux (webkit2gtk-4.0)
@@ -94,10 +102,16 @@ jobs:
 
       ## Linux (webkit2gtk-4.1)
       - name: Install Ubuntu prerequisites
-        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'webkit2gtk40')
+        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'webkit2gtk40') && !contains(matrix.build.tag, 'rpm')
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
-      
+
+      ## Linux (RPM) - Install both webkit versions and rpm tools
+      - name: Install RPM build prerequisites
+        if: runner.os == 'Linux' && contains(matrix.build.tag, 'rpm')
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev rpm build-essential
+
       ## macOS
       - name: Setup Gon
         if: runner.os == 'macOS'
@@ -133,7 +147,7 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install nsis
-    
+
       # Build -- frontend
 
       - name: Build frontend assets
@@ -142,7 +156,7 @@ jobs:
           npm install -g npm
           node version.js "v${{ steps.normalise_version.outputs.version }}"
           cd frontend && npm install
-    
+
       # Build -- app variants
 
       ## Linux (webkit2gtk-4.0) -- We explicitly set 4.0 in this tag because it'll only be less used over time
@@ -153,7 +167,13 @@ jobs:
 
       ## Linux (webkit2gtk-4.1) -- We set this as the new default as more users will use 24.0x+ over time
       - name: Build wails app for Linux (webkit2gtk-4.1)
-        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'webkit2gtk40')
+        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'webkit2gtk40') && !contains(matrix.build.tag, 'rpm')
+        shell: bash
+        run: wails build -platform ${{ matrix.build.platform }} -tags webkit2_41 -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
+
+      ## Linux (RPM) - Build with webkit2gtk-4.1 for RPM packages
+      - name: Build wails app for Linux (RPM)
+        if: runner.os == 'Linux' && contains(matrix.build.tag, 'rpm')
         shell: bash
         run: wails build -platform ${{ matrix.build.platform }} -tags webkit2_41 -ldflags "-X main.version=v${{ steps.normalise_version.outputs.version }}"
 
@@ -207,7 +227,7 @@ jobs:
 
       ## Linux
       - name: Package up deb file
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'rpm')
         shell: bash
         run: |
           mv build/bin/october build/linux/october_0.0.0_ARCH/usr/local/bin/
@@ -216,12 +236,42 @@ jobs:
           sed -i 's/ARCH/${{ matrix.build.arch }}/g' "october_0.0.0_ARCH/DEBIAN/control"
           mv october_0.0.0_ARCH "october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.arch }}"
           dpkg-deb --build "october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.arch }}"
-        
+
       - name: Compress deb
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && !contains(matrix.build.tag, 'rpm')
         shell: bash
         run: |
           cd build/linux && zip -r october-${{ matrix.build.tag }}.zip october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.arch }}.deb
+          mv october-${{ matrix.build.tag }}.zip ../bin
+
+      ## Linux RPM
+      - name: Package up rpm file
+        if: runner.os == 'Linux' && contains(matrix.build.tag, 'rpm')
+        shell: bash
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+
+          # Copy binary and icon
+          cp build/bin/october ~/rpmbuild/SOURCES/
+          cp appicon.png ~/rpmbuild/SOURCES/ || cp build/appicon.png ~/rpmbuild/SOURCES/appicon.png
+
+          # Prepare spec file
+          cp build/rpm/october.spec ~/rpmbuild/SPECS/
+          sed -i 's/0.0.0/${{ steps.normalise_version.outputs.version }}/g' ~/rpmbuild/SPECS/october.spec
+          sed -i 's/ARCH/${{ matrix.build.arch }}/g' ~/rpmbuild/SPECS/october.spec
+
+          # Build RPM
+          rpmbuild -bb ~/rpmbuild/SPECS/october.spec
+
+          # Copy built RPM to build directory
+          mkdir -p build/rpm
+          cp ~/rpmbuild/RPMS/${{ matrix.build.arch }}/october-${{ steps.normalise_version.outputs.version }}-1*.rpm build/rpm/
+
+      - name: Compress rpm
+        if: runner.os == 'Linux' && contains(matrix.build.tag, 'rpm')
+        shell: bash
+        run: |
+          cd build/rpm && zip -r october-${{ matrix.build.tag }}.zip *.rpm
           mv october-${{ matrix.build.tag }}.zip ../bin
 
       ## macOS
@@ -251,7 +301,7 @@ jobs:
         if: runner.os == 'Windows' && matrix.build.tag == 'windows-portable_amd64'
         run: Compress-Archive october.exe october-${{ matrix.build.tag }}.zip
         working-directory: ./build/bin
-        
+
       - name: Upload build artifact
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: actions/upload-artifact@v4
@@ -276,7 +326,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ARTIFACT_NAME: october_${{ steps.normalise_version.outputs.version }}_${{ matrix.build.tag }}
         with:
-          upload_url:  ${{ steps.get_upload_url.outputs.url }}
+          upload_url: ${{ steps.get_upload_url.outputs.url }}
           asset_path: ./build/bin/october-${{ matrix.build.tag }}.zip
           asset_name: ${{ env.ARTIFACT_NAME }}.zip
           asset_content_type: application/zip

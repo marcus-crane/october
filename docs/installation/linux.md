@@ -1,18 +1,13 @@
 # Linux
 
-For Linux users, there is one build available:
+For Linux users, there are now multiple package formats available:
 
-- amd64 (.deb)
-
-While I'm only personally using a Debian flavour machine myself, if there is a strong enough interest in either alternative distro formats (ie; `rpm`) or in alternative packaging formats (ie; `AppImage`, `flatpak`), I'd be happy to consider looking into these.
-
-![](../public/linux/linux_overview_light.png)
+- **Debian/Ubuntu**: `.deb` packages (amd64, arm64)
+- **Fedora/RHEL/CentOS**: `.rpm` packages (amd64, arm64)
 
 ## Installation
 
-At the time of writing, the Linux build doesn't have any build requirements so it should be safe to install by way of `dpkg`.
-
-Having said that, I've spent the least time with the Linux build to date so the installation process could need some improvement. To my knowledge, everything should be compiled in though.
+### Debian/Ubuntu (.deb packages)
 
 > [!NOTE]
 > The default Linux `.deb` is built against webkit2gtk-4.1 as that is the version that ships with most recent Distros. If you have no idea what that is and you're on a recent Linux distro, you should use the default package.
@@ -25,7 +20,99 @@ The quickest way to install is by grabbing the latest `.deb` build from [Github]
 $ sudo dpkg -i ~/Downloads/october_x.x.x_linux_amd64.deb
 ```
 
-![](../public/linux/linux_install.png)
+# Fedora / RPM Installation
+
+October now provides native RPM packages for Fedora and other RPM-based distributions like RHEL, CentOS, and openSUSE.
+
+## Installation
+
+### From GitHub Releases
+
+1. Download the latest RPM package from [GitHub Releases](https://github.com/marcus-crane/october/releases)
+2. Install using dnf (Fedora) or your distribution's package manager:
+
+```bash
+# Fedora
+sudo dnf install october-*.rpm
+
+# RHEL/CentOS
+sudo yum install october-*.rpm
+
+# openSUSE
+sudo zypper install october-*.rpm
+```
+
+### Dependencies
+
+The RPM package automatically handles dependencies. On modern distributions (Fedora 35+, RHEL 9+), it requires:
+- `gtk3`
+- `webkit2gtk4.1`
+
+On older distributions, it will use:
+- `gtk3` 
+- `webkit2gtk3`
+
+## Architecture Support
+
+RPM packages are available for:
+- x86_64 (AMD64)
+- aarch64 (ARM64)
+
+## Desktop Integration
+
+The RPM package includes:
+- Desktop entry file for application launcher integration
+- Application icons in multiple sizes
+- AppData metadata for software centers
+- Automatic desktop database and icon cache updates
+
+## Uninstallation
+
+To remove October:
+
+```bash
+# Fedora
+sudo dnf remove october
+
+# RHEL/CentOS  
+sudo yum remove october
+
+# openSUSE
+sudo zypper remove october
+```
+
+## Technical Details
+
+### File Locations
+
+- **Binary**: `/usr/local/bin/october`
+- **Desktop file**: `/usr/share/applications/october.desktop`
+- **Icons**: `/usr/share/icons/hicolor/*/apps/october.png`
+- **Metadata**: `/usr/share/metainfo/net.utf9k.october.appdata.xml`
+
+### User Data
+
+User settings and logs are stored in standard XDG directories:
+- **Settings**: `$HOME/.config/october/config.json`
+- **Logs**: `$HOME/.local/share/october/logs/`
+
+These are not removed when uninstalling the package. 
+
+![](../public/linux/linux_overview_light.png)
+
+## Architecture Support
+
+Both package formats are available for:
+- **x86_64** (AMD64) - Intel/AMD 64-bit processors
+- **aarch64** (ARM64) - ARM 64-bit processors
+
+## Desktop Integration
+
+Both DEB and RPM packages include:
+- Desktop entry file for application launcher integration
+- Application icons in multiple sizes
+- AppData metadata for software centers
+- Automatic desktop database and icon cache updates
 
 It should install a `.desktop` file in the proper place as well, allowing for quick access via the system launcher.
 
